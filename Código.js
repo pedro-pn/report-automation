@@ -1,18 +1,66 @@
 const greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM"
 const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
-function onFormSubmit(formData) {
-  var formObject = formData.response
-  var reportObject = createReportSpreadSheet(formObject);
 
+const weekday = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
+class ReportData {
+  constructor(formObject) {
+    this.formObject = formObject;
+    this.name = this.getProjectName(formObject);
+    this.date = this.getReportDate(formObject);
+    this.rdo = this.getRDONumber(this.name);
+  }
+
+  getRDONumber(reportName) {
+    return (updateReportNumber(reportName, 1));
+  }
+
+  getWeekDay() {
+    var dateStrings = this.date.split('-');
+    var dateType = new Date(dateStrings[2], dateStrings[1] - 1, dateStrings[0]);
+    var weekDay = dateType.getDay()
+    return (weekday[weekDay]);
+  }
+  
+  searchColumnResponse(formObject, columnName) {
+      var itemResponses = formObject.getItemResponses();
+      for (var i = 0; i < itemResponses.length; i++) {
+        var itemResponse = itemResponses[i];
+        console.log('Question: ' + itemResponse.getItem().getTitle());
+        console.log('Response: ' + itemResponse.getResponse());
+        if (itemResponse.getItem().getTitle() == columnName)
+          return (itemResponse.getResponse());
+      }
+      var dd = new Date()
+    }
+
+  getReportDate(formObject) {
+      var date = this.searchColumnResponse(formObject, "Data do relatório");
+      var dateComponents = date.split('-');
+      var day = dateComponents[2];
+      var month = dateComponents[1];
+      var year = dateComponents[0];
+    
+      return (day + '-' + month + '-' + year);
+    }
+    
+    getProjectName(formObject) {
+      return (this.searchColumnResponse(formObject, "Projeto"));
+    }
 }
 
-function updateReportNumber(formObject, type) {
+function onFormSubmit(formData) {
+  var formObject = formData.response
+  let reportData = new ReportData(formObject);
+  var reportObject = createReportSpreadSheet(reportData);
+  console.log(reportData.name)
+}
+
+function updateReportNumber(reportName, type) {
   var reportFile = DriveApp.getFileById(reportInfoID);
   var reportInfoData = reportFile.getBlob().getDataAsString();
   let data = JSON.parse(reportInfoData);
-  const projectToUpdate = getProjectName(formObject);
-  const reportNumberToUpdate = data.Projects.find(project => project.Name === projectToUpdate);
+  const reportNumberToUpdate = data.Projects.find(project => project.Name === reportName);
 
   if (reportNumberToUpdate) {
     switch (type){
@@ -26,42 +74,12 @@ function updateReportNumber(formObject, type) {
   return (reportNumberToUpdate.RDO);
 }
 
-function getRDONumber(formObject) {
-  return (updateReportNumber(formObject, 1));
-}
-
-function searchColumnResponse(formObject, columnName) {
-  var itemResponses = formObject.getItemResponses();
-  
-  // Log the form response details
-  for (var i = 0; i < itemResponses.length; i++) {
-    var itemResponse = itemResponses[i];
-    console.log('Question: ' + itemResponse.getItem().getTitle());
-    console.log('Response: ' + itemResponse.getResponse());
-    if (itemResponse.getItem().getTitle() == columnName)
-      return (itemResponse.getResponse());
-  }
-}
-
-function getProjectName(formObject) {
-  return (searchColumnResponse(formObject, "Projeto"));
-}
-
-function getReportDate(formObject) {
-  var date = searchColumnResponse(formObject, "Data do relatório");
-  var dateComponents = date.split('-');
-  var day = dateComponents[2];
-  var month = dateComponents[1];
-  var year = dateComponents[0];
-
-  return (day + '-' + month + '-' + year);
-}
-function createReportSpreadSheet(formObject) {
+function createReportSpreadSheet(reportData) {
   var sourceSpreadsheet = SpreadsheetApp.openById(greportModelID);
   var copiedSpreadsheet = DriveApp.getFileById(sourceSpreadsheet.getId()).makeCopy();
-  copiedSpreadsheet.setName(getProjectName(formObject) + ' - RDO ' + getRDONumber(formObject) + ' - ' + getReportDate(formObject) + '')
+  copiedSpreadsheet.setName(reportData.name + ' - RDO ' + reportData.rdo + ' - ' + reportData.date + ' - ' + reportData.getWeekDay());
 
-  return (copiedSpreadsheet)
+  return (copiedSpreadsheet);
 }
 
 function moveFile() {
