@@ -1,4 +1,4 @@
-const greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM"
+const greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM" 
 const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 
 const weekday = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
@@ -9,6 +9,8 @@ class ReportData {
     this.name = this.getProjectName(formObject);
     this.date = this.getReportDate(formObject);
     this.rdo = this.getRDONumber(this.name);
+    this.reportSpreadSheet;
+    this.reportSpreadSheetFile;
   }
 
   getRDONumber(reportName) {
@@ -31,7 +33,6 @@ class ReportData {
         if (itemResponse.getItem().getTitle() == columnName)
           return (itemResponse.getResponse());
       }
-      var dd = new Date()
     }
 
   getReportDate(formObject) {
@@ -47,12 +48,26 @@ class ReportData {
     getProjectName(formObject) {
       return (this.searchColumnResponse(formObject, "Projeto"));
     }
+
+    openReportSpreadSheet() {
+      this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
+    }
+}
+
+function reportHeader(reportData) {
+  var reportSpreadSheet = reportData.reportSpreadSheet
+  console.log(typeof reportSpreadSheet);
+  var reportFirstSheet = reportSpreadSheet.getSheets()[0];
+  reportFirstSheet.getRange("J5").setValue(reportData.rdo);
+  reportFirstSheet.getRange("L5").setValue(reportData.date);
 }
 
 function onFormSubmit(formData) {
   var formObject = formData.response
   let reportData = new ReportData(formObject);
-  var reportObject = createReportSpreadSheet(reportData);
+  reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
+  reportData.openReportSpreadSheet();
+  reportHeader(reportData);
   console.log(reportData.name)
 }
 
@@ -68,18 +83,16 @@ function updateReportNumber(reportName, type) {
         reportNumberToUpdate.RDO += 1;
     }
     const updatedInfoData = JSON.stringify(data, null, 2);
-    // var updatedBlob = Utilities.newBlob(updatedInfoData, 'application/json');
     reportFile.setContent(updatedInfoData);
   }
   return (reportNumberToUpdate.RDO);
 }
 
-function createReportSpreadSheet(reportData) {
-  var sourceSpreadsheet = SpreadsheetApp.openById(greportModelID);
-  var copiedSpreadsheet = DriveApp.getFileById(sourceSpreadsheet.getId()).makeCopy();
-  copiedSpreadsheet.setName(reportData.name + ' - RDO ' + reportData.rdo + ' - ' + reportData.date + ' - ' + reportData.getWeekDay());
-
-  return (copiedSpreadsheet);
+function createReportSpreadSheetFile(reportData) {
+  var modelSpreadSheetFile = SpreadsheetApp.openById(greportModelID);
+  var copierSpreadSheetFile = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy();
+  copierSpreadSheetFile.setName(reportData.name + ' - RDO ' + reportData.rdo + ' - ' + reportData.date + ' - ' + reportData.getWeekDay());
+  return (copierSpreadSheetFile);
 }
 
 function moveFile() {
