@@ -3,18 +3,57 @@ const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 
 const weekday = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
+class ReportInfo {
+  constructor() {
+    this.reportInfoFile = DriveApp.getFileById(reportInfoID);
+    this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
+    this.reportInfoData = JSON.parse(this.reportInfoString);
+  }
+
+  // This function MUST be called after using reportInfo.json. 
+  updateReportInfo() {
+    const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
+    this.reportInfoFile.setContent(updatedInfoData);
+  }
+
+  getProjectInfo(projectName) {
+    return (this.reportInfoData.Projects.find(project => project.Name === projectName));
+  }
+
+  getClient(projectName) {
+      return (this.getProjectInfo(projectName).Client)
+  }
+
+  updateRDO(projectName) {
+    this.getProjectInfo(projectName).RDO += 1;
+  }
+
+  getCNPJ(projectName) {
+    return (this.getProjectInfo(projectName).CNPJ)
+  }
+
+  getRDO(projectName) {
+    return (this.getProjectInfo(projectName).RDO)
+  }
+
+  getProposal(projectName) {
+    return (this.getProjectInfo(projectName).Proposal)
+  }
+}
+
 class ReportData {
   constructor(formObject) {
     this.formObject = formObject;
+    this.reportInfo = new ReportInfo();
     this.name = this.getProjectName(formObject);
     this.date = this.getReportDate(formObject);
-    this.rdo = this.getRDONumber(this.name);
+    this.rdo = this.getRDONumber(this.name) + 1;
     this.reportSpreadSheet;
     this.reportSpreadSheetFile;
   }
 
   getRDONumber(reportName) {
-    return (updateReportNumber(reportName, 1));
+    return (this.reportInfo.getRDO(reportName));
   }
 
   getWeekDay() {
@@ -54,10 +93,10 @@ class ReportData {
     }
 }
 
-function reportHeader(reportData) {
+function fillReportHeader(reportData) {
   var reportSpreadSheet = reportData.reportSpreadSheet
-  console.log(typeof reportSpreadSheet);
   var reportFirstSheet = reportSpreadSheet.getSheets()[0];
+
   reportFirstSheet.getRange("J5").setValue(reportData.rdo);
   reportFirstSheet.getRange("L5").setValue(reportData.date);
 }
@@ -67,25 +106,11 @@ function onFormSubmit(formData) {
   let reportData = new ReportData(formObject);
   reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
   reportData.openReportSpreadSheet();
-  reportHeader(reportData);
-  console.log(reportData.name)
-}
+  fillReportHeader(reportData);
 
-function updateReportNumber(reportName, type) {
-  var reportFile = DriveApp.getFileById(reportInfoID);
-  var reportInfoData = reportFile.getBlob().getDataAsString();
-  let data = JSON.parse(reportInfoData);
-  const reportNumberToUpdate = data.Projects.find(project => project.Name === reportName);
+  reportData.reportInfo.updateRDO(reportData.name);
+  reportData.reportInfo.updateReportInfo();
 
-  if (reportNumberToUpdate) {
-    switch (type){
-      case (1):
-        reportNumberToUpdate.RDO += 1;
-    }
-    const updatedInfoData = JSON.stringify(data, null, 2);
-    reportFile.setContent(updatedInfoData);
-  }
-  return (reportNumberToUpdate.RDO);
 }
 
 function createReportSpreadSheetFile(reportData) {
