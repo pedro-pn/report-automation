@@ -3,6 +3,20 @@ const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 
 const weekday = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
+const FormsFields = {
+  Date: "Data do relatório",
+  Project: "Projeto",
+  DayShiftStartTime: "Horário de chegada a obra",
+  DayShiftExitTime: "Horário de saída da obra",
+  TotalLunchTime: "Tempo total de intervalo de almoço",
+  DayShiftNumOfEmployees: "Quantidade de colaboradores (apenas turno diurno)",
+  NightShift: "Houve turno noturno?",
+  NightShiftStartTime: "Horário de inicio do turno noturno",
+  NightShiftEndTime: "Horário de saída do turno noturno",
+  TotalDinnerTime: "Tempo total de intervalo de janta",
+  NightShiftNumOfEmployees: "Quantidade de colaboradores no turno noturno",
+}
+
 class ReportInfo {
 	constructor() {
     	this.reportInfoFile = DriveApp.getFileById(reportInfoID);
@@ -69,8 +83,8 @@ class ReportData {
     }
 
   getReportDate() {
-      var date = this.searchFieldResponse("Data do relatório");
-      var dateComponents = date.split('-');
+      var date = this.searchFieldResponse(FormsFields.Date);
+      var dateComponents = date.split("-");
       var day = dateComponents[2];
       var month = dateComponents[1];
       var year = dateComponents[0];
@@ -79,7 +93,7 @@ class ReportData {
     }
     
     getProjectName() {
-      return (this.searchFieldResponse("Projeto"));
+      return (this.searchFieldResponse(FormsFields.Project));
     }
 
     openReportSpreadSheet() {
@@ -88,15 +102,15 @@ class ReportData {
 }
 
 function	fillReportNightShift(reportData, reportFirstSheet) {
-	var nightShiftFlag = reportData.searchFieldResponse("Houve turno noturno?");
+	var nightShiftFlag = reportData.searchFieldResponse(FormsFields.NightShift);
 
 	if (nightShiftFlag === "Não")
 		return ;
 	
-	var nightShiftStartTime = reportData.searchFieldResponse("Horário de inicio do turno noturno");
-	var nightShiftExitTime = reportData.searchFieldResponse("Horário de saída do turno noturno");
-	var nightShiftDinnerTime = reportData.searchFieldResponse("Tempo total de intervalo de janta");
-	var	nightShiftNumOfEmployees = reportData.searchFieldResponse("Quantidade de colaboradores no turno noturno");
+	var nightShiftStartTime = reportData.searchFieldResponse(FormsFields.NightShiftStartTime);
+	var nightShiftExitTime = reportData.searchFieldResponse(FormsFields.NightShiftEndTime);
+	var nightShiftDinnerTime = reportData.searchFieldResponse(FormsFields.TotalDinnerTime);
+	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(FormsFields.NightShiftNumOfEmployees);
 	console.log(nightShiftFlag);
 	console.log(nightShiftStartTime);
 	console.log(nightShiftExitTime);
@@ -118,10 +132,10 @@ function  fillReport(reportData) {
 }
 
 function  fillReportSubHeader(reportData, reportFirstSheet) {
-	var	reportArriveTime = reportData.searchFieldResponse("Horário de chegada a obra");
-	var	reportExitTime = reportData.searchFieldResponse("Horário de saída da obra");
-	var	reportLunchTime = reportData.searchFieldResponse("Tempo total de intervalo de almoço");
-	var reportNumOfEmployees = reportData.searchFieldResponse("Quantidade de colaboradores (apenas turno diurno)");
+	var	reportArriveTime = reportData.searchFieldResponse(FormsFields.DayShiftStartTime);
+	var	reportExitTime = reportData.searchFieldResponse(FormsFields.DayShiftExitTime);
+	var	reportLunchTime = reportData.searchFieldResponse(FormsFields.TotalLunchTime);
+	var reportNumOfEmployees = reportData.searchFieldResponse(FormsFields.DayShiftNumOfEmployees);
 	
 	reportFirstSheet.getRange("B7").setValue(reportArriveTime);
 	reportFirstSheet.getRange("B8").setValue(reportExitTime);
