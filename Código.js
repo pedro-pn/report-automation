@@ -111,15 +111,68 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	var nightShiftExitTime = reportData.searchFieldResponse(FormsFields.NightShiftEndTime);
 	var nightShiftDinnerTime = reportData.searchFieldResponse(FormsFields.TotalDinnerTime);
 	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(FormsFields.NightShiftNumOfEmployees);
-	console.log(nightShiftFlag);
-	console.log(nightShiftStartTime);
-	console.log(nightShiftExitTime);
-	console.log(nightShiftDinnerTime);
-	console.log(nightShiftNumOfEmployees);
 	reportFirstSheet.getRange("D7").setValue(nightShiftStartTime);
 	reportFirstSheet.getRange("D8").setValue(nightShiftExitTime);
 	reportFirstSheet.getRange("H8").setValue(nightShiftDinnerTime);
 	reportFirstSheet.getRange("L8").setValue(nightShiftNumOfEmployees);
+}
+
+
+function hourStringToDate(hourString) {
+  const [hours, minutes] = hourString.split(':');
+  const date = new Date();
+  date.setHours(parseInt(hours, 10));
+  date.setMinutes(parseInt(minutes, 10));
+  
+  return (date);
+}
+
+function getDiffHour(startHourString, endHourString) {
+    const startTime = hourStringToDate(startHourString);
+    const endTime = hourStringToDate(endHourString);
+    const timeDifference = endTime.getTime() - startTime.getTime();
+    const hourDifference = timeDifference / (1000 * 60 * 60);
+
+    return Math.abs(hourDifference);
+}
+
+function hoursToHourString(hours) {
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.round((hours - wholeHours) * 60);
+
+    const paddedHours = wholeHours < 10 ? '0' + wholeHours : wholeHours;
+    const paddedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    const hourString = `${paddedHours}:${paddedMinutes}`;
+
+    return (hourString);
+}
+
+function isNotOvertime(overtime) {
+    console.log(overtime);
+    if (overtime <= 10.50)
+        return (true);
+    return (false)
+}
+
+function fillDayShiftOvertime(reportData, reportFirstSheet) {
+    const dayShiftStartTime = reportData.searchFieldResponse(FormsFields.DayShiftStartTime);
+    const dayShiftExitTime = reportData.searchFieldResponse(FormsFields.DayShiftExitTime);
+    const totalShiftTime = getDiffHour(dayShiftStartTime, dayShiftExitTime)
+
+    if (isNotOvertime(totalShiftTime))
+        return ;
+
+    const lunchInterval = reportData.searchFieldResponse(FormsFields.TotalLunchTime);
+    const rawOvertime = getDiffHour(hoursToHourString(totalShiftTime), "09:00");
+    console.log(lunchInterval);
+    console.log(typeof lunchInterval);
+    const overtime = getDiffHour(hoursToHourString(rawOvertime), lunchInterval);
+    reportFirstSheet.getRange("D63").setValue(hoursToHourString(overtime));
+}
+
+function fillReportFooter(reportData, reportFirstSheet) {
+    fillDayShiftOvertime(reportData, reportFirstSheet)
 }
 
 function  fillReport(reportData) {
@@ -129,6 +182,7 @@ function  fillReport(reportData) {
   fillReportHeader(reportData, reportFirstSheet);
   fillReportSubHeader(reportData, reportFirstSheet);
   fillReportNightShift(reportData, reportFirstSheet);
+  fillReportFooter(reportData, reportFirstSheet);
 }
 
 function  fillReportSubHeader(reportData, reportFirstSheet) {
