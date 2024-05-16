@@ -144,6 +144,8 @@ function hourStringToDate(hourString) {
 function getDiffHour(startHourString, endHourString) {
 	const startTime = hourStringToDate(startHourString);
 	const endTime = hourStringToDate(endHourString);
+	if (endTime < startTime)
+		endTime.setTime(endTime.getTime() + 8.64E7); // add 24 hours
 	const timeDifference = endTime.getTime() - startTime.getTime();
 	const hourDifference = timeDifference / (1000 * 60 * 60);
 
@@ -196,6 +198,16 @@ function calculateDayShiftTime(reportData) {
 	return (shiftTime);
 }
 
+function calculateNightShiftTime(reportData) {
+	const nightShiftStartTime = reportData.searchFieldResponse(FormsFields.NightShiftStartTime);
+	const nightShiftExitTime = reportData.searchFieldResponse(FormsFields.NightShiftEndTime);
+	const dinnerInterval = reportData.searchFieldResponse(FormsFields.TotalDinnerTime);
+	const totalShiftTime = getDiffHour(nightShiftStartTime, nightShiftExitTime);
+	const shiftTime = getDiffHour(dinnerInterval, hoursToHourString(totalShiftTime));
+
+	return (shiftTime);
+}
+
 function fillDayShiftOvertime(reportData, reportFirstSheet) {
 	const dayShiftTime = calculateDayShiftTime(reportData);
 	const shiftTime = getShiftTime(reportData);
@@ -205,8 +217,19 @@ function fillDayShiftOvertime(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("D63").setValue(hoursToHourString(overtime));
 }
 
+function fillNightShiftOvertime(reportData, reportFirstSheet) {
+	const nightShiftTime = calculateNightShiftTime(reportData);
+	const shiftTime = getShiftTime(reportData);
+	const overtime = calculateOvertime(shiftTime, nightShiftTime);
+	console.log("night shift overtime: " + overtime);
+	if (overtime <= 0.5)
+			return ;
+	reportFirstSheet.getRange("D64").setValue(hoursToHourString(overtime));
+}
+
 function fillReportFooter(reportData, reportFirstSheet) {
-		fillDayShiftOvertime(reportData, reportFirstSheet)
+		fillDayShiftOvertime(reportData, reportFirstSheet);
+		fillNightShiftOvertime(reportData, reportFirstSheet);
 }
 
 function  fillReport(reportData) {
