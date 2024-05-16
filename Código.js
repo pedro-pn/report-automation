@@ -15,6 +15,10 @@ const FormsFields = {
 	NightShiftEndTime: "Horário de saída do turno noturno",
 	TotalDinnerTime: "Tempo total de intervalo de janta",
 	NightShiftNumOfEmployees: "Quantidade de colaboradores no turno noturno",
+	StandByFlag: "Teve período ocioso (stand-by)",
+	StandByValidity: "O período de aguardo foi por causa do cliente?",
+	StandByTime: "Tempo total em stand-by",
+	StandByMotive: "Motivo do período ocioso"
 }
 
 class ReportInfo {
@@ -227,9 +231,23 @@ function fillNightShiftOvertime(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("D64").setValue(hoursToHourString(overtime));
 }
 
+function fillStandBy(reportData, reportFirstSheet) {
+	if (reportData.searchFieldResponse(FormsFields.StandByValidity) === "Não" || 
+			reportData.searchFieldResponse(FormsFields.StandByFlag === "Não"))
+			return ;
+	const standByTime = reportData.searchFieldResponse(FormsFields.StandByTime);
+	const standByMotive = reportData.searchFieldResponse(FormsFields.StandByMotive);
+	console.log("standby motive: " + standByMotive);
+	console.log("standby time: " + standByTime);
+	reportFirstSheet.getRange("I63").setValue(standByTime);
+	reportFirstSheet.getRange("I64").setValue(standByMotive);
+}
+
+
 function fillReportFooter(reportData, reportFirstSheet) {
 		fillDayShiftOvertime(reportData, reportFirstSheet);
 		fillNightShiftOvertime(reportData, reportFirstSheet);
+		fillStandBy(reportData, reportFirstSheet);
 }
 
 function  fillReport(reportData) {
