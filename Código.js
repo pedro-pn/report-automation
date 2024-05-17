@@ -128,6 +128,50 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("L8").setValue(nightShiftNumOfEmployees);
 }
 
+function readJsonFromSheet() {
+	var sheetId = '1ClBqPxJY9XLXchy_AkTJjGFhOiokednGul3WKKnQo30'; // Replace with your Google Sheet ID
+	var sheetName = 'Página1'; // Replace with your Sheet Name if different
+  
+	var sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
+	var data = sheet.getDataRange().getValues();
+	
+	// Convert sheet data to JSON format
+	var jsonData = {};
+	for (var i = 1; i < data.length; i++) {
+	  var row = data[i];
+	  jsonData[row[0]] = row[1];
+	}
+  
+	Logger.log(JSON.stringify(jsonData));
+	return jsonData;
+  }
+
+  function writeJsonToSheet(newData) {
+	var sheetId = '1ClBqPxJY9XLXchy_AkTJjGFhOiokednGul3WKKnQo30'; // Replace with your Google Sheet ID
+	var sheetName = 'Página1'; // Replace with your Sheet Name if different
+  
+	var sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
+	sheet.clear(); // Clear existing data
+  
+	var data = [];
+	for (var key in newData) {
+	  if (newData.hasOwnProperty(key)) {
+		data.push([key, newData[key]]);
+	  }
+	}
+	
+	// Insert headers if needed
+	data.unshift(['Key', 'Value']);
+	
+	// Write new data to the sheet
+	sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
+
+  function teste2() {
+	let reportInfo = new ReportInfo();
+
+	writeJsonToSheet(reportInfo.reportInfoData);
+  }
 
 function hourStringToDate(hourString) {
 	const [hours, minutes] = hourString.split(':');
