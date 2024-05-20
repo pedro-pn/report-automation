@@ -1,7 +1,9 @@
 const greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM" 
 const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
-
+const reportInfoSheetID = "1ClBqPxJY9XLXchy_AkTJjGFhOiokednGul3WKKnQo30"
 const weekDays = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const sheetName = "Página1"
+
 
 const FormsFields = {
 	Date: "Data do relatório",
@@ -24,24 +26,69 @@ const FormsFields = {
 
 class ReportInfo {
 	constructor() {
-			this.reportInfoFile = DriveApp.getFileById(reportInfoID);
-			this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
-			this.reportInfoData = JSON.parse(this.reportInfoString);
-		}
+			var sheet = SpreadsheetApp.openById(reportInfoSheetID).getSheetByName("Página1");
+			var data = sheet.getDataRange().getValues();
+			
+			this.reportInfoData = {};
+			for (var i = 1; i < data.length; i++) { // Start from 1 to skip headers
+			  var keys = data[i][0].split('.');
+			  var value = JSON.parse(data[i][1]);
+			  this.setValue(this.reportInfoData, keys, value);
+			}
+	}
 
 	// This function MUST be called after using reportInfo.json. 
-		updateReportInfo() {
-	 		const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
-			this.reportInfoFile.setContent(updatedInfoData);
+	updateReportInfo() {
+		this.writeJsonToSheet(this.reportInfoData);
+	}
+
+	writeJsonToSheet(newData) {
+		var sheet = SpreadsheetApp.openById(reportInfoSheetID).getSheetByName(sheetName);
+		sheet.clear(); // Clear existing data
+		
+		// Flatten the JSON data into key-value pairs
+		var data = [];
+		this.flattenJson(newData, data);
+	  
+		// Insert headers if needed
+		data.unshift(['Key', 'Value']);
+		
+		// Write new data to the sheet
+		sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+	  }
+	  
+	flattenJson(obj, data, parentKey = '') {
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+			var newKey = parentKey ? parentKey + '.' + key : key;
+			if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+				flattenJson(obj[key], data, newKey); // Recursively flatten nested objects
+			} else {
+				data.push([newKey, JSON.stringify(obj[key])]); // Convert arrays/values to strings
+			}
+			}
+		}
+	}
+
+	setValue(obj, keys, value) {
+		var key = keys.shift();
+		if (keys.length === 0) {
+		  obj[key] = value;
+		} else {
+		  if (!obj[key]) {
+			obj[key] = {};
+		  }
+		  setValue(obj[key], keys, value);
+		}
 	}
 
 	getProjectInfo(projectName) {
 			return (this.reportInfoData.Projects.find(project => project.Name === projectName));
-		}
+	}
 
 	updateRDO(projectName) {
 			this.getProjectInfo(projectName).RDO += 1;
-		}
+	}
 }
 
 class ReportData {
@@ -128,50 +175,12 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("L8").setValue(nightShiftNumOfEmployees);
 }
 
-function readJsonFromSheet() {
-	var sheetId = '1ClBqPxJY9XLXchy_AkTJjGFhOiokednGul3WKKnQo30'; // Replace with your Google Sheet ID
-	var sheetName = 'Página1'; // Replace with your Sheet Name if different
-  
-	var sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
-	var data = sheet.getDataRange().getValues();
-	
-	// Convert sheet data to JSON format
-	var jsonData = {};
-	for (var i = 1; i < data.length; i++) {
-	  var row = data[i];
-	  jsonData[row[0]] = row[1];
-	}
-  
-	Logger.log(JSON.stringify(jsonData));
-	return jsonData;
-  }
 
-  function writeJsonToSheet(newData) {
-	var sheetId = '1ClBqPxJY9XLXchy_AkTJjGFhOiokednGul3WKKnQo30'; // Replace with your Google Sheet ID
-	var sheetName = 'Página1'; // Replace with your Sheet Name if different
-  
-	var sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
-	sheet.clear(); // Clear existing data
-  
-	var data = [];
-	for (var key in newData) {
-	  if (newData.hasOwnProperty(key)) {
-		data.push([key, newData[key]]);
-	  }
-	}
-	
-	// Insert headers if needed
-	data.unshift(['Key', 'Value']);
-	
-	// Write new data to the sheet
-	sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
-  }
-
-  function teste2() {
+function teste2() {
 	let reportInfo = new ReportInfo();
 
 	writeJsonToSheet(reportInfo.reportInfoData);
-  }
+}
 
 function hourStringToDate(hourString) {
 	const [hours, minutes] = hourString.split(':');
@@ -368,6 +377,8 @@ function fillReportHeader(reportData, reportFirstSheet) {
 
 function onFormSubmit(formData) {
 	var formObject = formData.response
+	var lock = LockService.getScriptLock();
+  	lock.waitLock(300000);  // prevents data race between processes
 	let reportData = new ReportData(formObject);
 	reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
 	reportData.openReportSpreadSheet();
@@ -375,6 +386,7 @@ function onFormSubmit(formData) {
 
 	reportData.reportInfo.updateRDO(reportData.name);
 	reportData.reportInfo.updateReportInfo();
+	lock.releaseLock();
 }
 
 function createReportSpreadSheetFile(reportData) {
