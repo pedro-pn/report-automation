@@ -19,7 +19,8 @@ const FormsFields = {
 	StandByValidity: "O período de aguardo foi por causa do cliente?",
 	StandByTime: "Tempo total em stand-by",
 	StandByMotive: "Motivo do período ocioso",
-	OvertimeComment: "Em caso de hora extra, indicar o responsável a mesma"
+	OvertimeComment: "Em caso de hora extra, indicar o responsável a mesma",
+	Activities: "Atividades/Observações"
 }
 
 class ReportInfo {
@@ -285,11 +286,18 @@ function fillClientLeaderField(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("H67").setValue(position);
 }
 
+function fillActivities(reportData, reportFirstSheet) {
+	const activities = reportData.searchFieldResponse(FormsFields.Activities)
+
+	reportFirstSheet.getRange("C59").setValue(activities);
+}
+
 function fillReportFooter(reportData, reportFirstSheet) {
 		fillOvertimeField(reportData, reportFirstSheet);
 		fillStandByField(reportData, reportFirstSheet);
 		fillLeaderField(reportData, reportFirstSheet);
 		fillClientLeaderField(reportData, reportFirstSheet);
+		fillActivities(reportData, reportFirstSheet);
 }
 
 function  fillReport(reportData) {
