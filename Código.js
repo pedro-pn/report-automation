@@ -198,7 +198,10 @@ function getShiftTime(reportData) {
 }
 
 function calculateOvertime(shiftTime, totalShiftTime) {
-	return (getDiffHourAbs(hoursToHourString(totalShiftTime), shiftTime));
+	const overtime = getDiffHourAbs(totalShiftTime, shiftTime);
+	if (totalShiftTime < shiftTime)
+		return (-overtime)
+	return (overtime);
 }
 
 function calculateDayShiftTime(reportData) {
@@ -221,7 +224,7 @@ function calculateNightShiftTime(reportData) {
 }
 
 function fillDayShiftOvertimeField(reportData, reportFirstSheet) {
-	const dayShiftTime = calculateDayShiftTime(reportData);
+	const dayShiftTime = hoursToHourString(calculateDayShiftTime(reportData));
 	const shiftTime = getShiftTime(reportData);
 	const overtime = calculateOvertime(shiftTime, dayShiftTime);
 	if (overtime <= 0.5)
