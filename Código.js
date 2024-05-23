@@ -20,8 +20,51 @@ const FormsFields = {
 	StandByTime: "Tempo total em stand-by",
 	StandByMotive: "Motivo do período ocioso",
 	OvertimeComment: "Em caso de hora extra, indicar o responsável a mesma",
-	Activities: "Atividades/Observações"
+	Activities: "Atividades/Observações",
+	AddService: "Selecione o tipo de serviço que deseja adicionar informações"
 }
+
+const ReportCells = {
+	Item1Service: "C13",
+	Item1Equipament: "C14",
+	Item1System: "C15",
+	Item1StartTime: "H13",
+	Item1EndTime: "K13",
+	Item1Status: "H15",
+}
+
+//#region Test
+function showAllResponses() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
+	var responses = form.getResponses();
+	
+	responses.forEach(function(response) {
+	  Logger.log(response.getItemResponses().map(function(itemResponse) {
+		return itemResponse.getResponse();
+	  }));
+	});
+	return responses;
+  }
+
+  function testWithPreviousResponse() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+	var responses = form.getResponses();
+	if (responses.length > 0) {
+	  var testResponse = responses[22];
+	  
+	  // Create a fake event object
+	  var fakeEvent = {
+		response: testResponse,
+		source: form
+	  }
+	  // Call form submission handler with the fake event
+	  onFormSubmit(fakeEvent);
+	} else {
+	  Logger.log('No responses found.');
+	}
+  }
+
+//#endregion
 
 class ReportInfo {
 	constructor() {
@@ -85,14 +128,17 @@ class ReportData {
 		return (weekDays[weekDay]);
 	}
 	
-	searchFieldResponse(fieldName) {
-			var itemResponses = this.formObject.getItemResponses();
-			for (var i = 0; i < itemResponses.length; i++) {
-				var itemResponse = itemResponses[i];
-				if (itemResponse.getItem().getTitle() == fieldName)
-					return (itemResponse.getResponse());
+	searchFieldResponse(fieldName, item=0) {
+		var itemResponses = this.formObject.getItemResponses();
+		for (var i = 0; i < itemResponses.length; i++) {
+			var itemResponse = itemResponses[i];
+			if (itemResponse.getItem().getTitle() == fieldName){
+				if (item == 0)
+					return(itemResponse.getResponse());
+				item--;
 			}
 		}
+	}
 
 	getReportDate() {
 			var date = this.searchFieldResponse(FormsFields.Date);
@@ -163,7 +209,6 @@ function getDiffHour(startHourString, endHourString) {
 		endTime.setTime(endTime.getTime() + 8.64E7); // add 24 hours
 	const timeDifference = endTime.getTime() - startTime.getTime();
 	const hourDifference = timeDifference / (1000 * 60 * 60);
-	console.log("hourDifference: " + hourDifference)
 	return (hourDifference);
 }
 
@@ -210,6 +255,7 @@ function calculateDayShiftTime(reportData) {
 	const lunchInterval = reportData.searchFieldResponse(FormsFields.TotalLunchTime);
 	const totalShiftTime = getDiffHour(dayShiftStartTime, dayShiftExitTime);
 	const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), lunchInterval);
+
 	return (shiftTime);
 }
 
@@ -235,15 +281,14 @@ function fillDayShiftOvertimeField(reportData, reportFirstSheet) {
 }
 
 function fillNightShiftOvertimeField(reportData, reportFirstSheet) {
-	const nightShiftTime = calculateNightShiftTime(reportData);
+	const nightShiftTime = hoursToHourString(calculateNightShiftTime(reportData));
 	const shiftTime = getShiftTime(reportData);
 	const overtime = calculateOvertime(shiftTime, nightShiftTime);
-	console.log("night shift overtime: " + overtime);
 	if (overtime <= 0.5)
 			return false;
 	reportFirstSheet.getRange("D64").setValue(hoursToHourString(overtime));
 	
-	return true
+	return (true);
 }
 
 function fillStandByField(reportData, reportFirstSheet) {
@@ -252,8 +297,6 @@ function fillStandByField(reportData, reportFirstSheet) {
 			return ;
 	const standByTime = reportData.searchFieldResponse(FormsFields.StandByTime);
 	const standByMotive = reportData.searchFieldResponse(FormsFields.StandByMotive);
-	console.log("standby motive: " + standByMotive);
-	console.log("standby time: " + standByTime);
 	reportFirstSheet.getRange("I63").setValue(standByTime);
 	reportFirstSheet.getRange("I64").setValue(standByMotive);
 }
@@ -289,6 +332,18 @@ function fillClientLeaderField(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("H67").setValue(position);
 }
 
+function fillServicesFields(reportData, reportFirstSheet) {
+	console.log(reportData.searchFieldResponse(FormsFields.AddService, 1))
+	// if (reportData.searchFieldResponse(FormsFields.AddService) != "")
+	// 	fillFirstItem();
+	// fillSecondItem();
+	// fillThirdItem();
+	// fillFourthItem();
+	// fillFifthItem();
+	// fillSexthItem();
+}
+
+
 function fillActivities(reportData, reportFirstSheet) {
 	const activities = reportData.searchFieldResponse(FormsFields.Activities)
 
@@ -296,11 +351,12 @@ function fillActivities(reportData, reportFirstSheet) {
 }
 
 function fillReportFooter(reportData, reportFirstSheet) {
-		fillOvertimeField(reportData, reportFirstSheet);
-		fillStandByField(reportData, reportFirstSheet);
-		fillLeaderField(reportData, reportFirstSheet);
-		fillClientLeaderField(reportData, reportFirstSheet);
-		fillActivities(reportData, reportFirstSheet);
+	fillOvertimeField(reportData, reportFirstSheet);
+	fillStandByField(reportData, reportFirstSheet);
+	fillLeaderField(reportData, reportFirstSheet);
+	fillClientLeaderField(reportData, reportFirstSheet);
+	fillActivities(reportData, reportFirstSheet);
+	fillServicesFields(reportData, reportFirstSheet);
 }
 
 function  fillReport(reportData) {
@@ -334,7 +390,7 @@ function fillReportHeader(reportData, reportFirstSheet) {
 }
 
 function onFormSubmit(formData) {
-	var formObject = formData.response
+	var formObject = formData.response;
 	let reportData = new ReportData(formObject);
 	reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
 	reportData.openReportSpreadSheet();
