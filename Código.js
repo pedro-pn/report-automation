@@ -3,7 +3,7 @@ const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 
 const weekDays = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 
-const FormsFields = {
+const HeaderFields = {
 	Date: "Data do relatório",
 	Project: "Projeto",
 	DayShiftStartTime: "Horário de chegada a obra",
@@ -24,13 +24,124 @@ const FormsFields = {
 	AddService: "Selecione o tipo de serviço que deseja adicionar informações"
 }
 
+const ServicesFields = {
+	Service: "Selecione o tipo de serviço que deseja adicionar informações",
+	Equipament: "Nome do equipamento",
+	System: "Nome do sistema",
+	Size: "Diâmetro e comprimento das tubulações",
+	Oil: "Óleo (nome, marca e viscosidade)",
+	Type: "Tipo de Flushing",
+	Start: "Início/continuação do flushing",
+	End: "Término ou pausa do flushing",
+	Inversion: "Inversão de fluxo",
+	Steps: "Etapas realizadas no dia",
+	Obs: "Observações"
+}
+
+const ServiceStatements = {
+	InicialAnalysis: "Análise inicial",
+	FinalAnalysis: "Análise final",
+	Volume: "Volume",
+	Material: "Material",
+	WorkPressure: "Pressão de trabalho",
+	TestPressure: "Pressão de teste",
+	Fluid: "Fluido",
+
+
+}
+
 const ReportCells = {
-	Item1Service: "C13",
-	Item1Equipament: "C14",
-	Item1System: "C15",
-	Item1StartTime: "H13",
-	Item1EndTime: "K13",
-	Item1Status: "H15",
+	1: {
+		service: "C13",
+		equipament: "C14",
+		system: "C15",
+		startTime: "H13",
+		endTime: "K13",
+		status: "H15",
+		ParamOne: "H14",
+		ParamTwo: "K14",
+		Info: "K15",
+		ParamOneKey: "F14",
+		ParamTwoKey: "I15",
+		InfoKey: "J15"
+
+	},
+
+	2: {
+		service: "C22",
+		equipament: "C23",
+		system: "C24",
+		startTime: "H22",
+		endTime: "K22",
+		status: "H24",
+		ParamOne: "H23",
+		ParamTwo: "K23",
+		Info: "K24",
+		ParamOneKey: "F123",
+		ParamTwoKey: "I24",
+		InfoKey: "J24"
+		
+	},
+
+	3: {
+		service: "C30",
+		equipament: "C31",
+		system: "C32",
+		startTime: "H30",
+		endTime: "K30",
+		status: "H32",
+		ParamOne: "H31",
+		ParamTwo: "K31",
+		Info: "K32",
+		ParamOneKey: "F31",
+		ParamTwoKey: "I32",
+		InfoKey: "J32"
+	},
+
+	4: {
+		service: "C38",
+		equipament: "C39",
+		system: "C40",
+		startTime: "H38",
+		endTime: "K38",
+		status: "H17",
+		ParamOne: "H39",
+		ParamTwo: "K39",
+		Info: "K40",
+		ParamOneKey: "F39",
+		ParamTwoKey: "I40",
+		InfoKey: "J40"
+	},
+
+	5: {
+		service: "C46",
+		equipament: "C47",
+		system: "C48",
+		startTime: "H46",
+		endTime: "K46",
+		status: "H48",
+		ParamOne: "H47",
+		ParamTwo: "K47",
+		Info: "K48",
+		ParamOneKey: "F47",
+		ParamTwoKey: "I48",
+		InfoKey: "J48"
+	},
+
+	6: {
+		service: "C54",
+		equipament: "C55",
+		system: "C56",
+		startTime: "H54",
+		endTime: "K54",
+		status: "H56",
+		ParamOne: "H55",
+		ParamTwo: "K55",
+		Info: "K56",
+		ParamOneKey: "F55",
+		ParamTwoKey: "I56",
+		InfoKey: "J56"
+	}
 }
 
 //#region Test
@@ -46,24 +157,37 @@ function showAllResponses() {
 	return responses;
   }
 
-  function testWithPreviousResponse() {
-	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
-	var responses = form.getResponses();
+function testWithPreviousResponse() {
+var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+var responses = form.getResponses();
 	if (responses.length > 0) {
-	  var testResponse = responses[22];
-	  
-	  // Create a fake event object
-	  var fakeEvent = {
+		var testResponse = responses[22];
+		
+		// Create a fake event object
+		var fakeEvent = {
 		response: testResponse,
 		source: form
-	  }
-	  // Call form submission handler with the fake event
-	  onFormSubmit(fakeEvent);
+		}
+		// Call form submission handler with the fake event
+		onFormSubmit(fakeEvent);
 	} else {
-	  Logger.log('No responses found.');
+		Logger.log('No responses found.');
 	}
-  }
+}
 
+function testReportData() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+	var responses = form.getResponses();
+	var testResponse = responses[22];
+	var fakeEvent = {
+		response: testResponse,
+		source: form
+	}
+	var reportData = new ReportData(testResponse);
+	console.log(reportData.services.First);
+	console.log(reportData.services.Second);
+	console.log(reportData.services.Third);
+}
 //#endregion
 
 class ReportInfo {
@@ -95,6 +219,7 @@ class ReportData {
 		this.name = this.getProjectName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
+		this.services = this.getServices();
 		this.reportSpreadSheet;
 		this.reportSpreadSheetFile;
 	}
@@ -105,6 +230,18 @@ class ReportData {
 
 	getClient() {
 		return (this.reportInfo.getProjectInfo(this.name).Client);
+	}
+
+	getServices() {
+		const services = {
+			First: this.searchFieldResponse(HeaderFields.AddService, 0),
+			Second: this.searchFieldResponse(HeaderFields.AddService, 1),
+			Third: this.searchFieldResponse(HeaderFields.AddService, 2),
+			Fourth: this.searchFieldResponse(HeaderFields.AddService, 3),
+			Fifth: this.searchFieldResponse(HeaderFields.AddService, 4),
+			Sixth: this.searchFieldResponse(HeaderFields.AddService, 5),
+		};
+		return (services);
 	}
 
 	getCNPJ() {
@@ -141,7 +278,7 @@ class ReportData {
 	}
 
 	getReportDate() {
-			var date = this.searchFieldResponse(FormsFields.Date);
+			var date = this.searchFieldResponse(HeaderFields.Date);
 			var dateComponents = date.split("-");
 			var day = dateComponents[2];
 			var month = dateComponents[1];
@@ -151,7 +288,7 @@ class ReportData {
 		}
 		
 		getProjectName() {
-			return (this.searchFieldResponse(FormsFields.Project));
+			return (this.searchFieldResponse(HeaderFields.Project));
 		}
 
 		openReportSpreadSheet() {
@@ -160,15 +297,15 @@ class ReportData {
 }
 
 function	fillReportNightShift(reportData, reportFirstSheet) {
-	var nightShiftFlag = reportData.searchFieldResponse(FormsFields.NightShift);
+	var nightShiftFlag = reportData.searchFieldResponse(HeaderFields.NightShift);
 
 	if (nightShiftFlag === "Não")
 		return ;
 	
-	var nightShiftStartTime = reportData.searchFieldResponse(FormsFields.NightShiftStartTime);
-	var nightShiftExitTime = reportData.searchFieldResponse(FormsFields.NightShiftEndTime);
-	var nightShiftDinnerTime = reportData.searchFieldResponse(FormsFields.TotalDinnerTime);
-	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(FormsFields.NightShiftNumOfEmployees);
+	var nightShiftStartTime = reportData.searchFieldResponse(HeaderFields.NightShiftStartTime);
+	var nightShiftExitTime = reportData.searchFieldResponse(HeaderFields.NightShiftEndTime);
+	var nightShiftDinnerTime = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime);
+	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.NightShiftNumOfEmployees);
 	reportFirstSheet.getRange("D7").setValue(nightShiftStartTime);
 	reportFirstSheet.getRange("D8").setValue(nightShiftExitTime);
 	reportFirstSheet.getRange("H8").setValue(nightShiftDinnerTime);
@@ -250,9 +387,9 @@ function calculateOvertime(shiftTime, totalShiftTime) {
 }
 
 function calculateDayShiftTime(reportData) {
-	const dayShiftStartTime = reportData.searchFieldResponse(FormsFields.DayShiftStartTime);
-	const dayShiftExitTime = reportData.searchFieldResponse(FormsFields.DayShiftExitTime);
-	const lunchInterval = reportData.searchFieldResponse(FormsFields.TotalLunchTime);
+	const dayShiftStartTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
+	const dayShiftExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
+	const lunchInterval = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
 	const totalShiftTime = getDiffHour(dayShiftStartTime, dayShiftExitTime);
 	const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), lunchInterval);
 
@@ -260,9 +397,9 @@ function calculateDayShiftTime(reportData) {
 }
 
 function calculateNightShiftTime(reportData) {
-	const nightShiftStartTime = reportData.searchFieldResponse(FormsFields.NightShiftStartTime);
-	const nightShiftExitTime = reportData.searchFieldResponse(FormsFields.NightShiftEndTime);
-	const dinnerInterval = reportData.searchFieldResponse(FormsFields.TotalDinnerTime);
+	const nightShiftStartTime = reportData.searchFieldResponse(HeaderFields.NightShiftStartTime);
+	const nightShiftExitTime = reportData.searchFieldResponse(HeaderFields.NightShiftEndTime);
+	const dinnerInterval = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime);
 	const totalShiftTime = getDiffHour(nightShiftStartTime, nightShiftExitTime);
 	const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), dinnerInterval);
 
@@ -292,23 +429,23 @@ function fillNightShiftOvertimeField(reportData, reportFirstSheet) {
 }
 
 function fillStandByField(reportData, reportFirstSheet) {
-	if (reportData.searchFieldResponse(FormsFields.StandByValidity) === "Não" || 
-			reportData.searchFieldResponse(FormsFields.StandByFlag === "Não"))
+	if (reportData.searchFieldResponse(HeaderFields.StandByValidity) === "Não" || 
+			reportData.searchFieldResponse(HeaderFields.StandByFlag === "Não"))
 			return ;
-	const standByTime = reportData.searchFieldResponse(FormsFields.StandByTime);
-	const standByMotive = reportData.searchFieldResponse(FormsFields.StandByMotive);
+	const standByTime = reportData.searchFieldResponse(HeaderFields.StandByTime);
+	const standByMotive = reportData.searchFieldResponse(HeaderFields.StandByMotive);
 	reportFirstSheet.getRange("I63").setValue(standByTime);
 	reportFirstSheet.getRange("I64").setValue(standByMotive);
 }
 
 function fillOvertimeCommentField(reportData, reportFirstSheet) {
-	const overtimeComment = reportData.searchFieldResponse(FormsFields.OvertimeComment);
+	const overtimeComment = reportData.searchFieldResponse(HeaderFields.OvertimeComment);
 	reportFirstSheet.getRange("B65").setValue(overtimeComment);
 }
 
 function fillOvertimeField(reportData, reportFirstSheet) {
 	const dayOvertime = fillDayShiftOvertimeField(reportData, reportFirstSheet);
-	const NightShift = reportData.searchFieldResponse(FormsFields.NightShift);
+	const NightShift = reportData.searchFieldResponse(HeaderFields.NightShift);
 	var	nightOvertime = false;
 	if (NightShift === "Sim")
 		nightOvertime = fillNightShiftOvertimeField(reportData, reportFirstSheet);
@@ -332,10 +469,33 @@ function fillClientLeaderField(reportData, reportFirstSheet) {
 	reportFirstSheet.getRange("H67").setValue(position);
 }
 
+function fillFlushing(reportData, reportFirstSheet, cells) {
+	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ServiceStatements.InicialAnalysis + ":")
+	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ServiceStatements.FinalAnalysis + ":")
+	reportFirstSheet.getRange(cells.InfoKey).setValue(ServiceStatements.Volume + ":")
+
+	reportFirstSheet.getRange(cells.startTime).setValue(reportData.searchFieldResponse(ServicesFields.Start))
+}
+
+function fillItem(reportData, reportFirstSheet, item) {
+	var cells = ReportCells[item];
+	var service = reportData.searchFieldResponse(ServicesFields.Service, item - 1)
+	if (service === "Flushing")
+		fillFlushing(reportData, reportFirstSheet, cells)
+	// else if (reportData.services.item === "Limpeza Química")
+	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	// else if (reportData.services.item === "Filtragem")
+	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	// else if (reportData.services.item === "Teste de Pressão")
+	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	// else if (reportData.services.item === "Limpeza de reservatório")
+	// 	fillFlushing(reportData, reportFirstSheet, cells)
+}
+
 function fillServicesFields(reportData, reportFirstSheet) {
-	console.log(reportData.searchFieldResponse(FormsFields.AddService, 1))
-	// if (reportData.searchFieldResponse(FormsFields.AddService) != "")
-	// 	fillFirstItem();
+	for (var item = 6; item > 0; item--) {
+		fillItem(reportData, reportFirstSheet, item);
+	}
 	// fillSecondItem();
 	// fillThirdItem();
 	// fillFourthItem();
@@ -345,9 +505,9 @@ function fillServicesFields(reportData, reportFirstSheet) {
 
 
 function fillActivities(reportData, reportFirstSheet) {
-	const activities = reportData.searchFieldResponse(FormsFields.Activities)
+	const activities = reportData.searchFieldResponse(HeaderFields.Activities)
 
-	reportFirstSheet.getRange("C59").setValue(activities);
+	reportFirstSheet.getRange("C10").setValue(activities);
 }
 
 function fillReportFooter(reportData, reportFirstSheet) {
@@ -370,10 +530,10 @@ function  fillReport(reportData) {
 }
 
 function  fillReportSubHeader(reportData, reportFirstSheet) {
-	var	reportArriveTime = reportData.searchFieldResponse(FormsFields.DayShiftStartTime);
-	var	reportExitTime = reportData.searchFieldResponse(FormsFields.DayShiftExitTime);
-	var	reportLunchTime = reportData.searchFieldResponse(FormsFields.TotalLunchTime);
-	var reportNumOfEmployees = reportData.searchFieldResponse(FormsFields.DayShiftNumOfEmployees);
+	var	reportArriveTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
+	var	reportExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
+	var	reportLunchTime = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
+	var reportNumOfEmployees = reportData.searchFieldResponse(HeaderFields.DayShiftNumOfEmployees);
 	
 	reportFirstSheet.getRange("B7").setValue(reportArriveTime);
 	reportFirstSheet.getRange("B8").setValue(reportExitTime);
