@@ -5,7 +5,7 @@ const weekDays = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábad
 
 const HeaderFields = {
 	Date: "Data do relatório",
-	Project: "Projeto",
+	Mission: "Missão",
 	DayShiftStartTime: "Horário de chegada a obra",
 	DayShiftExitTime: "Horário de saída da obra",
 	TotalLunchTime: "Tempo total de intervalo de almoço",
@@ -31,9 +31,12 @@ const ServicesFields = {
 	Size: "Diâmetro e comprimento das tubulações",
 	Oil: "Óleo (nome, marca e viscosidade)",
 	Type: "Tipo de Flushing",
+	Status: "Serviço finalizado?",
 	Start: "Início/continuação do flushing",
 	End: "Término ou pausa do flushing",
 	Inversion: "Inversão de fluxo",
+	InicialPartCount: "Contagem de partículas inicial",
+	FinalPartCount: "Contagem de partículas final",
 	Steps: "Etapas realizadas no dia",
 	Obs: "Observações"
 }
@@ -52,18 +55,20 @@ const ServiceStatements = {
 
 const ReportCells = {
 	1: {
-		service: "C13",
-		equipament: "C14",
-		system: "C15",
-		startTime: "H13",
-		endTime: "K13",
-		status: "H15",
-		ParamOne: "H14",
-		ParamTwo: "K14",
-		Info: "K15",
-		ParamOneKey: "F14",
-		ParamTwoKey: "I15",
-		InfoKey: "J15"
+		Service: "C13",
+		Equipament: "C14",
+		System: "C15",
+		StartTime: "I13",
+		EndTime: "M13",
+		Status: "I15",
+		ParamOne: "I14",
+		ParamTwo: "M14",
+		Info: "M15",
+		ParamOneKey: "G14",
+		ParamTwoKey: "K14",
+		InfoKey: "L15",
+		Steps: "B17",
+		Obs: "B19"
 
 	},
 
@@ -71,76 +76,85 @@ const ReportCells = {
 		service: "C22",
 		equipament: "C23",
 		system: "C24",
-		startTime: "H22",
-		endTime: "K22",
-		status: "H24",
-		ParamOne: "H23",
-		ParamTwo: "K23",
-		Info: "K24",
-		ParamOneKey: "F123",
-		ParamTwoKey: "I24",
-		InfoKey: "J24"
-		
+		startTime: "I22",
+		endTime: "M22",
+		status: "I24",
+		ParamOne: "I23",
+		ParamTwo: "M23",
+		Info: "M24",
+		ParamOneKey: "G23",
+		ParamTwoKey: "K24",
+		InfoKey: "L24",
+		Steps: "B26",
+		Obs: "B27"
 	},
 
 	3: {
 		service: "C30",
 		equipament: "C31",
 		system: "C32",
-		startTime: "H30",
-		endTime: "K30",
-		status: "H32",
-		ParamOne: "H31",
-		ParamTwo: "K31",
-		Info: "K32",
-		ParamOneKey: "F31",
-		ParamTwoKey: "I32",
-		InfoKey: "J32"
+		startTime: "I30",
+		endTime: "M30",
+		status: "I32",
+		ParamOne: "I31",
+		ParamTwo: "M31",
+		Info: "M32",
+		ParamOneKey: "G31",
+		ParamTwoKey: "K32",
+		InfoKey: "L32",
+		Steps: "B34",
+		Obs: "B35"
 	},
 
 	4: {
 		service: "C38",
 		equipament: "C39",
 		system: "C40",
-		startTime: "H38",
-		endTime: "K38",
-		status: "H17",
-		ParamOne: "H39",
-		ParamTwo: "K39",
-		Info: "K40",
-		ParamOneKey: "F39",
-		ParamTwoKey: "I40",
-		InfoKey: "J40"
+		startTime: "I38",
+		endTime: "M38",
+		status: "I17",
+		ParamOne: "I39",
+		ParamTwo: "M39",
+		Info: "M40",
+		ParamOneKey: "G39",
+		ParamTwoKey: "K40",
+		InfoKey: "L40",
+		Steps: "B42",
+		Obs: "B43"
 	},
 
 	5: {
 		service: "C46",
 		equipament: "C47",
 		system: "C48",
-		startTime: "H46",
-		endTime: "K46",
-		status: "H48",
-		ParamOne: "H47",
-		ParamTwo: "K47",
-		Info: "K48",
-		ParamOneKey: "F47",
-		ParamTwoKey: "I48",
-		InfoKey: "J48"
+		startTime: "I46",
+		endTime: "M46",
+		status: "I48",
+		ParamOne: "I47",
+		ParamTwo: "M47",
+		Info: "M48",
+		ParamOneKey: "G47",
+		ParamTwoKey: "K48",
+		InfoKey: "L48",
+		Steps: "B50",
+		Obs: "B51"
 	},
 
 	6: {
 		service: "C54",
 		equipament: "C55",
 		system: "C56",
-		startTime: "H54",
-		endTime: "K54",
-		status: "H56",
-		ParamOne: "H55",
-		ParamTwo: "K55",
-		Info: "K56",
-		ParamOneKey: "F55",
-		ParamTwoKey: "I56",
-		InfoKey: "J56"
+		startTime: "I54",
+		endTime: "M54",
+		status: "I56",
+		ParamOne: "I55",
+		ParamTwo: "M55",
+		Info: "M56",
+		ParamOneKey: "G55",
+		ParamTwoKey: "K56",
+		InfoKey: "L56",
+		Steps: "B58",
+		Obs: "B59"
 	}
 }
 
@@ -161,7 +175,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[22];
+		var testResponse = responses[41];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -192,31 +206,31 @@ function testReportData() {
 
 class ReportInfo {
 	constructor() {
-			this.reportInfoFile = DriveApp.getFileById(reportInfoID);
-			this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
-			this.reportInfoData = JSON.parse(this.reportInfoString);
-		}
-
-	// This function MUST be called after using reportInfo.json. 
-		updateReportInfo() {
-	 		const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
-			this.reportInfoFile.setContent(updatedInfoData);
+		this.reportInfoFile = DriveApp.getFileById(reportInfoID);
+		this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
+		this.reportInfoData = JSON.parse(this.reportInfoString);
 	}
 
-	getProjectInfo(projectName) {
-			return (this.reportInfoData.Projects.find(project => project.Name === projectName));
-		}
+	// This function MUST be called after using reportInfo.json. 
+	updateReportInfo() {
+		const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
+		this.reportInfoFile.setContent(updatedInfoData);
+	}
 
-	updateRDO(projectName) {
-			this.getProjectInfo(projectName).RDO += 1;
-		}
+	getMissionInfo(missionName) {
+		return (this.reportInfoData.Missions.find(mission => mission.Name === missionName));
+	}
+
+	updateRDO(missionName) {
+		this.getMissionInfo(missionName).RDO += 1;
+	}
 }
 
 class ReportData {
 	constructor(formObject) {
 		this.formObject = formObject;
 		this.reportInfo = new ReportInfo();
-		this.name = this.getProjectName();
+		this.name = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
 		this.services = this.getServices();
@@ -225,11 +239,11 @@ class ReportData {
 	}
 
 	getRDONumber() {
-		return (this.reportInfo.getProjectInfo(this.name).RDO);
+		return (this.reportInfo.getMissionInfo(this.name).RDO);
 	}
 
 	getClient() {
-		return (this.reportInfo.getProjectInfo(this.name).Client);
+		return (this.reportInfo.getMissionInfo(this.name).Client);
 	}
 
 	getServices() {
@@ -245,11 +259,11 @@ class ReportData {
 	}
 
 	getCNPJ() {
-		return (this.reportInfo.getProjectInfo(this.name).CNPJ);
+		return (this.reportInfo.getMissionInfo(this.name).CNPJ);
 	}
 
 	getProposal() {
-		return (this.reportInfo.getProjectInfo(this.name).Proposal);
+		return (this.reportInfo.getMissionInfo(this.name).Proposal);
 	}
 
 	getWeekDayNum() {
@@ -287,8 +301,8 @@ class ReportData {
 			return (day + '-' + month + '-' + year);
 		}
 		
-		getProjectName() {
-			return (this.searchFieldResponse(HeaderFields.Project));
+		getMissionName() {
+			return (this.searchFieldResponse(HeaderFields.Mission));
 		}
 
 		openReportSpreadSheet() {
@@ -308,8 +322,8 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.NightShiftNumOfEmployees);
 	reportFirstSheet.getRange("D7").setValue(nightShiftStartTime);
 	reportFirstSheet.getRange("D8").setValue(nightShiftExitTime);
-	reportFirstSheet.getRange("H8").setValue(nightShiftDinnerTime);
-	reportFirstSheet.getRange("L8").setValue(nightShiftNumOfEmployees);
+	reportFirstSheet.getRange("I8").setValue(nightShiftDinnerTime);
+	reportFirstSheet.getRange("N8").setValue(nightShiftNumOfEmployees);
 }
 
 
@@ -369,7 +383,7 @@ function hoursToHourString(hours) {
 
 function getShiftTime(reportData) {
 	const weekday = reportData.getWeekDayNum();
-	const saturdayFlag = reportData.reportInfo.getProjectInfo(reportData.name).IncludeSaturday;
+	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.name).IncludeSaturday;
 	if (weekday > 0 && weekday < 5)
 		return ("09:00");
 	if (weekday == 5)
@@ -434,8 +448,8 @@ function fillStandByField(reportData, reportFirstSheet) {
 			return ;
 	const standByTime = reportData.searchFieldResponse(HeaderFields.StandByTime);
 	const standByMotive = reportData.searchFieldResponse(HeaderFields.StandByMotive);
-	reportFirstSheet.getRange("I63").setValue(standByTime);
-	reportFirstSheet.getRange("I64").setValue(standByMotive);
+	reportFirstSheet.getRange("J64").setValue(standByMotive);
+	reportFirstSheet.getRange("J63").setValue(standByTime);
 }
 
 function fillOvertimeCommentField(reportData, reportFirstSheet) {
@@ -454,27 +468,44 @@ function fillOvertimeField(reportData, reportFirstSheet) {
 }
 
 function fillLeaderField(reportData, reportFirstSheet) {
-	const leader = reportData.reportInfo.getProjectInfo(reportData.name).Leader;
-	const position = reportData.reportInfo.getProjectInfo(reportData.name).Position;
+	const leader = reportData.reportInfo.getMissionInfo(reportData.name).Leader;
+	const position = reportData.reportInfo.getMissionInfo(reportData.name).Position;
 
 	reportFirstSheet.getRange("B66").setValue(leader);
 	reportFirstSheet.getRange("B67").setValue(position);
 }
 
 function fillClientLeaderField(reportData, reportFirstSheet) {
-	const leader = reportData.reportInfo.getProjectInfo(reportData.name).ClientLeader;
-	const position = reportData.reportInfo.getProjectInfo(reportData.name).ClientLeaderPosition;
+	const leader = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeader;
+	const position = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeaderPosition;
 
-	reportFirstSheet.getRange("H66").setValue(leader);
-	reportFirstSheet.getRange("H67").setValue(position);
+	reportFirstSheet.getRange("I66").setValue(leader);
+	reportFirstSheet.getRange("I67").setValue(position);
+}
+
+function getStatus(status) {
+	if (status === "Sim")
+		return ("Finalizado");
+	return ("Em andamento");
 }
 
 function fillFlushing(reportData, reportFirstSheet, cells) {
-	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ServiceStatements.InicialAnalysis + ":")
-	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ServiceStatements.FinalAnalysis + ":")
-	reportFirstSheet.getRange(cells.InfoKey).setValue(ServiceStatements.Volume + ":")
+	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ServiceStatements.InicialAnalysis + ":");
+	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ServiceStatements.FinalAnalysis + ":");
+	reportFirstSheet.getRange(cells.InfoKey).setValue(ServiceStatements.Volume + ":");
 
-	reportFirstSheet.getRange(cells.startTime).setValue(reportData.searchFieldResponse(ServicesFields.Start))
+	console.log(reportData.searchFieldResponse(ServicesFields.Steps))
+	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(ServicesFields.Start));
+	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(ServicesFields.End));
+	reportFirstSheet.getRange(cells.Service).setValue("Flushing");
+	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(ServicesFields.Equipament));
+	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(ServicesFields.System));
+	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(ServicesFields.Status)));
+	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(ServicesFields.InicialPartCount));
+	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(ServicesFields.FinalPartCount));
+	reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(ServicesFields.Steps).join(", "));
+	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(ServicesFields.Obs));
+
 }
 
 function fillItem(reportData, reportFirstSheet, item) {
@@ -537,16 +568,16 @@ function  fillReportSubHeader(reportData, reportFirstSheet) {
 	
 	reportFirstSheet.getRange("B7").setValue(reportArriveTime);
 	reportFirstSheet.getRange("B8").setValue(reportExitTime);
-	reportFirstSheet.getRange("H7").setValue(reportLunchTime);
-	reportFirstSheet.getRange("L7").setValue(reportNumOfEmployees);
+	reportFirstSheet.getRange("I7").setValue(reportLunchTime);
+	reportFirstSheet.getRange("N7").setValue(reportNumOfEmployees);
 }
 
 function fillReportHeader(reportData, reportFirstSheet) {
-	reportFirstSheet.getRange("J5").setValue(reportData.rdo);
-	reportFirstSheet.getRange("L5").setValue(reportData.date);
+	reportFirstSheet.getRange("L5").setValue(reportData.rdo);
+	reportFirstSheet.getRange("N5").setValue(reportData.date);
 	reportFirstSheet.getRange("B6").setValue(reportData.getClient());
-	reportFirstSheet.getRange("F6").setValue(reportData.getCNPJ());
-	reportFirstSheet.getRange("K6").setValue(reportData.getProposal());
+	reportFirstSheet.getRange("G6").setValue(reportData.getCNPJ());
+	reportFirstSheet.getRange("M6").setValue(reportData.getProposal());
 }
 
 function onFormSubmit(formData) {
