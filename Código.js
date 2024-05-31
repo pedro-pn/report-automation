@@ -24,7 +24,7 @@ const HeaderFields = {
 	AddService: "Selecione o tipo de serviço que deseja adicionar informações"
 }
 
-const ServicesFields = {
+const FormServicesFields = {
 	Service: "Selecione o tipo de serviço que deseja adicionar informações",
 	Equipament: "Nome do equipamento",
 	System: "Nome do sistema",
@@ -41,7 +41,7 @@ const ServicesFields = {
 	Obs: "Observações"
 }
 
-const ServiceStatements = {
+const ReportServiceStatements = {
 	InicialAnalysis: "Análise inicial",
 	FinalAnalysis: "Análise final",
 	Volume: "Volume",
@@ -49,11 +49,9 @@ const ServiceStatements = {
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
 	Fluid: "Fluido",
-
-
 }
 
-const ReportCells = {
+const ReportServiceRespCells = {
 	1: {
 		Service: "C13",
 		Equipament: "C14",
@@ -68,93 +66,93 @@ const ReportCells = {
 		ParamTwoKey: "K14",
 		InfoKey: "L15",
 		Steps: "B17",
-		Obs: "B19"
+		Obs: "B18"
 
 	},
 
 	2: {
-		service: "C22",
-		equipament: "C23",
-		system: "C24",
-		startTime: "I22",
-		endTime: "M22",
-		status: "I24",
-		ParamOne: "I23",
-		ParamTwo: "M23",
-		Info: "M24",
-		ParamOneKey: "G23",
-		ParamTwoKey: "K24",
-		InfoKey: "L24",
-		Steps: "B26",
-		Obs: "B27"
+		Service: "C21",
+		Equipament: "C22",
+		System: "C23",
+		StartTime: "I21",
+		EndTime: "M21",
+		Status: "I23",
+		ParamOne: "I22",
+		ParamTwo: "M22",
+		Info: "M23",
+		ParamOneKey: "G22",
+		ParamTwoKey: "K22",
+		InfoKey: "L23",
+		Steps: "B25",
+		Obs: "B26"
 	},
 
 	3: {
-		service: "C30",
-		equipament: "C31",
-		system: "C32",
-		startTime: "I30",
-		endTime: "M30",
-		status: "I32",
-		ParamOne: "I31",
-		ParamTwo: "M31",
-		Info: "M32",
-		ParamOneKey: "G31",
-		ParamTwoKey: "K32",
-		InfoKey: "L32",
-		Steps: "B34",
-		Obs: "B35"
+		Service: "C29",
+		Equipament: "C30",
+		System: "C31",
+		StartTime: "I29",
+		EndTime: "M29",
+		Status: "I31",
+		ParamOne: "I30",
+		ParamTwo: "M30",
+		Info: "M31",
+		ParamOneKey: "G30",
+		ParamTwoKey: "K30",
+		InfoKey: "L31",
+		Steps: "B33",
+		Obs: "B34"
 	},
 
 	4: {
-		service: "C38",
-		equipament: "C39",
-		system: "C40",
-		startTime: "I38",
-		endTime: "M38",
-		status: "I17",
-		ParamOne: "I39",
-		ParamTwo: "M39",
-		Info: "M40",
-		ParamOneKey: "G39",
-		ParamTwoKey: "K40",
-		InfoKey: "L40",
-		Steps: "B42",
-		Obs: "B43"
+		Service: "C37",
+		Equipament: "C38",
+		System: "C39",
+		StartTime: "I37",
+		EndTime: "M37",
+		Status: "I39",
+		ParamOne: "I38",
+		ParamTwo: "M38",
+		Info: "M39",
+		ParamOneKey: "G38",
+		ParamTwoKey: "K38",
+		InfoKey: "L39",
+		Steps: "B41",
+		Obs: "B42"
 	},
 
 	5: {
-		service: "C46",
-		equipament: "C47",
-		system: "C48",
-		startTime: "I46",
-		endTime: "M46",
-		status: "I48",
-		ParamOne: "I47",
-		ParamTwo: "M47",
-		Info: "M48",
-		ParamOneKey: "G47",
-		ParamTwoKey: "K48",
-		InfoKey: "L48",
-		Steps: "B50",
-		Obs: "B51"
+		Service: "C45",
+		Equipament: "C46",
+		System: "C47",
+		StartTime: "I45",
+		EndTime: "M45",
+		Status: "I47",
+		ParamOne: "I46",
+		ParamTwo: "M46",
+		Info: "M47",
+		ParamOneKey: "G46",
+		ParamTwoKey: "K46",
+		InfoKey: "L47",
+		Steps: "B48",
+		Obs: "B49"
 	},
 
 	6: {
-		service: "C54",
-		equipament: "C55",
-		system: "C56",
-		startTime: "I54",
-		endTime: "M54",
-		status: "I56",
-		ParamOne: "I55",
-		ParamTwo: "M55",
-		Info: "M56",
-		ParamOneKey: "G55",
-		ParamTwoKey: "K56",
-		InfoKey: "L56",
-		Steps: "B58",
-		Obs: "B59"
+		Service: "C53",
+		Equipament: "C54",
+		System: "C55",
+		StartTime: "I53",
+		EndTime: "M53",
+		Status: "I55",
+		ParamOne: "I54",
+		ParamTwo: "M54",
+		Info: "M55",
+		ParamOneKey: "G54",
+		ParamTwoKey: "K54",
+		InfoKey: "L55",
+		Steps: "B57",
+		Obs: "B58"
 	}
 }
 
@@ -175,7 +173,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[41];
+		var testResponse = responses[42];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -192,7 +190,7 @@ var responses = form.getResponses();
 function testReportData() {
 	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 	var responses = form.getResponses();
-	var testResponse = responses[22];
+	var testResponse = responses[42];
 	var fakeEvent = {
 		response: testResponse,
 		source: form
@@ -283,8 +281,8 @@ class ReportData {
 		var itemResponses = this.formObject.getItemResponses();
 		for (var i = 0; i < itemResponses.length; i++) {
 			var itemResponse = itemResponses[i];
-			if (itemResponse.getItem().getTitle() == fieldName){
-				if (item == 0)
+			if (itemResponse.getItem().getTitle() === fieldName){
+				if (item === 0)
 					return(itemResponse.getResponse());
 				item--;
 			}
@@ -426,7 +424,7 @@ function fillDayShiftOvertimeField(reportData, reportFirstSheet) {
 	const overtime = calculateOvertime(shiftTime, dayShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	reportFirstSheet.getRange("D63").setValue(hoursToHourString(overtime));
+	reportFirstSheet.getRange("D62").setValue(hoursToHourString(overtime));
 
 	return (true);
 }
@@ -437,7 +435,7 @@ function fillNightShiftOvertimeField(reportData, reportFirstSheet) {
 	const overtime = calculateOvertime(shiftTime, nightShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	reportFirstSheet.getRange("D64").setValue(hoursToHourString(overtime));
+	reportFirstSheet.getRange("D63").setValue(hoursToHourString(overtime));
 	
 	return (true);
 }
@@ -448,13 +446,13 @@ function fillStandByField(reportData, reportFirstSheet) {
 			return ;
 	const standByTime = reportData.searchFieldResponse(HeaderFields.StandByTime);
 	const standByMotive = reportData.searchFieldResponse(HeaderFields.StandByMotive);
-	reportFirstSheet.getRange("J64").setValue(standByMotive);
-	reportFirstSheet.getRange("J63").setValue(standByTime);
+	reportFirstSheet.getRange("J63").setValue(standByMotive);
+	reportFirstSheet.getRange("J62").setValue(standByTime);
 }
 
 function fillOvertimeCommentField(reportData, reportFirstSheet) {
 	const overtimeComment = reportData.searchFieldResponse(HeaderFields.OvertimeComment);
-	reportFirstSheet.getRange("B65").setValue(overtimeComment);
+	reportFirstSheet.getRange("B64").setValue(overtimeComment);
 }
 
 function fillOvertimeField(reportData, reportFirstSheet) {
@@ -471,16 +469,16 @@ function fillLeaderField(reportData, reportFirstSheet) {
 	const leader = reportData.reportInfo.getMissionInfo(reportData.name).Leader;
 	const position = reportData.reportInfo.getMissionInfo(reportData.name).Position;
 
-	reportFirstSheet.getRange("B66").setValue(leader);
-	reportFirstSheet.getRange("B67").setValue(position);
+	reportFirstSheet.getRange("B65").setValue(leader);
+	reportFirstSheet.getRange("B66").setValue(position);
 }
 
 function fillClientLeaderField(reportData, reportFirstSheet) {
 	const leader = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeader;
 	const position = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeaderPosition;
 
-	reportFirstSheet.getRange("I66").setValue(leader);
-	reportFirstSheet.getRange("I67").setValue(position);
+	reportFirstSheet.getRange("I65").setValue(leader);
+	reportFirstSheet.getRange("I66").setValue(position);
 }
 
 function getStatus(status) {
@@ -489,30 +487,36 @@ function getStatus(status) {
 	return ("Em andamento");
 }
 
-function fillFlushing(reportData, reportFirstSheet, cells) {
-	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ServiceStatements.InicialAnalysis + ":");
-	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ServiceStatements.FinalAnalysis + ":");
-	reportFirstSheet.getRange(cells.InfoKey).setValue(ServiceStatements.Volume + ":");
+function fillFlushing(reportData, reportFirstSheet, item) {
+	var cells = ReportServiceRespCells[item];
 
-	console.log(reportData.searchFieldResponse(ServicesFields.Steps))
-	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(ServicesFields.Start));
-	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(ServicesFields.End));
+	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ReportServiceStatements.InicialAnalysis + ":");
+	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ReportServiceStatements.FinalAnalysis + ":");
+	reportFirstSheet.getRange(cells.InfoKey).setValue(ReportServiceStatements.Volume + ":");
+
+	console.log(reportData.searchFieldResponse(FormServicesFields.Steps))
+	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(FormServicesFields.Start, item));
+	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(FormServicesFields.End, item));
 	reportFirstSheet.getRange(cells.Service).setValue("Flushing");
-	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(ServicesFields.Equipament));
-	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(ServicesFields.System));
-	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(ServicesFields.Status)));
-	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(ServicesFields.InicialPartCount));
-	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(ServicesFields.FinalPartCount));
-	reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(ServicesFields.Steps).join(", "));
-	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(ServicesFields.Obs));
+	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(FormServicesFields.Equipament, item));
+	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(FormServicesFields.System, item));
+	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(FormServicesFields.Status, item)));
+	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, item));
+	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, item));
+	try {
+		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item).join(", "));
+
+	} catch(e) {
+		Logger.log("No steps in this service");
+	}
+	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item));
 
 }
 
 function fillItem(reportData, reportFirstSheet, item) {
-	var cells = ReportCells[item];
-	var service = reportData.searchFieldResponse(ServicesFields.Service, item - 1)
+	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Flushing")
-		fillFlushing(reportData, reportFirstSheet, cells)
+		fillFlushing(reportData, reportFirstSheet, item);
 	// else if (reportData.services.item === "Limpeza Química")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
 	// else if (reportData.services.item === "Filtragem")
