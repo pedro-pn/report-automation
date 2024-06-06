@@ -32,12 +32,13 @@ const FormServicesFields = {
 	Oil: "Óleo (nome, marca e viscosidade)",
 	Type: "Tipo de Flushing",
 	Status: "Serviço finalizado?",
-	Start: "Início/continuação do flushing",
-	End: "Término ou pausa do flushing",
+	Start: "Horário de início/continuação",
+	End: "Horário de término/pausa",
 	Inversion: "Inversão de fluxo",
 	InicialPartCount: "Contagem de partículas inicial",
 	FinalPartCount: "Contagem de partículas final",
 	Steps: "Etapas realizadas no dia",
+	Volume: "Volume",
 	Obs: "Observações"
 }
 
@@ -49,6 +50,7 @@ const ReportServiceStatements = {
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
 	Fluid: "Fluido",
+	Oil: "Óleo"
 }
 
 const ReportServiceRespCells = {
@@ -173,7 +175,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[42];
+		var testResponse = responses[0];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -196,10 +198,27 @@ function testReportData() {
 		source: form
 	}
 	var reportData = new ReportData(testResponse);
-	console.log(reportData.services.First);
-	console.log(reportData.services.Second);
-	console.log(reportData.services.Third);
 }
+
+function showResponsesAndTitle() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+  var responses = form.getResponses();
+	  if (responses.length > 0) {
+		  var testResponse = responses[0];
+	  var formResponses = testResponse.getItemResponses()
+		  
+  
+		  // Call form submission handler with the fake event
+	  console.log("formResponse length: " + formResponses.length)
+		  for (var i = 0; i < formResponses.length; i++) {
+		formResponse = formResponses[i];
+		  console.log("Tittle: " + formResponse.getItem().getTitle() + "\n" + "Response: " + formResponse.getResponse() + "\n\n")
+	  }
+	  } else {
+		  Logger.log('No responses found.');
+	  }
+  }
+
 //#endregion
 
 class ReportInfo {
@@ -281,8 +300,9 @@ class ReportData {
 		var itemResponses = this.formObject.getItemResponses();
 		for (var i = 0; i < itemResponses.length; i++) {
 			var itemResponse = itemResponses[i];
-			if (itemResponse.getItem().getTitle() === fieldName){
-				if (item === 0)
+			var itemTittle = itemResponse.getItem().getTitle().trim()
+			if (itemTittle === fieldName) {
+				if (item === 0) 
 					return(itemResponse.getResponse());
 				item--;
 			}
@@ -492,24 +512,24 @@ function fillFlushing(reportData, reportFirstSheet, item) {
 
 	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ReportServiceStatements.InicialAnalysis + ":");
 	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ReportServiceStatements.FinalAnalysis + ":");
-	reportFirstSheet.getRange(cells.InfoKey).setValue(ReportServiceStatements.Volume + ":");
+	reportFirstSheet.getRange(cells.InfoKey).setValue(ReportServiceStatements.Oil + ":");
 
-	console.log(reportData.searchFieldResponse(FormServicesFields.Steps))
-	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(FormServicesFields.Start, item));
-	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(FormServicesFields.End, item));
+	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(FormServicesFields.Start, item - 1));
+	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(FormServicesFields.End, item - 1));
 	reportFirstSheet.getRange(cells.Service).setValue("Flushing");
-	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(FormServicesFields.Equipament, item));
-	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(FormServicesFields.System, item));
-	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(FormServicesFields.Status, item)));
-	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, item));
-	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, item));
+	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(FormServicesFields.Equipament, item - 1));
+	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(FormServicesFields.System, item - 1));
+	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(FormServicesFields.Status, item - 1)));
+	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, item - 2));
+	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, item - 2));
+	reportFirstSheet.getRange(cells.Info).setValue(reportData.searchFieldResponse(FormServicesFields.Oil, item - 1));
 	try {
-		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item).join(", "));
+		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item - 2).join(", "));
 
 	} catch(e) {
 		Logger.log("No steps in this service");
 	}
-	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item));
+	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item - 1));
 
 }
 
