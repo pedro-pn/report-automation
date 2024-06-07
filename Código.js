@@ -37,6 +37,8 @@ const FormServicesFields = {
 	Inversion: "Inversão de fluxo",
 	InicialPartCount: "Contagem de partículas inicial",
 	FinalPartCount: "Contagem de partículas final",
+	WorkPressure: "Pressão de trabalho",
+	TestPressure: "Pressão de teste",
 	Steps: "Etapas realizadas no dia",
 	Volume: "Volume",
 	Obs: "Observações"
@@ -539,8 +541,8 @@ function getServiceFieldResponse(reportData, field, item) {
 }
 
 function fillFlushingStatements(reportFirstSheet, cells) {
-	setCellValue(reportFirstSheet, cells.ParamOne, ReportServiceStatements.InicialAnalysis);
-	setCellValue(reportFirstSheet, cells.ParamTwo, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.InicialAnalysis);
 	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Oil);
 }
 
@@ -587,15 +589,63 @@ function fillFlushing(reportData, reportFirstSheet, item) {
 	counters.FLU++;
 }
 
+function	fillPressureTestStatements(reportFirstSheet, cells) {
+	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.WorkPressure);
+	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.TestPressure);
+	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Fluid);
+}
+
+function getPressureTestSpecs(reportData, item) {
+	var pressureTestSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
+		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, item - 1),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, counters.TP),
+		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, counters.TP),
+		Status: getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1)
+	}
+	
+	return (pressureTestSpecs);
+}
+
+function	fillPressureTest(reportData, reportFirstSheet, item) {
+	var cells = ReportServiceRespCells[item];
+	var pressureTestSpecs = getPressureTestSpecs(reportData, item);
+	fillPressureTestStatements(reportFirstSheet, cells);
+	setCellValue(reportFirstSheet, cells.StartTime, pressureTestSpecs.StartTime);
+	setCellValue(reportFirstSheet, cells.EndTime, pressureTestSpecs.EndTime);
+	setCellValue(reportFirstSheet, cells.Equipament, pressureTestSpecs.Equipament);
+	setCellValue(reportFirstSheet, cells.System, pressureTestSpecs.System);
+	setCellValue(reportFirstSheet, cells.Service, pressureTestSpecs.Service);
+	setCellValue(reportFirstSheet, cells.Status, pressureTestSpecs.Status);
+	setCellValue(reportFirstSheet, cells.ParamOne, pressureTestSpecs.WorkPressure);
+	setCellValue(reportFirstSheet, cells.ParamTwo, pressureTestSpecs.TestPressure);
+	setCellValue(reportFirstSheet, cells.Info, pressureTestSpecs.Fluid);
+	if (pressureTestSpecs.Obs) {
+		setCellValue(reportFirstSheet, cells.Obs, pressureTestSpecs.Obs);
+		counters.OBS++;
+	}
+	if (pressureTestSpecs.Steps) {
+		setCellValue(reportFirstSheet, cells.Steps, pressureTestSpecs.Steps.join(", "));
+		counters.ST++;
+	}
+	counters.TP++;
+}
+
 function fillItem(reportData, reportFirstSheet, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Flushing")
 		fillFlushing(reportData, reportFirstSheet, item);
+	else if (service === "Teste de pressão")
+		fillPressureTest(reportData, reportFirstSheet, item);
 	// else if (reportData.services.item === "Limpeza Química")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
 	// else if (reportData.services.item === "Filtragem")
-	// 	fillFlushing(reportData, reportFirstSheet, cells)
-	// else if (reportData.services.item === "Teste de Pressão")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
 	// else if (reportData.services.item === "Limpeza de reservatório")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
