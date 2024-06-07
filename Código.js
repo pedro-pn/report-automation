@@ -43,14 +43,14 @@ const FormServicesFields = {
 }
 
 const ReportServiceStatements = {
-	InicialAnalysis: "Análise inicial",
-	FinalAnalysis: "Análise final",
-	Volume: "Volume",
-	Material: "Material",
-	WorkPressure: "Pressão de trabalho",
-	TestPressure: "Pressão de teste",
-	Fluid: "Fluido",
-	Oil: "Óleo"
+	InicialAnalysis: "Análise inicial:",
+	FinalAnalysis: "Análise final:",
+	Volume: "Volume:",
+	Material: "Material:",
+	WorkPressure: "Pressão de trabalho:",
+	TestPressure: "Pressão de teste:",
+	Fluid: "Fluido:",
+	Oil: "Óleo:"
 }
 
 const ReportServiceRespCells = {
@@ -161,9 +161,11 @@ const ReportServiceRespCells = {
 var counters = {
 	TP: 0,
 	LQ: 0,
-	FL: 0,
-	FI: 0,
-	LR: 0
+	FLU: 0,
+	FIL: 0,
+	LR: 0,
+	ST: 0,
+	OBS: 0
 }
 
 //#region Test
@@ -183,7 +185,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[0];
+		var testResponse = responses[3];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -528,31 +530,61 @@ function getStatus(status) {
 	return ("Em andamento");
 }
 
+function setCellValue(reportFirstSheet, cell, value) {
+	reportFirstSheet.getRange(cell).setValue(value);
+}
+
+function getServiceFieldResponse(reportData, field, item) {
+	return (reportData.searchFieldResponse(field, item));
+}
+
+function fillFlushingStatements(reportFirstSheet, cells) {
+	setCellValue(reportFirstSheet, cells.ParamOne, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.ParamTwo, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Oil);
+}
+
+function getFlushingSpecs(reportData, item) {
+	var flushingSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
+		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.FLU),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.FLU),
+		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item - 1),
+		Status: getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1)
+	}
+	
+	return (flushingSpecs);
+}
+
 function fillFlushing(reportData, reportFirstSheet, item) {
 	var cells = ReportServiceRespCells[item];
-
-	reportFirstSheet.getRange(cells.ParamOneKey).setValue(ReportServiceStatements.InicialAnalysis + ":");
-	reportFirstSheet.getRange(cells.ParamTwoKey).setValue(ReportServiceStatements.FinalAnalysis + ":");
-	reportFirstSheet.getRange(cells.InfoKey).setValue(ReportServiceStatements.Oil + ":");
-
-	reportFirstSheet.getRange(cells.StartTime).setValue(reportData.searchFieldResponse(FormServicesFields.Start, item - 1));
-	reportFirstSheet.getRange(cells.EndTime).setValue(reportData.searchFieldResponse(FormServicesFields.End, item - 1));
-	reportFirstSheet.getRange(cells.Service).setValue("Flushing");
-	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(FormServicesFields.Equipament, item - 1));
-	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(FormServicesFields.System, item - 1));
-	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(FormServicesFields.Status, item - 1)));
-	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item - 1));
-	try {
-		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item - 1).join(", "));
-		
-	} catch(e) {
-		Logger.log("No steps in this service");
+	var flushingSpecs = getFlushingSpecs(reportData, item);
+	fillFlushingStatements(reportFirstSheet, cells)
+	setCellValue(reportFirstSheet, cells.StartTime, flushingSpecs.StartTime);
+	setCellValue(reportFirstSheet, cells.EndTime, flushingSpecs.EndTime);
+	setCellValue(reportFirstSheet, cells.Equipament, flushingSpecs.Equipament);
+	setCellValue(reportFirstSheet, cells.System, flushingSpecs.System);
+	setCellValue(reportFirstSheet, cells.Service, flushingSpecs.Service + " " + flushingSpecs.Type);
+	setCellValue(reportFirstSheet, cells.Status, flushingSpecs.Status);
+	setCellValue(reportFirstSheet, cells.ParamOne, flushingSpecs.InicialPartCount);
+	setCellValue(reportFirstSheet, cells.ParamTwo, flushingSpecs.FinalPartCount);
+	setCellValue(reportFirstSheet, cells.Info, flushingSpecs.Oil);
+	if (flushingSpecs.Obs) {
+		setCellValue(reportFirstSheet, cells.Obs, flushingSpecs.Obs);
+		counters.OBS++;
 	}
-
-	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, counters.FL));
-	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, counters.FL));
-	reportFirstSheet.getRange(cells.Info).setValue(reportData.searchFieldResponse(FormServicesFields.Oil, counters.FL));
-	counters.FL += 1;
+	if (flushingSpecs.Steps) {
+		setCellValue(reportFirstSheet, cells.Steps, flushingSpecs.Steps.join(", "));
+		counters.ST++;
+	}
+	counters.FLU++;
 }
 
 function fillItem(reportData, reportFirstSheet, item) {
