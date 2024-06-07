@@ -185,7 +185,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[3];
+		var testResponse = responses[4];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -550,7 +550,7 @@ function getFlushingSpecs(reportData, item) {
 		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
 		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, item),
+		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, counters.FLU),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
