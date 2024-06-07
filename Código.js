@@ -158,6 +158,14 @@ const ReportServiceRespCells = {
 	}
 }
 
+var counters = {
+	TP: 0,
+	LQ: 0,
+	FL: 0,
+	FI: 0,
+	LR: 0
+}
+
 //#region Test
 function showAllResponses() {
 	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
@@ -218,6 +226,19 @@ function showResponsesAndTitle() {
 		  Logger.log('No responses found.');
 	  }
   }
+
+function testSearchResponse() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+	var responses = form.getResponses();
+	var testResponse = responses[3];
+	let reportData = new ReportData(testResponse);
+
+	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 3));
+	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 2));
+	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
+
+	
+}
 
 //#endregion
 
@@ -520,17 +541,18 @@ function fillFlushing(reportData, reportFirstSheet, item) {
 	reportFirstSheet.getRange(cells.Equipament).setValue(reportData.searchFieldResponse(FormServicesFields.Equipament, item - 1));
 	reportFirstSheet.getRange(cells.System).setValue(reportData.searchFieldResponse(FormServicesFields.System, item - 1));
 	reportFirstSheet.getRange(cells.Status).setValue(getStatus(reportData.searchFieldResponse(FormServicesFields.Status, item - 1)));
-	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, item - 2));
-	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, item - 2));
-	reportFirstSheet.getRange(cells.Info).setValue(reportData.searchFieldResponse(FormServicesFields.Oil, item - 1));
+	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item - 1));
 	try {
-		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item - 2).join(", "));
-
+		reportFirstSheet.getRange(cells.Steps).setValue(reportData.searchFieldResponse(FormServicesFields.Steps, item - 1).join(", "));
+		
 	} catch(e) {
 		Logger.log("No steps in this service");
 	}
-	reportFirstSheet.getRange(cells.Obs).setValue(reportData.searchFieldResponse(FormServicesFields.Obs, item - 1));
 
+	reportFirstSheet.getRange(cells.ParamOne).setValue(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, counters.FL));
+	reportFirstSheet.getRange(cells.ParamTwo).setValue(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, counters.FL));
+	reportFirstSheet.getRange(cells.Info).setValue(reportData.searchFieldResponse(FormServicesFields.Oil, counters.FL));
+	counters.FL += 1;
 }
 
 function fillItem(reportData, reportFirstSheet, item) {
@@ -548,7 +570,7 @@ function fillItem(reportData, reportFirstSheet, item) {
 }
 
 function fillServicesFields(reportData, reportFirstSheet) {
-	for (var item = 6; item > 0; item--) {
+	for (var item = 1; item <= 6; item++) {
 		fillItem(reportData, reportFirstSheet, item);
 	}
 	// fillSecondItem();
