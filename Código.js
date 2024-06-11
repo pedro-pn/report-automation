@@ -559,7 +559,7 @@ function getFlushingSpecs(reportData, item) {
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.FLU),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.FLU),
 		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item - 1),
-		Status: getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1)
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
 	return (flushingSpecs);
