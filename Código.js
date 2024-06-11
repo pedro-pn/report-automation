@@ -40,7 +40,7 @@ const FormServicesFields = {
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
 	Steps: "Etapas realizadas no dia",
-	Volume: "Volume",
+	Volume: "Volume de óleo",
 	Obs: "Observações"
 }
 
@@ -187,7 +187,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[4];
+		var testResponse = responses[10];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -542,7 +542,7 @@ function getServiceFieldResponse(reportData, field, item) {
 
 function fillFlushingStatements(reportFirstSheet, cells) {
 	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
-	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
 	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Oil);
 }
 
@@ -637,14 +637,62 @@ function	fillPressureTest(reportData, reportFirstSheet, item) {
 	counters.TP++;
 }
 
+function fillFiltrationStatements(reportFirstSheet, cells) {
+	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
+	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
+	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Volume);
+}
+
+function getFiltrationSpecs(reportData, item) {
+	var filtrationSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.FIL),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.FIL),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.FIL),
+		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item - 1),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+	}
+	
+	return (filtrationSpecs);
+}
+
+function fillFiltration(reportData, reportFirstSheet, item) {
+	var cells = ReportServiceRespCells[item];
+	var filtrationSpecs = getFiltrationSpecs(reportData, item);
+	fillFiltrationStatements(reportFirstSheet, cells)
+	setCellValue(reportFirstSheet, cells.StartTime, filtrationSpecs.StartTime);
+	setCellValue(reportFirstSheet, cells.EndTime, filtrationSpecs.EndTime);
+	setCellValue(reportFirstSheet, cells.Equipament, filtrationSpecs.Equipament);
+	setCellValue(reportFirstSheet, cells.System, filtrationSpecs.System);
+	setCellValue(reportFirstSheet, cells.Service, filtrationSpecs.Service);
+	setCellValue(reportFirstSheet, cells.Status, filtrationSpecs.Status);
+	setCellValue(reportFirstSheet, cells.ParamOne, filtrationSpecs.InicialPartCount);
+	setCellValue(reportFirstSheet, cells.ParamTwo, filtrationSpecs.FinalPartCount);
+	setCellValue(reportFirstSheet, cells.Info, filtrationSpecs.Volume);
+	if (filtrationSpecs.Obs) {
+		setCellValue(reportFirstSheet, cells.Obs, filtrationSpecs.Obs);
+		counters.OBS++;
+	}
+	if (filtrationSpecs.Steps) {
+		setCellValue(reportFirstSheet, cells.Steps, filtrationSpecs.Steps.join(", "));
+		counters.ST++;
+	}
+	counters.FIL++;
+}
+
 function fillItem(reportData, reportFirstSheet, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Flushing")
 		fillFlushing(reportData, reportFirstSheet, item);
 	else if (service === "Teste de pressão")
 		fillPressureTest(reportData, reportFirstSheet, item);
-	// else if (reportData.services.item === "Limpeza Química")
-	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	else if (service === "Filtragem absoluta")
+		fillFiltration(reportData, reportFirstSheet, item)
 	// else if (reportData.services.item === "Filtragem")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
 	// else if (reportData.services.item === "Limpeza de reservatório")
@@ -655,11 +703,6 @@ function fillServicesFields(reportData, reportFirstSheet) {
 	for (var item = 1; item <= 6; item++) {
 		fillItem(reportData, reportFirstSheet, item);
 	}
-	// fillSecondItem();
-	// fillThirdItem();
-	// fillFourthItem();
-	// fillFifthItem();
-	// fillSexthItem();
 }
 
 
