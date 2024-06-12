@@ -30,6 +30,7 @@ const FormServicesFields = {
 	System: "Nome do sistema",
 	Size: "Diâmetro e comprimento das tubulações",
 	Oil: "Óleo (nome, marca e viscosidade)",
+	Fluid: "Fluido do teste?",
 	Type: "Tipo de Flushing",
 	Status: "Serviço finalizado?",
 	Start: "Horário de início/continuação",
@@ -39,6 +40,7 @@ const FormServicesFields = {
 	FinalPartCount: "Contagem de partículas final",
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
+	pipeMaterial: "Material das tubulações",
 	Steps: "Etapas realizadas no dia",
 	Volume: "Volume de óleo",
 	Obs: "Observações"
@@ -48,7 +50,7 @@ const ReportServiceStatements = {
 	InicialAnalysis: "Análise inicial:",
 	FinalAnalysis: "Análise final:",
 	Volume: "Volume:",
-	Material: "Material:",
+	pipeMaterial: "Material da tubulação:",
 	WorkPressure: "Pressão de trabalho:",
 	TestPressure: "Pressão de teste:",
 	Fluid: "Fluido:",
@@ -165,6 +167,8 @@ var counters = {
 	LQ: 0,
 	FLU: 0,
 	FIL: 0,
+	PC1: 0,
+	PC2: 0,
 	LR: 0,
 	ST: 0,
 	OBS: 0
@@ -556,9 +560,9 @@ function getFlushingSpecs(reportData, item) {
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.FLU),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.FLU),
-		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item - 1),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
+		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, counters.FLU),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -602,7 +606,7 @@ function getPressureTestSpecs(reportData, item) {
 		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, item - 1),
+		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, counters.TP),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
 		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, counters.TP),
@@ -651,10 +655,10 @@ function getFiltrationSpecs(reportData, item) {
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.FIL),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.FIL),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.FIL),
-		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
+		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.FIL),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -684,6 +688,47 @@ function fillFiltration(reportData, reportFirstSheet, item) {
 	}
 	counters.FIL++;
 }
+function fillDescalingStatements(reportFirstSheet, cells) {
+	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.pipeMaterial);
+}
+
+function getDescalingSpecs(reportData, item) {
+	var descalingSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		pipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.pipeMaterial, counters.LQ),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+	}
+	
+	return (descalingSpecs);
+}
+
+function fillDescaling(reportData, reportFirstSheet, item) {
+	var cells = ReportServiceRespCells[item];
+	var descalingSpecs = getDescalingSpecs(reportData, item);
+	fillDescalingStatements(reportFirstSheet, cells)
+	setCellValue(reportFirstSheet, cells.StartTime, descalingSpecs.StartTime);
+	setCellValue(reportFirstSheet, cells.EndTime, descalingSpecs.EndTime);
+	setCellValue(reportFirstSheet, cells.Equipament, descalingSpecs.Equipament);
+	setCellValue(reportFirstSheet, cells.System, descalingSpecs.System);
+	setCellValue(reportFirstSheet, cells.Service, descalingSpecs.Service);
+	setCellValue(reportFirstSheet, cells.Status, descalingSpecs.Status);
+	setCellValue(reportFirstSheet, cells.ParamOne, descalingSpecs.pipeMaterial);
+	if (descalingSpecs.Obs) {
+		setCellValue(reportFirstSheet, cells.Obs, descalingSpecs.Obs);
+		counters.OBS++;
+	}
+	if (descalingSpecs.Steps) {
+		setCellValue(reportFirstSheet, cells.Steps, descalingSpecs.Steps.join(", "));
+		counters.ST++;
+	}
+	counters.LQ++;
+}
 
 function fillItem(reportData, reportFirstSheet, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
@@ -693,8 +738,8 @@ function fillItem(reportData, reportFirstSheet, item) {
 		fillPressureTest(reportData, reportFirstSheet, item);
 	else if (service === "Filtragem absoluta")
 		fillFiltration(reportData, reportFirstSheet, item)
-	// else if (reportData.services.item === "Filtragem")
-	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	else if (service === "Limpeza química")
+		fillDescaling(reportData, reportFirstSheet, item)
 	// else if (reportData.services.item === "Limpeza de reservatório")
 	// 	fillFlushing(reportData, reportFirstSheet, cells)
 }
@@ -704,7 +749,6 @@ function fillServicesFields(reportData, reportFirstSheet) {
 		fillItem(reportData, reportFirstSheet, item);
 	}
 }
-
 
 function fillActivities(reportData, reportFirstSheet) {
 	const activities = reportData.searchFieldResponse(HeaderFields.Activities)
