@@ -368,10 +368,16 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	var nightShiftExitTime = reportData.searchFieldResponse(HeaderFields.NightShiftEndTime);
 	var nightShiftDinnerTime = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime);
 	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.NightShiftNumOfEmployees);
-	reportFirstSheet.getRange("D7").setValue(nightShiftStartTime);
-	reportFirstSheet.getRange("D8").setValue(nightShiftExitTime);
-	reportFirstSheet.getRange("I8").setValue(nightShiftDinnerTime);
-	reportFirstSheet.getRange("N8").setValue(nightShiftNumOfEmployees);
+
+	let range = reportFirstSheet.getRange("A1:N8")
+	let values = range.getValues();
+
+	values[6][3] = nightShiftStartTime;
+	values[7][3] = nightShiftExitTime;
+	values[7][8] = nightShiftDinnerTime;
+	values[7][12] = nightShiftNumOfEmployees;
+
+	range.setValues(values);
 }
 
 
@@ -788,8 +794,8 @@ function fillReportSubHeader(reportData, reportFirstSheet) {
   
 	values[0][0] = reportArriveTime;  // B7
 	values[1][0] = reportExitTime;    // B8
-	values[0][6] = reportLunchTime;   // I7
-	values[1][12] = reportNumOfEmployees; // N8
+	values[0][7] = reportLunchTime;   // I7
+	values[0][12] = reportNumOfEmployees; // N8
   
 	range.setValues(values);
   }
