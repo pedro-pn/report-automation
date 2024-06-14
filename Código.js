@@ -175,6 +175,7 @@ var counters = {
 }
 
 //#region Test
+
 function showAllResponses() {
 	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
 	var responses = form.getResponses();
@@ -775,24 +776,34 @@ function  fillReport(reportData) {
 	fillReportFooter(reportData, reportFirstSheet);
 }
 
-function  fillReportSubHeader(reportData, reportFirstSheet) {
-	var	reportArriveTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
-	var	reportExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
-	var	reportLunchTime = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
+function fillReportSubHeader(reportData, reportFirstSheet) {
+	var reportArriveTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
+	var reportExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
+	var reportLunchTime = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
 	var reportNumOfEmployees = reportData.searchFieldResponse(HeaderFields.DayShiftNumOfEmployees);
-	
-	reportFirstSheet.getRange("B7").setValue(reportArriveTime);
-	reportFirstSheet.getRange("B8").setValue(reportExitTime);
-	reportFirstSheet.getRange("I7").setValue(reportLunchTime);
-	reportFirstSheet.getRange("N7").setValue(reportNumOfEmployees);
-}
+  
+	var range = reportFirstSheet.getRange("B7:N8");
+  
+	var values = range.getValues();
+  
+	values[0][0] = reportArriveTime;  // B7
+	values[1][0] = reportExitTime;    // B8
+	values[0][6] = reportLunchTime;   // I7
+	values[1][12] = reportNumOfEmployees; // N8
+  
+	range.setValues(values);
+  }
 
 function fillReportHeader(reportData, reportFirstSheet) {
-	reportFirstSheet.getRange("L5").setValue(reportData.rdo);
-	reportFirstSheet.getRange("N5").setValue(reportData.date);
-	reportFirstSheet.getRange("B6").setValue(reportData.getClient());
-	reportFirstSheet.getRange("G6").setValue(reportData.getCNPJ());
-	reportFirstSheet.getRange("M6").setValue(reportData.getProposal());
+	let range = reportFirstSheet.getRange("A1:N6");
+	let values = range.getValues();
+	values[4][11] = reportData.rdo;
+	values[4][13] = reportData.date;
+	values[5][1] = reportData.getClient();
+	values[5][6] = reportData.getCNPJ();
+	values[5][12] = reportData.getProposal();
+
+	range.setValues(values);
 }
 
 function onFormSubmit(formData) {
