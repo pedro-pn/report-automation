@@ -2,6 +2,7 @@ const greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM"
 const reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 
 const weekDays = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+let reportBuffer;
 
 const HeaderFields = {
 	Date: "Data do relatório",
@@ -192,7 +193,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[10];
+		var testResponse = responses[12];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -358,7 +359,7 @@ class ReportData {
 		}
 }
 
-function	fillReportNightShift(reportData, reportFirstSheet) {
+function	fillReportNightShift(reportData) {
 	var nightShiftFlag = reportData.searchFieldResponse(HeaderFields.NightShift);
 
 	if (nightShiftFlag === "Não")
@@ -369,17 +370,18 @@ function	fillReportNightShift(reportData, reportFirstSheet) {
 	var nightShiftDinnerTime = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime);
 	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.NightShiftNumOfEmployees);
 
-	let range = reportFirstSheet.getRange("A1:N8")
-	let values = range.getValues();
-
-	values[6][3] = nightShiftStartTime;
-	values[7][3] = nightShiftExitTime;
-	values[7][8] = nightShiftDinnerTime;
-	values[7][12] = nightShiftNumOfEmployees;
-
-	range.setValues(values);
+	setValueToBuffer("D7", nightShiftStartTime);
+	setValueToBuffer("D8", nightShiftExitTime);
+	setValueToBuffer("I8", nightShiftDinnerTime);
+	setValueToBuffer("N8", nightShiftNumOfEmployees);
 }
 
+function setValueToBuffer(cellString, content) {
+	var columnLetter = cellString.charAt(0);
+	var columnNumber = columnLetter.charCodeAt(0) - 65;
+	var rowNumber = parseInt(cellString.substring(1)) - 1;
+	reportBuffer[rowNumber][columnNumber] = content;
+  }
 
 function hourStringToDate(hourString) {
 	const [hours, minutes] = hourString.split(':');
@@ -474,67 +476,67 @@ function calculateNightShiftTime(reportData) {
 	return (shiftTime);
 }
 
-function fillDayShiftOvertimeField(reportData, reportFirstSheet) {
+function fillDayShiftOvertimeField(reportData) {
 	const dayShiftTime = hoursToHourString(calculateDayShiftTime(reportData));
 	const shiftTime = getShiftTime(reportData);
 	const overtime = calculateOvertime(shiftTime, dayShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	reportFirstSheet.getRange("D62").setValue(hoursToHourString(overtime));
+	setValueToBuffer("D62", hoursToHourString(overtime))
 
 	return (true);
 }
 
-function fillNightShiftOvertimeField(reportData, reportFirstSheet) {
+function fillNightShiftOvertimeField(reportData) {
 	const nightShiftTime = hoursToHourString(calculateNightShiftTime(reportData));
 	const shiftTime = getShiftTime(reportData);
 	const overtime = calculateOvertime(shiftTime, nightShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	reportFirstSheet.getRange("D63").setValue(hoursToHourString(overtime));
+	setValueToBuffer("D63", hoursToHourString(overtime));
 	
 	return (true);
 }
 
-function fillStandByField(reportData, reportFirstSheet) {
+function fillStandByField(reportData) {
 	if (reportData.searchFieldResponse(HeaderFields.StandByValidity) === "Não" || 
 			reportData.searchFieldResponse(HeaderFields.StandByFlag === "Não"))
 			return ;
 	const standByTime = reportData.searchFieldResponse(HeaderFields.StandByTime);
 	const standByMotive = reportData.searchFieldResponse(HeaderFields.StandByMotive);
-	reportFirstSheet.getRange("J63").setValue(standByMotive);
-	reportFirstSheet.getRange("J62").setValue(standByTime);
+	setValueToBuffer("J63", standByMotive);
+	setValueToBuffer("J62", standByTime);
 }
 
-function fillOvertimeCommentField(reportData, reportFirstSheet) {
+function fillOvertimeCommentField(reportData) {
 	const overtimeComment = reportData.searchFieldResponse(HeaderFields.OvertimeComment);
-	reportFirstSheet.getRange("B64").setValue(overtimeComment);
+	setValueToBuffer("B64", overtimeComment);
 }
 
-function fillOvertimeField(reportData, reportFirstSheet) {
-	const dayOvertime = fillDayShiftOvertimeField(reportData, reportFirstSheet);
+function fillOvertimeField(reportData) {
+	const dayOvertime = fillDayShiftOvertimeField(reportData);
 	const NightShift = reportData.searchFieldResponse(HeaderFields.NightShift);
 	var	nightOvertime = false;
 	if (NightShift === "Sim")
-		nightOvertime = fillNightShiftOvertimeField(reportData, reportFirstSheet);
+		nightOvertime = fillNightShiftOvertimeField(reportData);
 	if (dayOvertime || nightOvertime)
-		fillOvertimeCommentField(reportData, reportFirstSheet);
+		fillOvertimeCommentField(reportData);
 }
 
-function fillLeaderField(reportData, reportFirstSheet) {
+function fillLeaderField(reportData) {
 	const leader = reportData.reportInfo.getMissionInfo(reportData.name).Leader;
 	const position = reportData.reportInfo.getMissionInfo(reportData.name).Position;
 
-	reportFirstSheet.getRange("B65").setValue(leader);
-	reportFirstSheet.getRange("B66").setValue(position);
+	setValueToBuffer("B65", leader);
+	setValueToBuffer("B66", position);
 }
 
-function fillClientLeaderField(reportData, reportFirstSheet) {
+function fillClientLeaderField(reportData) {
 	const leader = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeader;
 	const position = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeaderPosition;
 
-	reportFirstSheet.getRange("I65").setValue(leader);
-	reportFirstSheet.getRange("I66").setValue(position);
+	setValueToBuffer("I65", leader);
+	setValueToBuffer("I66", position);
 }
 
 function getStatus(status) {
@@ -543,18 +545,14 @@ function getStatus(status) {
 	return ("Em andamento");
 }
 
-function setCellValue(reportFirstSheet, cell, value) {
-	reportFirstSheet.getRange(cell).setValue(value);
-}
-
 function getServiceFieldResponse(reportData, field, item) {
 	return (reportData.searchFieldResponse(field, item));
 }
 
-function fillFlushingStatements(reportFirstSheet, cells) {
-	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
-	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
-	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Oil);
+function fillFlushingStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
+	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
+	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Oil);
 }
 
 function getFlushingSpecs(reportData, item) {
@@ -576,34 +574,34 @@ function getFlushingSpecs(reportData, item) {
 	return (flushingSpecs);
 }
 
-function fillFlushing(reportData, reportFirstSheet, item) {
+function fillFlushing(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var flushingSpecs = getFlushingSpecs(reportData, item);
-	fillFlushingStatements(reportFirstSheet, cells)
-	setCellValue(reportFirstSheet, cells.StartTime, flushingSpecs.StartTime);
-	setCellValue(reportFirstSheet, cells.EndTime, flushingSpecs.EndTime);
-	setCellValue(reportFirstSheet, cells.Equipament, flushingSpecs.Equipament);
-	setCellValue(reportFirstSheet, cells.System, flushingSpecs.System);
-	setCellValue(reportFirstSheet, cells.Service, flushingSpecs.Service + " " + flushingSpecs.Type);
-	setCellValue(reportFirstSheet, cells.Status, flushingSpecs.Status);
-	setCellValue(reportFirstSheet, cells.ParamOne, flushingSpecs.InicialPartCount);
-	setCellValue(reportFirstSheet, cells.ParamTwo, flushingSpecs.FinalPartCount);
-	setCellValue(reportFirstSheet, cells.Info, flushingSpecs.Oil);
+	fillFlushingStatements(cells)
+	setValueToBuffer(cells.StartTime, flushingSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, flushingSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, flushingSpecs.Equipament);
+	setValueToBuffer(cells.System, flushingSpecs.System);
+	setValueToBuffer(cells.Service, flushingSpecs.Service + " " + flushingSpecs.Type);
+	setValueToBuffer(cells.Status, flushingSpecs.Status);
+	setValueToBuffer(cells.ParamOne, flushingSpecs.InicialPartCount);
+	setValueToBuffer(cells.ParamTwo, flushingSpecs.FinalPartCount);
+	setValueToBuffer(cells.Info, flushingSpecs.Oil);
 	if (flushingSpecs.Obs) {
-		setCellValue(reportFirstSheet, cells.Obs, flushingSpecs.Obs);
+		setValue(cells.Obs, flushingSpecs.Obs);
 		counters.OBS++;
 	}
 	if (flushingSpecs.Steps) {
-		setCellValue(reportFirstSheet, cells.Steps, flushingSpecs.Steps.join(", "));
+		setValue(cells.Steps, flushingSpecs.Steps.join(", "));
 		counters.ST++;
 	}
 	counters.FLU++;
 }
 
-function	fillPressureTestStatements(reportFirstSheet, cells) {
-	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.WorkPressure);
-	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.TestPressure);
-	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Fluid);
+function	fillPressureTestStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.WorkPressure);
+	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.TestPressure);
+	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Fluid);
 }
 
 function getPressureTestSpecs(reportData, item) {
@@ -624,34 +622,34 @@ function getPressureTestSpecs(reportData, item) {
 	return (pressureTestSpecs);
 }
 
-function	fillPressureTest(reportData, reportFirstSheet, item) {
+function	fillPressureTest(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var pressureTestSpecs = getPressureTestSpecs(reportData, item);
-	fillPressureTestStatements(reportFirstSheet, cells);
-	setCellValue(reportFirstSheet, cells.StartTime, pressureTestSpecs.StartTime);
-	setCellValue(reportFirstSheet, cells.EndTime, pressureTestSpecs.EndTime);
-	setCellValue(reportFirstSheet, cells.Equipament, pressureTestSpecs.Equipament);
-	setCellValue(reportFirstSheet, cells.System, pressureTestSpecs.System);
-	setCellValue(reportFirstSheet, cells.Service, pressureTestSpecs.Service);
-	setCellValue(reportFirstSheet, cells.Status, pressureTestSpecs.Status);
-	setCellValue(reportFirstSheet, cells.ParamOne, pressureTestSpecs.WorkPressure);
-	setCellValue(reportFirstSheet, cells.ParamTwo, pressureTestSpecs.TestPressure);
-	setCellValue(reportFirstSheet, cells.Info, pressureTestSpecs.Fluid);
+	fillPressureTestStatements(cells);
+	setValueToBuffer(cells.StartTime, pressureTestSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, pressureTestSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, pressureTestSpecs.Equipament);
+	setValueToBuffer(cells.System, pressureTestSpecs.System);
+	setValueToBuffer(cells.Service, pressureTestSpecs.Service);
+	setValueToBuffer(cells.Status, pressureTestSpecs.Status);
+	setValueToBuffer(cells.ParamOne, pressureTestSpecs.WorkPressure);
+	setValueToBuffer(cells.ParamTwo, pressureTestSpecs.TestPressure);
+	setValueToBuffer(cells.Info, pressureTestSpecs.Fluid);
 	if (pressureTestSpecs.Obs) {
-		setCellValue(reportFirstSheet, cells.Obs, pressureTestSpecs.Obs);
+		setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
 		counters.OBS++;
 	}
 	if (pressureTestSpecs.Steps) {
-		setCellValue(reportFirstSheet, cells.Steps, pressureTestSpecs.Steps.join(", "));
+		setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
 		counters.ST++;
 	}
 	counters.TP++;
 }
 
-function fillFiltrationStatements(reportFirstSheet, cells) {
-	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
-	setCellValue(reportFirstSheet, cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
-	setCellValue(reportFirstSheet, cells.InfoKey, ReportServiceStatements.Volume);
+function fillFiltrationStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
+	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
+	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Volume);
 }
 
 function getFiltrationSpecs(reportData, item) {
@@ -672,31 +670,32 @@ function getFiltrationSpecs(reportData, item) {
 	return (filtrationSpecs);
 }
 
-function fillFiltration(reportData, reportFirstSheet, item) {
+function fillFiltration(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var filtrationSpecs = getFiltrationSpecs(reportData, item);
-	fillFiltrationStatements(reportFirstSheet, cells)
-	setCellValue(reportFirstSheet, cells.StartTime, filtrationSpecs.StartTime);
-	setCellValue(reportFirstSheet, cells.EndTime, filtrationSpecs.EndTime);
-	setCellValue(reportFirstSheet, cells.Equipament, filtrationSpecs.Equipament);
-	setCellValue(reportFirstSheet, cells.System, filtrationSpecs.System);
-	setCellValue(reportFirstSheet, cells.Service, filtrationSpecs.Service);
-	setCellValue(reportFirstSheet, cells.Status, filtrationSpecs.Status);
-	setCellValue(reportFirstSheet, cells.ParamOne, filtrationSpecs.InicialPartCount);
-	setCellValue(reportFirstSheet, cells.ParamTwo, filtrationSpecs.FinalPartCount);
-	setCellValue(reportFirstSheet, cells.Info, filtrationSpecs.Volume);
+	fillFiltrationStatements(cells)
+	setValueToBuffer(cells.StartTime, filtrationSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, filtrationSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, filtrationSpecs.Equipament);
+	setValueToBuffer(cells.System, filtrationSpecs.System);
+	setValueToBuffer(cells.Service, filtrationSpecs.Service);
+	setValueToBuffer(cells.Status, filtrationSpecs.Status);
+	setValueToBuffer(cells.ParamOne, filtrationSpecs.InicialPartCount);
+	setValueToBuffer(cells.ParamTwo, filtrationSpecs.FinalPartCount);
+	setValueToBuffer(cells.Info, filtrationSpecs.Volume);
 	if (filtrationSpecs.Obs) {
-		setCellValue(reportFirstSheet, cells.Obs, filtrationSpecs.Obs);
+		setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
 		counters.OBS++;
 	}
 	if (filtrationSpecs.Steps) {
-		setCellValue(reportFirstSheet, cells.Steps, filtrationSpecs.Steps.join(", "));
+		setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 		counters.ST++;
 	}
 	counters.FIL++;
 }
-function fillDescalingStatements(reportFirstSheet, cells) {
-	setCellValue(reportFirstSheet, cells.ParamOneKey, ReportServiceStatements.pipeMaterial);
+
+function fillDescalingStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.pipeMaterial);
 }
 
 function getDescalingSpecs(reportData, item) {
@@ -715,101 +714,92 @@ function getDescalingSpecs(reportData, item) {
 	return (descalingSpecs);
 }
 
-function fillDescaling(reportData, reportFirstSheet, item) {
+function fillDescaling(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var descalingSpecs = getDescalingSpecs(reportData, item);
-	fillDescalingStatements(reportFirstSheet, cells)
-	setCellValue(reportFirstSheet, cells.StartTime, descalingSpecs.StartTime);
-	setCellValue(reportFirstSheet, cells.EndTime, descalingSpecs.EndTime);
-	setCellValue(reportFirstSheet, cells.Equipament, descalingSpecs.Equipament);
-	setCellValue(reportFirstSheet, cells.System, descalingSpecs.System);
-	setCellValue(reportFirstSheet, cells.Service, descalingSpecs.Service);
-	setCellValue(reportFirstSheet, cells.Status, descalingSpecs.Status);
-	setCellValue(reportFirstSheet, cells.ParamOne, descalingSpecs.pipeMaterial);
+	fillDescalingStatements(cells)
+	setValueToBuffer(cells.StartTime, descalingSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, descalingSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, descalingSpecs.Equipament);
+	setValueToBuffer(cells.System, descalingSpecs.System);
+	setValueToBuffer(cells.Service, descalingSpecs.Service);
+	setValueToBuffer(cells.Status, descalingSpecs.Status);
+	setValueToBuffer(cells.ParamOne, descalingSpecs.pipeMaterial);
 	if (descalingSpecs.Obs) {
-		setCellValue(reportFirstSheet, cells.Obs, descalingSpecs.Obs);
+		setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 		counters.OBS++;
 	}
 	if (descalingSpecs.Steps) {
-		setCellValue(reportFirstSheet, cells.Steps, descalingSpecs.Steps.join(", "));
+		setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 		counters.ST++;
 	}
 	counters.LQ++;
 }
 
-function fillItem(reportData, reportFirstSheet, item) {
+function fillItem(reportData, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Flushing")
-		fillFlushing(reportData, reportFirstSheet, item);
+		fillFlushing(reportData, item);
 	else if (service === "Teste de pressão")
-		fillPressureTest(reportData, reportFirstSheet, item);
+		fillPressureTest(reportData, item);
 	else if (service === "Filtragem absoluta")
-		fillFiltration(reportData, reportFirstSheet, item)
+		fillFiltration(reportData, item)
 	else if (service === "Limpeza química")
-		fillDescaling(reportData, reportFirstSheet, item)
+		fillDescaling(reportData, item)
 	// else if (reportData.services.item === "Limpeza de reservatório")
-	// 	fillFlushing(reportData, reportFirstSheet, cells)
+	// 	fillFlushing(reportData, cells)
 }
 
-function fillServicesFields(reportData, reportFirstSheet) {
+function fillServicesFields(reportData) {
 	for (var item = 1; item <= 6; item++) {
-		fillItem(reportData, reportFirstSheet, item);
+		fillItem(reportData, item);
 	}
 }
 
-function fillActivities(reportData, reportFirstSheet) {
+function fillActivities(reportData) {
 	const activities = reportData.searchFieldResponse(HeaderFields.Activities)
-
-	reportFirstSheet.getRange("C10").setValue(activities);
+	setValueToBuffer("C10", activities);
 }
 
-function fillReportFooter(reportData, reportFirstSheet) {
-	fillOvertimeField(reportData, reportFirstSheet);
-	fillStandByField(reportData, reportFirstSheet);
-	fillLeaderField(reportData, reportFirstSheet);
-	fillClientLeaderField(reportData, reportFirstSheet);
-	fillActivities(reportData, reportFirstSheet);
-	fillServicesFields(reportData, reportFirstSheet);
+function fillReportFooter(reportData) {
+	fillOvertimeField(reportData);
+	fillStandByField(reportData);
+	fillLeaderField(reportData);
+	fillClientLeaderField(reportData);
 }
 
 function  fillReport(reportData) {
 	var reportSpreadSheet = reportData.reportSpreadSheet;
 	var reportFirstSheet = reportSpreadSheet.getSheets()[0];
+	let reportCellsRange = reportFirstSheet.getRange("A1:P68");
+	reportBuffer = reportCellsRange.getValues();
 
-	fillReportHeader(reportData, reportFirstSheet);
-	fillReportSubHeader(reportData, reportFirstSheet);
-	fillReportNightShift(reportData, reportFirstSheet);
-	fillReportFooter(reportData, reportFirstSheet);
+	fillReportHeader(reportData);
+	fillReportSubHeader(reportData);
+	fillReportNightShift(reportData);
+	fillReportFooter(reportData);
+	fillActivities(reportData);
+	fillServicesFields(reportData);
+	reportCellsRange.setValues(reportBuffer)
 }
 
-function fillReportSubHeader(reportData, reportFirstSheet) {
+function fillReportSubHeader(reportData) {
 	var reportArriveTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
 	var reportExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
 	var reportLunchTime = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
 	var reportNumOfEmployees = reportData.searchFieldResponse(HeaderFields.DayShiftNumOfEmployees);
-  
-	var range = reportFirstSheet.getRange("B7:N8");
-  
-	var values = range.getValues();
-  
-	values[0][0] = reportArriveTime;  // B7
-	values[1][0] = reportExitTime;    // B8
-	values[0][7] = reportLunchTime;   // I7
-	values[0][12] = reportNumOfEmployees; // N8
-  
-	range.setValues(values);
+	
+	setValueToBuffer("B7", reportArriveTime);
+	setValueToBuffer("B8", reportExitTime);
+	setValueToBuffer("I7", reportLunchTime);
+	setValueToBuffer("N8", reportNumOfEmployees);
   }
 
-function fillReportHeader(reportData, reportFirstSheet) {
-	let range = reportFirstSheet.getRange("A1:N6");
-	let values = range.getValues();
-	values[4][11] = reportData.rdo;
-	values[4][13] = reportData.date;
-	values[5][1] = reportData.getClient();
-	values[5][6] = reportData.getCNPJ();
-	values[5][12] = reportData.getProposal();
-
-	range.setValues(values);
+function fillReportHeader(reportData) {
+	setValueToBuffer("L5", reportData.rdo);
+	setValueToBuffer("B6", reportData.getClient());
+	setValueToBuffer("G6", reportData.getCNPJ());
+	setValueToBuffer("M6", reportData.getProposal());
 }
 
 function onFormSubmit(formData) {
