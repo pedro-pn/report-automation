@@ -277,13 +277,13 @@ class ReportInfo {
 class ReportData {
 	constructor(formObject) {
 		this.formObject = formObject;
+		this.itemResponses = this.formObject.getItemResponses();
 		this.reportInfo = new ReportInfo();
 		this.name = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
 		this.services = this.getServices();
 		this.reportSpreadSheet;
-		this.reportSpreadSheetFile;
 	}
 
 	getRDONumber() {
@@ -328,9 +328,8 @@ class ReportData {
 	}
 	
 	searchFieldResponse(fieldName, item=0) {
-		var itemResponses = this.formObject.getItemResponses();
-		for (var i = 0; i < itemResponses.length; i++) {
-			var itemResponse = itemResponses[i];
+		for (var i = 0; i < this.itemResponses.length; i++) {
+			var itemResponse = this.itemResponses[i];
 			var itemTittle = itemResponse.getItem().getTitle().trim()
 			if (itemTittle === fieldName) {
 				if (item === 0) 
