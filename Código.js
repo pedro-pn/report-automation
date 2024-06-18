@@ -284,6 +284,7 @@ class ReportData {
 		this.rdo = this.getRDONumber() + 1;
 		this.services = this.getServices();
 		this.reportSpreadSheet;
+		this.reportSpreadSheetFile;
 	}
 
 	getRDONumber() {
@@ -347,15 +348,15 @@ class ReportData {
 			var year = dateComponents[0];
 		
 			return (day + '-' + month + '-' + year);
-		}
+	}
 		
-		getMissionName() {
-			return (this.searchFieldResponse(HeaderFields.Mission));
-		}
+	getMissionName() {
+		return (this.searchFieldResponse(HeaderFields.Mission));
+	}
 
-		openReportSpreadSheet() {
-			this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
-		}
+	openReportSpreadSheet() {
+		this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
+	}
 }
 
 function	fillReportNightShift(reportData) {
@@ -587,11 +588,11 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.ParamTwo, flushingSpecs.FinalPartCount);
 	setValueToBuffer(cells.Info, flushingSpecs.Oil);
 	if (flushingSpecs.Obs) {
-		setValue(cells.Obs, flushingSpecs.Obs);
+		setValueToBuffer(cells.Obs, flushingSpecs.Obs);
 		counters.OBS++;
 	}
 	if (flushingSpecs.Steps) {
-		setValue(cells.Steps, flushingSpecs.Steps.join(", "));
+		setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
 		counters.ST++;
 	}
 	counters.FLU++;
@@ -814,9 +815,9 @@ function onFormSubmit(formData) {
 
 function createReportSpreadSheetFile(reportData) {
 	var modelSpreadSheetFile = SpreadsheetApp.openById(greportModelID);
-	var copierSpreadSheetFile = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy();
-	copierSpreadSheetFile.setName(reportData.name + ' - RDO ' + reportData.rdo + ' - ' + reportData.date + ' - ' + reportData.getWeekDay());
-	return (copierSpreadSheetFile);
+	var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy();
+	spreadSheetFileCopy.setName(`${reportData.name} - RDO ${reportData.rdo} - ${reportData.date}  - ${reportData.getWeekDay()}`);
+	return (spreadSheetFileCopy);
 }
 
 function moveFile() {
