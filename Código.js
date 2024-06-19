@@ -42,6 +42,7 @@ const FormServicesFields = {
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
 	pipeMaterial: "Material das tubulações",
+	tankMaterial: "Material do reservatório",
 	Steps: "Etapas realizadas no dia",
 	Volume: "Volume de óleo",
 	Obs: "Observações"
@@ -52,6 +53,7 @@ const ReportServiceStatements = {
 	FinalAnalysis: "Análise final:",
 	Volume: "Volume:",
 	pipeMaterial: "Material da tubulação:",
+	tankMaterial: "Material do tanque:",
 	WorkPressure: "Pressão de trabalho:",
 	TestPressure: "Pressão de teste:",
 	Fluid: "Fluido:",
@@ -277,7 +279,7 @@ class ReportInfo {
 class ReportData {
 	constructor(formObject) {
 		this.formObject = formObject;
-		this.itemResponses = this.formObject.getItemResponses();
+		this.formResponses = this.getFormResponsesAsDictionary()
 		this.reportInfo = new ReportInfo();
 		this.name = this.getMissionName();
 		this.date = this.getReportDate();
@@ -324,20 +326,19 @@ class ReportData {
 	}
 
 	getWeekDay() {
-		var weekDay = this.getWeekDayNum();
+		let weekDay = this.getWeekDayNum();
 		return (weekDays[weekDay]);
 	}
 	
 	searchFieldResponse(fieldName, item=0) {
-		for (var i = 0; i < this.itemResponses.length; i++) {
-			var itemResponse = this.itemResponses[i];
-			var itemTittle = itemResponse.getItem().getTitle().trim()
-			if (itemTittle === fieldName) {
+		this.formResponses.forEach(question => {
+			let key = Object.keys[question];
+			if (key === fieldName) {
 				if (item === 0) 
-					return(itemResponse.getResponse());
+					return(question[key]);
 				item--;
-			}
-		}
+				}
+		})
 	}
 
 	getReportDate() {
@@ -357,6 +358,17 @@ class ReportData {
 	openReportSpreadSheet() {
 		this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
 	}
+
+	getFormResponsesAsDictionary() {
+		var allResponses = [];
+		var responseDict = {};
+		this.formObject.getItemResponses().forEach(function(itemResponse) {
+			responseDict[itemResponse.getItem().getTitle()] = itemResponse.getResponse();
+			allResponses.push(responseDict);
+		});
+	  
+		return (allResponses);
+	  }
 }
 
 function	fillReportNightShift(reportData) {
@@ -736,6 +748,48 @@ function fillDescaling(reportData, item) {
 	counters.LQ++;
 }
 
+function fillTankCleaningStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.tankMaterial);
+}
+
+function getTankCleaningSpecs(reportData, item) {
+	var descalingSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.tankMaterial, counters.LR),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+	}
+	
+	return (descalingSpecs);
+}
+
+function fillTankCleaning(reportData, item) {
+	var cells = ReportServiceRespCells[item];
+	var tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
+	fillTankCleaningStatements(cells)
+	setValueToBuffer(cells.StartTime, tankCleaningSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, tankCleaningSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, tankCleaningSpecs.Equipament);
+	setValueToBuffer(cells.System, tankCleaningSpecs.System);
+	setValueToBuffer(cells.Service, tankCleaningSpecs.Service);
+	setValueToBuffer(cells.Status, tankCleaningSpecs.Status);
+	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.pipeMaterial);
+	if (tankCleaningSpecs.Obs) {
+		setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
+		counters.OBS++;
+	}
+	if (tankCleaningSpecs.Steps) {
+		setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
+		counters.ST++;
+	}
+	counters.LR++;
+}
+
 function fillItem(reportData, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Flushing")
@@ -746,8 +800,8 @@ function fillItem(reportData, item) {
 		fillFiltration(reportData, item)
 	else if (service === "Limpeza química")
 		fillDescaling(reportData, item)
-	// else if (reportData.services.item === "Limpeza de reservatório")
-	// 	fillFlushing(reportData, cells)
+	else if (service === "Limpeza de reservatório")
+		fillTankCleaning(reportData, item)
 }
 
 function fillServicesFields(reportData) {
