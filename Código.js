@@ -195,7 +195,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[12];
+		var testResponse = responses[18];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -331,14 +331,16 @@ class ReportData {
 	}
 	
 	searchFieldResponse(fieldName, item=0) {
-		this.formResponses.forEach(question => {
-			let key = Object.keys[question];
-			if (key === fieldName) {
-				if (item === 0) 
-					return(question[key]);
-				item--;
+		var responses = [];
+		this.formResponses.forEach(responseDict => {
+			for (let key in responseDict) {
+				if (responseDict.hasOwnProperty(key)) {
+          			if (key.trim() === fieldName) 
+				        responses.push(responseDict[key]);
 				}
-		})
+      		}
+		});
+		return (responses[item]);
 	}
 
 	getReportDate() {
@@ -361,12 +363,11 @@ class ReportData {
 
 	getFormResponsesAsDictionary() {
 		var allResponses = [];
-		var responseDict = {};
 		this.formObject.getItemResponses().forEach(function(itemResponse) {
-			responseDict[itemResponse.getItem().getTitle()] = itemResponse.getResponse();
-			allResponses.push(responseDict);
+		  var responseDict = {};
+		  responseDict[itemResponse.getItem().getTitle()] = itemResponse.getResponse();
+		  allResponses.push(responseDict);
 		});
-	  
 		return (allResponses);
 	  }
 }
@@ -822,19 +823,32 @@ function fillReportFooter(reportData) {
 	fillClientLeaderField(reportData);
 }
 
+function	mergeValuesAndFormulas(formulas, values) {
+	let result = formulas
+	for (var i = 0; i < formulas.length; i++) {
+		for (var j = 0; j < formulas[i].length; j++) {
+			if (formulas[i][j] === '')
+				result[i][j] = values[i][j];
+		}
+	}
+	return (result);
+}
+
 function  fillReport(reportData) {
 	var reportSpreadSheet = reportData.reportSpreadSheet;
 	var reportFirstSheet = reportSpreadSheet.getSheets()[0];
 	let reportCellsRange = reportFirstSheet.getRange("A1:P68");
 	reportBuffer = reportCellsRange.getValues();
-
+	let formulas = reportCellsRange.getFormulas();
+	
 	fillReportHeader(reportData);
 	fillReportSubHeader(reportData);
 	fillReportNightShift(reportData);
 	fillReportFooter(reportData);
 	fillActivities(reportData);
 	fillServicesFields(reportData);
-	reportCellsRange.setValues(reportBuffer)
+	var reportValuesResult = mergeValuesAndFormulas(formulas, reportBuffer);
+	reportCellsRange.setValues(reportValuesResult)
 }
 
 function fillReportSubHeader(reportData) {
@@ -846,11 +860,12 @@ function fillReportSubHeader(reportData) {
 	setValueToBuffer("B7", reportArriveTime);
 	setValueToBuffer("B8", reportExitTime);
 	setValueToBuffer("I7", reportLunchTime);
-	setValueToBuffer("N8", reportNumOfEmployees);
+	setValueToBuffer("N7", reportNumOfEmployees);
   }
 
 function fillReportHeader(reportData) {
 	setValueToBuffer("L5", reportData.rdo);
+	setValueToBuffer("N5", reportData.date);
 	setValueToBuffer("B6", reportData.getClient());
 	setValueToBuffer("G6", reportData.getCNPJ());
 	setValueToBuffer("M6", reportData.getProposal());
