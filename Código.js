@@ -165,6 +165,15 @@ const ReportServiceRespCells = {
 	}
 }
 
+const serviceRows = {
+	1: 12,
+	2: 20,
+	3: 28,
+	4: 36,
+	5: 44,
+	6: 52,
+}
+
 var counters = {
 	TP: 0,
 	LQ: 0,
@@ -191,11 +200,32 @@ function showAllResponses() {
 	return responses;
   }
 
+function remakeReports() {
+	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
+	var responses = form.getResponses();
+	var responsesNumber = [13, 14, 17, 19, 23, 24]
+	if (responses.length > 0) {
+		for (var i = 0; i < responsesNumber.length; i++) {
+			var testResponse = responses[responsesNumber[i]];
+
+			// Create a fake event object
+			var fakeEvent = {
+			response: testResponse,
+			source: form
+			}
+			// Call form submission handler with the fake event
+			onFormSubmit(fakeEvent);
+		}
+	} else {
+		Logger.log('No responses found.');
+	}
+}
+
 function testWithPreviousResponse() {
 var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[18];
+		var testResponse = responses[3];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -284,7 +314,7 @@ class ReportData {
 		this.name = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
-		this.services = this.getServices();
+		this.numOfServices = 0;
 		this.reportSpreadSheet;
 		this.reportSpreadSheetFile;
 	}
@@ -297,6 +327,7 @@ class ReportData {
 		return (this.reportInfo.getMissionInfo(this.name).Client);
 	}
 
+	// Method not in use. May be delete later
 	getServices() {
 		const services = {
 			First: this.searchFieldResponse(HeaderFields.AddService, 0),
@@ -350,7 +381,7 @@ class ReportData {
 			var month = dateComponents[1];
 			var year = dateComponents[0];
 		
-			return (day + '-' + month + '-' + year);
+			return (`${day}-${month}-${year}`);
 	}
 		
 	getMissionName() {
@@ -803,11 +834,14 @@ function fillItem(reportData, item) {
 		fillDescaling(reportData, item)
 	else if (service === "Limpeza de reservatório")
 		fillTankCleaning(reportData, item)
+	else
+		return (0)
+	return (1);
 }
 
 function fillServicesFields(reportData) {
 	for (var item = 1; item <= 6; item++) {
-		fillItem(reportData, item);
+		reportData.numOfServices += fillItem(reportData, item);
 	}
 }
 
@@ -834,6 +868,27 @@ function	mergeValuesAndFormulas(formulas, values) {
 	return (result);
 }
 
+function setDotLineBorder(reportData) {
+	var reportCells = [];
+	for (var service = 1; service <= reportData.numOfServices; service++) {
+		respCells = ReportServiceRespCells[service];
+
+		respCells.ParamOne != '' ? reportCells.push(respCells.ParamOne): false;
+		respCells.ParamTwo ? reportCells.push(respCells.ParamTwo): false;
+		respCells.Info ? reportCells.push(respCells.Info): false;
+	}
+	reportData.reportSpreadSheet.getRangeList(reportCells).activate()
+	.setBorder(null, null, true, null, null, null, '#000000', SpreadsheetApp.BorderStyle.DOTTED);
+}
+
+function deleteEmptyServiceRows(reportFirstSheet, servicesCount) {
+	if (servicesCount > 5)
+		return ;
+	var startRow = serviceRows[servicesCount + 1]
+	var endRow = 60 - startRow;
+	reportFirstSheet.deleteRows(startRow, endRow);
+}
+
 function  fillReport(reportData) {
 	var reportSpreadSheet = reportData.reportSpreadSheet;
 	var reportFirstSheet = reportSpreadSheet.getSheets()[0];
@@ -849,6 +904,8 @@ function  fillReport(reportData) {
 	fillServicesFields(reportData);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportBuffer);
 	reportCellsRange.setValues(reportValuesResult)
+	deleteEmptyServiceRows(reportFirstSheet, reportData.numOfServices);
+	setDotLineBorder(reportData);
 }
 
 function fillReportSubHeader(reportData) {
