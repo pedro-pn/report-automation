@@ -41,8 +41,8 @@ const FormServicesFields = {
 	FinalPartCount: "Contagem de partículas final",
 	WorkPressure: "Pressão de trabalho",
 	TestPressure: "Pressão de teste",
-	pipeMaterial: "Material das tubulações",
-	tankMaterial: "Material do reservatório",
+	PipeMaterial: "Material das tubulações",
+	TankMaterial: "Material do reservatório",
 	Steps: "Etapas realizadas no dia",
 	Volume: "Volume de óleo",
 	Obs: "Observações"
@@ -181,9 +181,13 @@ var counters = {
 	FIL: 0,
 	PC1: 0,
 	PC2: 0,
-	LR: 0,
-	ST: 0,
-	OBS: 0
+	LR: 0
+}
+
+function setAllValuesToZero(obj) {
+	Object.keys(obj).forEach(key => {
+	  obj[key] = 0;
+	});
 }
 
 //#region Test
@@ -203,7 +207,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk'); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [13, 14, 17, 19, 23, 24]
+	var responsesNumber = [13, 14, 17, 19, 23, 24, 25]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -215,6 +219,9 @@ function remakeReports() {
 			}
 			// Call form submission handler with the fake event
 			onFormSubmit(fakeEvent);
+			setAllValuesToZero(counters);
+			setAllValuesToZero(reportBuffer);
+			reportBuffer.fill(0);
 		}
 	} else {
 		Logger.log('No responses found.');
@@ -427,6 +434,16 @@ function setValueToBuffer(cellString, content) {
 	reportBuffer[rowNumber][columnNumber] = content;
   }
 
+function getValueFromBuffer(cellString) {
+	let columnLetter = cellString.charAt(0);
+	let columnNumber = columnLetter.charCodeAt(0) - 65;
+	let rowNumber = parseInt(cellString.substring(1)) - 1;
+	let value = reportBuffer[rowNumber][columnNumber];
+
+	return (value);
+};
+	
+
 function hourStringToDate(hourString) {
 	const [hours, minutes] = hourString.split(':');
 	const date = new Date();
@@ -607,8 +624,8 @@ function getFlushingSpecs(reportData, item) {
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, counters.FLU),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
 		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, counters.FLU),
@@ -631,14 +648,9 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.ParamOne, flushingSpecs.InicialPartCount);
 	setValueToBuffer(cells.ParamTwo, flushingSpecs.FinalPartCount);
 	setValueToBuffer(cells.Info, flushingSpecs.Oil);
-	if (flushingSpecs.Obs) {
-		setValueToBuffer(cells.Obs, flushingSpecs.Obs);
-		counters.OBS++;
-	}
-	if (flushingSpecs.Steps) {
-		setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
-		counters.ST++;
-	}
+	setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
+	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
+
 	counters.FLU++;
 }
 
@@ -656,8 +668,8 @@ function getPressureTestSpecs(reportData, item) {
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, counters.TP),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
 		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, counters.TP),
 		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, counters.TP),
 		Status: getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1)
@@ -679,14 +691,9 @@ function	fillPressureTest(reportData, item) {
 	setValueToBuffer(cells.ParamOne, pressureTestSpecs.WorkPressure);
 	setValueToBuffer(cells.ParamTwo, pressureTestSpecs.TestPressure);
 	setValueToBuffer(cells.Info, pressureTestSpecs.Fluid);
-	if (pressureTestSpecs.Obs) {
-		setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
-		counters.OBS++;
-	}
-	if (pressureTestSpecs.Steps) {
-		setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
-		counters.ST++;
-	}
+	setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
+	setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
+
 	counters.TP++;
 }
 
@@ -703,8 +710,8 @@ function getFiltrationSpecs(reportData, item) {
 		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
 		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.FIL),
@@ -727,14 +734,9 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.ParamOne, filtrationSpecs.InicialPartCount);
 	setValueToBuffer(cells.ParamTwo, filtrationSpecs.FinalPartCount);
 	setValueToBuffer(cells.Info, filtrationSpecs.Volume);
-	if (filtrationSpecs.Obs) {
-		setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
-		counters.OBS++;
-	}
-	if (filtrationSpecs.Steps) {
-		setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
-		counters.ST++;
-	}
+	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
+	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
+
 	counters.FIL++;
 }
 
@@ -749,9 +751,9 @@ function getDescalingSpecs(reportData, item) {
 		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
-		pipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.pipeMaterial, counters.LQ),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
+		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, counters.LQ),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -762,21 +764,17 @@ function fillDescaling(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var descalingSpecs = getDescalingSpecs(reportData, item);
 	fillDescalingStatements(cells)
+	console.log(`Pipe material: ${descalingSpecs.PipeMaterial}`)
 	setValueToBuffer(cells.StartTime, descalingSpecs.StartTime);
 	setValueToBuffer(cells.EndTime, descalingSpecs.EndTime);
 	setValueToBuffer(cells.Equipament, descalingSpecs.Equipament);
 	setValueToBuffer(cells.System, descalingSpecs.System);
 	setValueToBuffer(cells.Service, descalingSpecs.Service);
 	setValueToBuffer(cells.Status, descalingSpecs.Status);
-	setValueToBuffer(cells.ParamOne, descalingSpecs.pipeMaterial);
-	if (descalingSpecs.Obs) {
-		setValueToBuffer(cells.Obs, descalingSpecs.Obs);
-		counters.OBS++;
-	}
-	if (descalingSpecs.Steps) {
-		setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
-		counters.ST++;
-	}
+	setValueToBuffer(cells.ParamOne, descalingSpecs.PipeMaterial);
+	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
+	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
+
 	counters.LQ++;
 }
 
@@ -791,9 +789,9 @@ function getTankCleaningSpecs(reportData, item) {
 		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, counters.OBS),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, counters.ST),
-		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.tankMaterial, counters.LR),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
+		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.TankMaterial, counters.LR),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -811,27 +809,22 @@ function fillTankCleaning(reportData, item) {
 	setValueToBuffer(cells.Service, tankCleaningSpecs.Service);
 	setValueToBuffer(cells.Status, tankCleaningSpecs.Status);
 	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.pipeMaterial);
-	if (tankCleaningSpecs.Obs) {
-		setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
-		counters.OBS++;
-	}
-	if (tankCleaningSpecs.Steps) {
-		setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
-		counters.ST++;
-	}
+	setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
+	setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
+
 	counters.LR++;
 }
 
 function fillItem(reportData, item) {
 	var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
-	if (service === "Flushing")
-		fillFlushing(reportData, item);
-	else if (service === "Teste de pressão")
+	if (service === "Teste de pressão")
 		fillPressureTest(reportData, item);
-	else if (service === "Filtragem absoluta")
-		fillFiltration(reportData, item)
 	else if (service === "Limpeza química")
 		fillDescaling(reportData, item)
+	else if (service === "Flushing")
+		fillFlushing(reportData, item);
+	else if (service === "Filtragem absoluta")
+		fillFiltration(reportData, item)
 	else if (service === "Limpeza de reservatório")
 		fillTankCleaning(reportData, item)
 	else
@@ -873,12 +866,13 @@ function setDotLineBorder(reportData) {
 	for (var service = 1; service <= reportData.numOfServices; service++) {
 		respCells = ReportServiceRespCells[service];
 
-		respCells.ParamOne != '' ? reportCells.push(respCells.ParamOne): false;
-		respCells.ParamTwo ? reportCells.push(respCells.ParamTwo): false;
-		respCells.Info ? reportCells.push(respCells.Info): false;
+		getValueFromBuffer(respCells.ParamOne) ? reportCells.push(respCells.ParamOne): false;
+		getValueFromBuffer(respCells.ParamTwo) ? reportCells.push(respCells.ParamTwo): false;
+		getValueFromBuffer(respCells.Info) ? reportCells.push(respCells.Info): false;
 	}
-	reportData.reportSpreadSheet.getRangeList(reportCells).activate()
-	.setBorder(null, null, true, null, null, null, '#000000', SpreadsheetApp.BorderStyle.DOTTED);
+	if (reportCells.length)
+		reportData.reportSpreadSheet.getRangeList(reportCells).activate()
+			.setBorder(null, null, true, null, null, null, '#000000', SpreadsheetApp.BorderStyle.DOTTED);
 }
 
 function deleteEmptyServiceRows(reportFirstSheet, servicesCount) {
