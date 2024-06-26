@@ -323,6 +323,7 @@ class ReportData {
 		this.rdo = this.getRDONumber() + 1;
 		this.numOfServices = 0;
 		this.reportSpreadSheet;
+		this.reportFirstSheet;
 		this.reportSpreadSheetFile;
 	}
 
@@ -397,6 +398,7 @@ class ReportData {
 
 	openReportSpreadSheet() {
 		this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
+		this.reportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 	}
 
 	getFormResponsesAsDictionary() {
@@ -764,7 +766,6 @@ function fillDescaling(reportData, item) {
 	var cells = ReportServiceRespCells[item];
 	var descalingSpecs = getDescalingSpecs(reportData, item);
 	fillDescalingStatements(cells)
-	console.log(`Pipe material: ${descalingSpecs.PipeMaterial}`)
 	setValueToBuffer(cells.StartTime, descalingSpecs.StartTime);
 	setValueToBuffer(cells.EndTime, descalingSpecs.EndTime);
 	setValueToBuffer(cells.Equipament, descalingSpecs.Equipament);
@@ -884,9 +885,7 @@ function deleteEmptyServiceRows(reportFirstSheet, servicesCount) {
 }
 
 function  fillReport(reportData) {
-	var reportSpreadSheet = reportData.reportSpreadSheet;
-	var reportFirstSheet = reportSpreadSheet.getSheets()[0];
-	let reportCellsRange = reportFirstSheet.getRange("A1:P68");
+	let reportCellsRange = reportData.reportFirstSheet.getRange("A1:P68");
 	reportBuffer = reportCellsRange.getValues();
 	let formulas = reportCellsRange.getFormulas();
 	
@@ -898,7 +897,7 @@ function  fillReport(reportData) {
 	fillServicesFields(reportData);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportBuffer);
 	reportCellsRange.setValues(reportValuesResult)
-	deleteEmptyServiceRows(reportFirstSheet, reportData.numOfServices);
+	deleteEmptyServiceRows(reportData.reportFirstSheet, reportData.numOfServices);
 	setDotLineBorder(reportData);
 }
 
@@ -931,12 +930,42 @@ function onFormSubmit(formData) {
 
 	reportData.reportInfo.updateRDO(reportData.name);
 	reportData.reportInfo.updateReportInfo();
+	exportSheetToPDF(reportData);
+}
+
+function exportSheetToPDF(reportData) {
+	var spreadsheet = reportData.reportSpreadSheetFile;
+	var sheet = reportData.reportFirstSheet; // Change to spreadsheet.getSheetByName('SheetName') if you want a specific sheet
+	var sheetId = sheet.getSheetId();
+	
+	// Define the export URL
+	var url = 'https://docs.google.com/spreadsheets/d/' + spreadsheet.getId() + 
+	'/export?format=pdf' + 
+	'&size=A4' +        // Paper size
+	'&portrait=true' +  // Orientation
+	'&fitw=true' +      // Fit to width
+	'&sheetnames=false&printtitle=false' + // Hide sheet names
+	'&pagenumbers=false&gridlines=false' + // Hide page numbers and gridlines
+	'&fzr=false' +      // Do not repeat frozen rows
+	'&scale=4' +        // Fit to width
+	'&gid=' + sheetId;  // Sheet ID 
+
+	var token = ScriptApp.getOAuthToken();
+	
+	var response = UrlFetchApp.fetch(url, {
+	  headers: {
+		'Authorization': 'Bearer ' + token
+	  }
+	});
+	
+	var blob = response.getBlob().setName(`${spreadsheet.getName()}.pdf`);
+	DriveApp.createFile(blob);
 }
 
 function createReportSpreadSheetFile(reportData) {
 	var modelSpreadSheetFile = SpreadsheetApp.openById(greportModelID);
 	var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy();
-	spreadSheetFileCopy.setName(`${reportData.name} - RDO ${reportData.rdo} - ${reportData.date}  - ${reportData.getWeekDay()}`);
+	spreadSheetFileCopy.setName(`${reportData.name} - RDO ${reportData.rdo} - ${reportData.date} - ${reportData.getWeekDay()}`);
 	return (spreadSheetFileCopy);
 }
 
