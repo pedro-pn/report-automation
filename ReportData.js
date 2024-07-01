@@ -6,6 +6,7 @@ class ReportData {
 		this.name = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
+		this.shiftTime = this.getShiftTime();
 		this.numOfServices = 0;
 		this.reportSpreadSheet;
 		this.reportFirstSheet;
@@ -18,6 +19,15 @@ class ReportData {
 
 	getClient() {
 		return (this.reportInfo.getMissionInfo(this.name).Client);
+	}
+
+	getShiftTime() {
+		var shiftTime = {
+			weekdays: this.reportInfo.getMissionInfo(this.name).ShiftTime,
+			weekend: this.reportInfo.getMissionInfo(this.name).WeekendShiftTime
+		};
+
+		return (shiftTime);
 	}
 
 	// Method not in use. May be delete later
@@ -73,6 +83,8 @@ class ReportData {
 			var day = dateComponents[2];
 			var month = dateComponents[1];
 			var year = dateComponents[0];
+			if (year.substring(0, 2) === "00")
+				year = `20${year.substring(2)}`;
 		
 			return (`${day}-${month}-${year}`);
 	}

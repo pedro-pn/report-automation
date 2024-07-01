@@ -16,6 +16,11 @@ function deleteEmptyServiceRows(reportFirstSheet, servicesCount) {
 	if (servicesCount > 5)
 		return ;
 	var startRow = ServiceRows[servicesCount + 1]
-	var endRow = ServiceRows.LastRow - startRow;
+	var endRow = ServiceRows.LastRow - startRow + 1;
 	reportFirstSheet.deleteRows(startRow, endRow);
+}
+
+function reportCellsFit(reportFirstSheet) {
+	reportFirstSheet.autoResizeRows(6, 1);
+	reportFirstSheet.autoResizeRows(10, reportFirstSheet.getLastRow());
 }

@@ -32,7 +32,7 @@ function fillNightShiftOvertimeField(reportData) {
 	const overtime = calculateOvertime(shiftTime, nightShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	setValueToBuffer("D63", hoursToHourString(overtime));
+	setValueToBuffer(ReportFooterCells.NightShiftOvertime, hoursToHourString(overtime));
 	
 	return (true);
 }

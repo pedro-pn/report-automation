@@ -55,11 +55,14 @@ function hoursToHourString(hours) {
 function getShiftTime(reportData) {
 	const weekday = reportData.getWeekDayNum();
 	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.name).IncludeSaturday;
+	const sundayFlag = reportData.reportInfo.getMissionInfo(reportData.name).IncludeSunday;
 	if (weekday > 0 && weekday < 5)
-		return ("09:00");
+		return (reportData.shiftTime.weekdays);
 	if (weekday == 5)
-		return ("08:00");
+		return (reportData.shiftTime.weekend);
 	if (weekday == 6 && saturdayFlag)
-		return ("08:00");
+		return (reportData.shiftTime.weekend);
+	if (weekday == 0 && sundayFlag)
+		return (reportData.shiftTime.weekend)
 	return ("00:00");
 }

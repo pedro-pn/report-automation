@@ -1,3 +1,5 @@
+const weekDays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
 const HeaderFields = {
 	Date: "Data do relatório",
 	Mission: "Missão",
@@ -103,89 +105,89 @@ const ReportServiceRespCells = {
 	},
 
 	2: {
-		Service: "C22",
-		Equipament: "C23",
-		System: "C24",
-		StartTime: "I22",
-		EndTime: "M22",
-		Status: "I24",
-		ParamOne: "I23",
-		ParamTwo: "M23",
-		Info: "M24",
-		ParamOneKey: "G23",
-		ParamTwoKey: "K23",
-		InfoKey: "L24",
-		Steps: "B26",
-		Obs: "B27"
+		Service: "C19",
+		Equipament: "C20",
+		System: "C21",
+		StartTime: "I19",
+		EndTime: "M19",
+		Status: "I21",
+		ParamOne: "I20",
+		ParamTwo: "M20",
+		Info: "M21",
+		ParamOneKey: "G20",
+		ParamTwoKey: "K20",
+		InfoKey: "L21",
+		Steps: "B23",
+		Obs: "B24"
 	},
-	
+
 	3: {
-		Service: "C30",
-		Equipament: "C31",
-		System: "C32",
-		StartTime: "I30",
-		EndTime: "M30",
-		Status: "I32",
-		ParamOne: "I31",
-		ParamTwo: "M31",
-		Info: "M32",
-		ParamOneKey: "G31",
-		ParamTwoKey: "K31",
-		InfoKey: "L32",
-		Steps: "B34",
-		Obs: "B35"
+		Service: "C26",
+		Equipament: "C27",
+		System: "C28",
+		StartTime: "I26",
+		EndTime: "M26",
+		Status: "I28",
+		ParamOne: "I27",
+		ParamTwo: "M27",
+		Info: "M28",
+		ParamOneKey: "G27",
+		ParamTwoKey: "K27",
+		InfoKey: "L28",
+		Steps: "B30",
+		Obs: "B31"
 	},
-	
+
 	4: {
-		Service: "C38",
-		Equipament: "C39",
-		System: "C40",
-		StartTime: "I38",
-		EndTime: "M38",
-		Status: "I40",
-		ParamOne: "I39",
-		ParamTwo: "M39",
-		Info: "M40",
-		ParamOneKey: "G39",
-		ParamTwoKey: "K39",
-		InfoKey: "L40",
-		Steps: "B42",
-		Obs: "B43"
+		Service: "C33",
+		Equipament: "C34",
+		System: "C35",
+		StartTime: "I33",
+		EndTime: "M33",
+		Status: "I35",
+		ParamOne: "I34",
+		ParamTwo: "M34",
+		Info: "M35",
+		ParamOneKey: "G34",
+		ParamTwoKey: "K34",
+		InfoKey: "L35",
+		Steps: "B37",
+		Obs: "B38"
 	},
-	
+
 	5: {
-		Service: "C46",
-		Equipament: "C47",
-		System: "C48",
-		StartTime: "I46",
-		EndTime: "M46",
-		Status: "I48",
-		ParamOne: "I47",
-		ParamTwo: "M47",
-		Info: "M48",
-		ParamOneKey: "G47",
-		ParamTwoKey: "K47",
-		InfoKey: "L48",
-		Steps: "B49",
-		Obs: "B50"
-	},
-	
+		Service: "C40",
+		Equipament: "C41",
+		System: "C42",
+		StartTime: "I40",
+		EndTime: "M40",
+		Status: "I42",
+		ParamOne: "I41",
+		ParamTwo: "M41",
+		Info: "M42",
+		ParamOneKey: "G41",
+		ParamTwoKey: "K41",
+		InfoKey: "L42",
+		Steps: "B43",
+		Obs: "B44"
+	},	
+
 	6: {
-		Service: "C54",
-		Equipament: "C55",
-		System: "C56",
-		StartTime: "I54",
-		EndTime: "M54",
-		Status: "I56",
-		ParamOne: "I55",
-		ParamTwo: "M55",
-		Info: "M56",
-		ParamOneKey: "G55",
-		ParamTwoKey: "K55",
-		InfoKey: "L56",
-		Steps: "B58",
-		Obs: "B59"
-	}
+		Service: "C47",
+		Equipament: "C48",
+		System: "C49",
+		StartTime: "I47",
+		EndTime: "M47",
+		Status: "I49",
+		ParamOne: "I48",
+		ParamTwo: "M48",
+		Info: "M49",
+		ParamOneKey: "G48",
+		ParamTwoKey: "K48",
+		InfoKey: "L49",
+		Steps: "B51",
+		Obs: "B52"
+	}	
 }
 
 const ServiceRows = {

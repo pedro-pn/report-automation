@@ -43,13 +43,13 @@ function createReportSpreadSheetFile(reportData) {
 }
 
 function getRdoFolder(reportData) {
-	let reportsFolder = DriveApp.getFolderById("1Fal8CBjtATle0l7MnhmP1LSJqUk7cB-9");
+	let reportsFolder = DriveApp.getFolderById(reportFolderID);
 	try {
 		let currentReportFolder = reportsFolder.getFoldersByName(reportData.searchFieldResponse(HeaderFields.Mission)).next();
 		var recipientFolder = currentReportFolder.getFoldersByName("RDO").next();
 	}
 	catch {
-		recipientFolder = "10Yoluq2U6o5sQS-YGSMNs83a6GnwRru5";
+		recipientFolder = reportStandardFolderID;
 	}
 
 	return (recipientFolder);

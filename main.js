@@ -4,6 +4,7 @@ function onFormSubmit(formData) {
 	reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
 	reportData.openReportSpreadSheet();
 	fillReport(reportData);
+	SpreadsheetApp.flush();
 
 	reportData.reportInfo.updateRDO(reportData.name);
 	reportData.reportInfo.updateReportInfo();
@@ -23,7 +24,7 @@ function  fillReport(reportData) {
 	fillServicesFields(reportData);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportBuffer);
 	reportCellsRange.setValues(reportValuesResult)
-	reportData.reportFirstSheet.autoResizeRows(6, reportData.reportFirstSheet.getLastRow());
+	reportCellsFit(reportData.reportFirstSheet)
 	deleteEmptyServiceRows(reportData.reportFirstSheet, reportData.numOfServices);
 	setDotLineBorder(reportData);
 }
