@@ -1,7 +1,7 @@
 class ReportData {
-	constructor(formObject) {
-		this.formObject = formObject;
-		this.formResponses = this.getFormResponsesAsDictionary()
+	constructor(formResponse) {
+		this.formResponse = formResponse;
+		this.formResponsesDict = this.getFormResponsesAsDictionary()
 		this.reportInfo = new ReportInfo();
 		this.name = this.getMissionName();
 		this.date = this.getReportDate();
@@ -66,7 +66,7 @@ class ReportData {
 	
 	searchFieldResponse(fieldName, item=0) {
 		var responses = [];
-		this.formResponses.forEach(responseDict => {
+		this.formResponsesDict.forEach(responseDict => {
 			for (let key in responseDict) {
 				if (responseDict.hasOwnProperty(key)) {
           			if (key.trim() === fieldName) 
@@ -100,7 +100,7 @@ class ReportData {
 
 	getFormResponsesAsDictionary() {
 		var allResponses = [];
-		this.formObject.getItemResponses().forEach(function(itemResponse) {
+		this.formResponse.getItemResponses().forEach(function(itemResponse) {
 		  var responseDict = {};
 		  responseDict[itemResponse.getItem().getTitle()] = itemResponse.getResponse();
 		  allResponses.push(responseDict);

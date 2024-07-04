@@ -1,6 +1,6 @@
-function onFormSubmit(formData) {
-	var formObject = formData.response;
-	let reportData = new ReportData(formObject);
+function onFormSubmit(formEvent) {
+	var formResponse = formEvent.response;
+	let reportData = new ReportData(formResponse);
 	reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
 	reportData.openReportSpreadSheet();
 	fillReport(reportData);
