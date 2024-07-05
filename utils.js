@@ -54,8 +54,8 @@ function hoursToHourString(hours) {
 
 function getShiftTime(reportData) {
 	const weekday = reportData.getWeekDayNum();
-	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.name).IncludeSaturday;
-	const sundayFlag = reportData.reportInfo.getMissionInfo(reportData.name).IncludeSunday;
+	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSaturday;
+	const sundayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSunday;
 	if (weekday > 0 && weekday < 5)
 		return (reportData.shiftTime.weekdays);
 	if (weekday == 5)
@@ -65,4 +65,20 @@ function getShiftTime(reportData) {
 	if (weekday == 0 && sundayFlag)
 		return (reportData.shiftTime.weekend)
 	return ("00:00");
+}
+
+function fillTemplate(template, variables) {
+	return template.replace(/\${(.*?)}/g, (match, p1) => variables[p1] || '');
+}
+
+function showAllRespondsLink() {
+	var form = FormApp.openById(formId);
+	var formResponds = form.getResponses();
+  var index = 0;
+	formResponds.forEach(function(formResponse) {
+		Logger.log(formResponse.getItemResponses().map(function(itemResponse) {
+			return (itemResponse.getResponse());}));
+		console.log(formResponse.getEditResponseUrl());
+    console.log(index++)
+	})
 }

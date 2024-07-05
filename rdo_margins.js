@@ -98,16 +98,16 @@ function fillStandByField(reportData) {
 
 
 function fillLeaderField(reportData) {
-	const leader = reportData.reportInfo.getMissionInfo(reportData.name).Leader;
-	const position = reportData.reportInfo.getMissionInfo(reportData.name).Position;
+	const leaderId = reportData.reportInfo.getMissionInfo(reportData.missionName).Leader;
+	const leaderInfo = reportData.reportInfo.getLeaderInfo(leaderId);
 
-	setValueToBuffer(ReportFooterCells.Leader, leader);
-	setValueToBuffer(ReportFooterCells.Position, position);
+	setValueToBuffer(ReportFooterCells.Leader, leaderInfo.Name);
+	setValueToBuffer(ReportFooterCells.Position, leaderInfo.Position);
 }
 
 function fillClientLeaderField(reportData) {
-	const leader = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeader;
-	const position = reportData.reportInfo.getMissionInfo(reportData.name).ClientLeaderPosition;
+	const leader = reportData.reportInfo.getMissionInfo(reportData.missionName).ClientLeader;
+	const position = reportData.reportInfo.getMissionInfo(reportData.missionName).ClientLeaderPosition;
 
 	setValueToBuffer(ReportFooterCells.ClientLeader, leader);
 	setValueToBuffer(ReportFooterCells.ClientPosition, position);

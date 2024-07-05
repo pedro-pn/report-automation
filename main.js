@@ -6,9 +6,10 @@ function onFormSubmit(formEvent) {
 	fillReport(reportData);
 	SpreadsheetApp.flush();
 
-	reportData.reportInfo.updateRDO(reportData.name);
+	reportData.reportInfo.updateRDO(reportData.missionName);
 	reportData.reportInfo.updateReportInfo();
-	exportSheetToPDF(reportData);
+	reportData.exportSheetToPDF();
+	sendReportViaEmail(reportData);
 }
 
 function  fillReport(reportData) {
@@ -28,10 +29,3 @@ function  fillReport(reportData) {
 	deleteEmptyServiceRows(reportData.reportFirstSheet, reportData.numOfServices);
 	setDotLineBorder(reportData);
 }
-
-// function moveFile(reportData) {
-// 	var fileId = reportData.createReportSpreadSheetFile.getId();
-// 	var file = DriveApp.getFileById(fileId);
-// 	var folder = getRdoFolder(reportData)
-// 	folder.moveTo(file);
-// }

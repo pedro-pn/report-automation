@@ -3,7 +3,7 @@ class ReportData {
 		this.formResponse = formResponse;
 		this.formResponsesDict = this.getFormResponsesAsDictionary()
 		this.reportInfo = new ReportInfo();
-		this.name = this.getMissionName();
+		this.missionName = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber() + 1;
 		this.shiftTime = this.getShiftTime();
@@ -11,20 +11,27 @@ class ReportData {
 		this.reportSpreadSheet;
 		this.reportFirstSheet;
 		this.reportSpreadSheetFile;
+		this.reportParams = this.reportInfo.getParameters();
+		this.reportBlob;
 	}
 
 	getRDONumber() {
-		return (this.reportInfo.getMissionInfo(this.name).RDO);
+		return (this.reportInfo.getMissionInfo(this.missionName).RDO);
 	}
 
 	getClient() {
-		return (this.reportInfo.getMissionInfo(this.name).Client);
+		return (this.reportInfo.getMissionInfo(this.missionName).Client);
+	}
+
+	getLeaderInfos() {
+		var leaderId = this.reportInfo.getMissionInfo(this.missionName).Leader;
+		return (this.reportInfo.getLeaderInfo(leaderId));
 	}
 
 	getShiftTime() {
 		var shiftTime = {
-			weekdays: this.reportInfo.getMissionInfo(this.name).ShiftTime,
-			weekend: this.reportInfo.getMissionInfo(this.name).WeekendShiftTime
+			weekdays: this.reportInfo.getMissionInfo(this.missionName).ShiftTime,
+			weekend: this.reportInfo.getMissionInfo(this.missionName).WeekendShiftTime
 		};
 
 		return (shiftTime);
@@ -44,11 +51,15 @@ class ReportData {
 	}
 
 	getCNPJ() {
-		return (this.reportInfo.getMissionInfo(this.name).CNPJ);
+		return (this.reportInfo.getMissionInfo(this.missionName).CNPJ);
 	}
 
 	getProposal() {
-		return (this.reportInfo.getMissionInfo(this.name).Proposal);
+		return (this.reportInfo.getMissionInfo(this.missionName).Proposal);
+	}
+
+	getParameters() {
+		return (this.reportInfo.getParametersInfo())
 	}
 
 	getWeekDayNum() {
@@ -107,4 +118,34 @@ class ReportData {
 		});
 		return (allResponses);
 	  }
+
+	  exportSheetToPDF(reportData) {
+		var token = ScriptApp.getOAuthToken();
+		var reportSpreadsheetId = this.reportSpreadSheet.getId();
+		var reportSheetId = this.reportFirstSheet.getSheetId();
+		var urlRequest = `https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
+/export?format=pdf\
+&size=A4\
+&portrait=true\
+&fitw=true\
+&sheetnames=false&printtitle=false\
+&pagenumbers=false&gridlines=false\
+&fzr=false\
+&scale=4\
+&gid=${reportSheetId}`
+		try {
+			var response = UrlFetchApp.fetch(urlRequest, {
+			  headers: {
+				'Authorization': 'Bearer ' + token
+			  },
+			  muteHttpExceptions: true
+			});
+	
+		} catch (error) {
+			Logger.log('Error: ' + error.toString());
+		}
+		var blob = response.getBlob().setName(`${this.reportSpreadSheet.getName()}.pdf`);
+		this.reportBlob = blob;
+		getRdoFolder(reportData).createFile(blob)
+	}
 }

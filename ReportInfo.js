@@ -15,6 +15,14 @@ class ReportInfo {
 		return (this.reportInfoData.Missions.find(mission => mission.Name === missionName));
 	}
 
+	getLeaderInfo(leaderId) {
+		return (this.reportInfoData.Leaders.find(leader => leader.Id === leaderId));
+	}
+
+	getParameters() {
+		return (this.reportInfoData.Parameters);
+	}
+
 	updateRDO(missionName) {
 		this.getMissionInfo(missionName).RDO += 1;
 	}
