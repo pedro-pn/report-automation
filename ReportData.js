@@ -109,6 +109,19 @@ class ReportData {
 		this.reportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 	}
 
+	getRdoFolder() {
+		let reportsFolder = DriveApp.getFolderById(reportFolderID);
+		try {
+			let currentReportFolder = reportsFolder.getFoldersByName(this.searchFieldResponse(HeaderFields.Mission)).next();
+			var recipientFolder = currentReportFolder.getFoldersByName("RDO").next();
+		}
+		catch {
+			recipientFolder = DriveApp.getFolderById(reportStandardFolderID);
+		}
+	
+		return (recipientFolder);
+	}
+
 	getFormResponsesAsDictionary() {
 		var allResponses = [];
 		this.formResponse.getItemResponses().forEach(function(itemResponse) {
@@ -119,7 +132,7 @@ class ReportData {
 		return (allResponses);
 	  }
 
-	  exportSheetToPDF(reportData) {
+	  exportSheetToPDF() {
 		var token = ScriptApp.getOAuthToken();
 		var reportSpreadsheetId = this.reportSpreadSheet.getId();
 		var reportSheetId = this.reportFirstSheet.getSheetId();
@@ -146,6 +159,6 @@ class ReportData {
 		}
 		var blob = response.getBlob().setName(`${this.reportSpreadSheet.getName()}.pdf`);
 		this.reportBlob = blob;
-		getRdoFolder(reportData).createFile(blob)
+		this.getRdoFolder().createFile(blob)
 	}
 }
