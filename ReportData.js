@@ -5,7 +5,7 @@ class ReportData {
 		this.reportInfo = new ReportInfo();
 		this.missionName = this.getMissionName();
 		this.date = this.getReportDate();
-		this.rdo = this.getRDONumber() + 1;
+		this.rdo = this.getRDONumber();
 		this.shiftTime = this.getShiftTime();
 		this.numOfServices = 0;
 		this.reportSpreadSheet;
@@ -16,7 +16,9 @@ class ReportData {
 	}
 
 	getRDONumber() {
-		return (this.reportInfo.getMissionInfo(this.missionName).RDO);
+		if (isEdit === false)
+			return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
+		
 	}
 
 	getClient() {
@@ -105,6 +107,8 @@ class ReportData {
 	}
 
 	openReportSpreadSheet() {
+		if (isEdit)
+			return ;
 		this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
 		this.reportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 	}
@@ -160,5 +164,35 @@ class ReportData {
 		var blob = response.getBlob().setName(`${this.reportSpreadSheet.getName()}.pdf`);
 		this.reportBlob = blob;
 		this.getRdoFolder().createFile(blob)
+	}
+
+	makeReportSpreadsheetFile(reportDb) {
+		if (isEdit)
+			this.updateReportSpreadsheetFile(reportDb);
+		else
+			this.createReportSpreadSheetFile();
+	}
+
+	createReportSpreadSheetFile() {
+		var modelSpreadSheetFile = SpreadsheetApp.openById(greportModelID);
+		var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getRdoFolder());
+		spreadSheetFileCopy.setName(`${this.missionName} - RDO ${this.rdo} - ${this.date} - ${this.getWeekDay()}`);
+		this.reportSpreadSheetFile = spreadSheetFileCopy;
+	}
+
+	updateReportSpreadsheetFile(reportDb) {
+		this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId());
+		var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
+		this.rdo = oldReportFirstSheet.getRange(ReportHeaderCells.RdoNumber).getValue();
+		var modelSheet = SpreadsheetApp.openById(greportModelID).getSheets()[0];
+
+		this.reportFirstSheet = modelSheet.copyTo(this.reportSpreadSheet);
+		this.reportSpreadSheet.deleteSheet(oldReportFirstSheet);
+		this.reportFirstSheet.setName("RDO")
+
+		var reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
+		var newReportName = this.reportSpreadSheet.getName().replace(reportNameModel, `${this.date} - ${this.getWeekDay()}`);
+		this.reportSpreadSheet.rename(newReportName);
+
 	}
 }

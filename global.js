@@ -1,4 +1,5 @@
 var reportBuffer;
+var isEdit = false;
 
 var counters = {
 	TP: 0,

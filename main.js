@@ -1,15 +1,21 @@
 function onFormSubmit(formEvent) {
 	var formResponse = formEvent.response;
+	let reportDb = new ReportDb(formResponse);
+	reportDb.setEditFlag();
 	let reportData = new ReportData(formResponse);
-	reportData.reportSpreadSheetFile = createReportSpreadSheetFile(reportData);
+	reportData.makeReportSpreadsheetFile(reportDb);
 	reportData.openReportSpreadSheet();
 	fillReport(reportData);
 	SpreadsheetApp.flush();
 
-	reportData.reportInfo.updateRDO(reportData.missionName);
-	reportData.reportInfo.updateReportInfo();
 	reportData.exportSheetToPDF();
 	sendReportViaEmail(reportData);
+	if (isEdit === true)
+		return ;
+	reportData.reportInfo.updateRDO(reportData.missionName);
+	reportData.reportInfo.updateReportInfo();
+	reportDb.logResponse(reportData.reportSpreadSheet.getId());
+	
 }
 
 function  fillReport(reportData) {
