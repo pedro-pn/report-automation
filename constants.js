@@ -199,3 +199,14 @@ const ServiceRows = {
 	6: 46,
 	LastRow: 52
 }
+
+const urlRequestString = "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
+/export?format=pdf\
+&size=A4\
+&portrait=true\
+&fitw=true\
+&sheetnames=false&printtitle=false\
+&pagenumbers=false&gridlines=false\
+&fzr=false\
+&scale=4\
+&gid=${reportSheetId}"

@@ -71,6 +71,12 @@ function fillTemplate(template, variables) {
 	return template.replace(/\${(.*?)}/g, (match, p1) => variables[p1] || '');
 }
 
+function getExportUrlRequest(spreadSheetId, sheetId) {
+	return (fillTemplate(urlRequestString, {
+		reportSpreadsheetId: spreadSheetId,
+		reportSheetId: sheetId}));
+}
+
 function showAllRespondsLink() {
 	var form = FormApp.openById(formId);
 	var formResponds = form.getResponses();

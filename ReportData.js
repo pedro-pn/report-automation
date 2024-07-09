@@ -140,16 +140,7 @@ class ReportData {
 		var token = ScriptApp.getOAuthToken();
 		var reportSpreadsheetId = this.reportSpreadSheet.getId();
 		var reportSheetId = this.reportFirstSheet.getSheetId();
-		var urlRequest = `https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
-/export?format=pdf\
-&size=A4\
-&portrait=true\
-&fitw=true\
-&sheetnames=false&printtitle=false\
-&pagenumbers=false&gridlines=false\
-&fzr=false\
-&scale=4\
-&gid=${reportSheetId}`
+		var urlRequest = getExportUrlRequest(reportSpreadsheetId, reportSheetId);
 		try {
 			var response = UrlFetchApp.fetch(urlRequest, {
 			  headers: {
