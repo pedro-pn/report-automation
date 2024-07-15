@@ -87,12 +87,14 @@ function showResponsesAndTitle() {
 function testSearchResponse() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var testResponse = responses[3];
+	var testResponse = responses[60];
 	let reportData = new ReportData(testResponse);
 
 	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 3));
-	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 2));
-	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
+	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 2));
+	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
+
+	sendPostRequest(testResponse.getId());
 }
 
 //#endregion

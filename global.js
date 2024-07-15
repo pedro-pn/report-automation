@@ -11,6 +11,50 @@ var counters = {
 	LR: 0
 }
 
+var HeaderFields = {
+	Date: "Data do relatório",
+	Mission: "Missão",
+	DayShiftStartTime: "Horário de chegada a obra",
+	DayShiftExitTime: "Horário de saída da obra",
+	TotalLunchTime: "Tempo total de intervalo de almoço",
+	DayShiftNumOfEmployees: "Quantidade de colaboradores (apenas turno diurno)",
+	NightShift: "Houve turno noturno?",
+	NightShiftStartTime: "Horário de inicio do turno noturno",
+	NightShiftEndTime: "Horário de saída do turno noturno",
+	TotalDinnerTime: "Tempo total de intervalo de janta",
+	NightShiftNumOfEmployees: "Quantidade de colaboradores no turno noturno",
+	StandByFlag: "Teve período ocioso (stand-by)",
+	StandByValidity: "O período de aguardo foi por causa do cliente?",
+	StandByTime: "Tempo total em stand-by",
+	StandByMotive: "Motivo do período ocioso",
+	OvertimeComment: "Em caso de hora extra, indicar o responsável a mesma",
+	Activities: "Atividades/Observações",
+	AddService: "Selecione o tipo de serviço que deseja adicionar informações"
+}
+
+var FormServicesFields = {
+	Service: "Selecione o tipo de serviço que deseja adicionar informações",
+	Equipament: "Nome do equipamento",
+	System: "Nome do sistema",
+	Size: "Diâmetro e comprimento das tubulações",
+	Oil: "Óleo (nome, marca e viscosidade)",
+	Fluid: "Fluido do teste?",
+	Type: "Tipo de Flushing",
+	Status: "Serviço finalizado?",
+	Start: "Horário de início/continuação",
+	End: "Horário de término/pausa",
+	Inversion: "Inversão de fluxo",
+	InicialPartCount: "Contagem de partículas inicial",
+	FinalPartCount: "Contagem de partículas final",
+	WorkPressure: "Pressão de trabalho",
+	TestPressure: "Pressão de teste",
+	PipeMaterial: "Material das tubulações",
+	TankMaterial: "Material do reservatório",
+	Steps: "Etapas realizadas no dia",
+	Volume: "Volume de óleo",
+	Obs: "Observações"
+}
+
 function setValueToBuffer(cellString, content) {
 	var columnLetter = cellString.charAt(0);
 	var columnNumber = columnLetter.charCodeAt(0) - 65;

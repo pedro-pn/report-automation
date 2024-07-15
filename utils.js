@@ -77,6 +77,25 @@ function getExportUrlRequest(spreadSheetId, sheetId) {
 		reportSheetId: sheetId}));
 }
 
+function sendPostRequest(formResponseId, isEdit=false) {
+	var payload = {
+	  formResponseId: formResponseId,
+	  isEdit: isEdit
+	};
+  
+	var options = {
+	  'method': 'POST',
+	  'contentType': 'application/json',
+	  'payload': JSON.stringify(payload),
+	  'headers': {
+		'Authorization': 'Bearer ' + ScriptApp.getOAuthToken()
+	  }
+	};
+  
+	var response = UrlFetchApp.fetch(serviceReportApi, options);
+	Logger.log('Response from Script A: ' + response.getContentText());
+  }
+
 function showAllRespondsLink() {
 	var form = FormApp.openById(formId);
 	var formResponds = form.getResponses();

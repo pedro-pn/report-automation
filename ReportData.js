@@ -2,7 +2,7 @@ class ReportData {
 	constructor(formResponse) {
 		this.formResponse = formResponse;
 		this.formResponsesDict = this.getFormResponsesAsDictionary()
-		this.reportInfo = new ReportInfo();
+		this.reportInfo = new ReportLib.ReportInfo();
 		this.missionName = this.getMissionName();
 		this.date = this.getReportDate();
 		this.rdo = this.getRDONumber();
