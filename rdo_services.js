@@ -44,7 +44,7 @@ function getPressureTestSpecs(reportData, item) {
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
 		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, counters.TP),
 		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, counters.TP),
-		Status: getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1)
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
 	return (pressureTestSpecs);
