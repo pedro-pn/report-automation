@@ -14,7 +14,7 @@ class ReportData {
 		this.reportParams = this.reportInfo.getParameters();
 		this.reportBlob;
 	}
-
+	
 	getRDONumber() {
 		if (isEdit === false)
 			return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
