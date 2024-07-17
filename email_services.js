@@ -14,7 +14,7 @@ function sendReportViaEmail(reportData) {
 function generateEmailSubject(reportData) {
     var subjectTemplate = reportData.reportParams.EmailSubject;
     var subject = fillTemplate(subjectTemplate, {
-        rdoNumber: reportData.rdo,
+        rdoNumber: reportData.reportNum,
         reportName: reportData.missionName
     });
     return (subject);

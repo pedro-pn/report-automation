@@ -5,7 +5,7 @@ class ReportData {
 		this.reportInfo = new ReportLib.ReportInfo();
 		this.missionName = this.getMissionName();
 		this.date = this.getReportDate();
-		this.rdo = this.getRDONumber();
+		this.reportNum = this.getRDONumber();
 		this.shiftTime = this.getShiftTime();
 		this.numOfServices = 0;
 		this.reportSpreadSheet;
@@ -167,14 +167,14 @@ class ReportData {
 	createReportSpreadSheetFile() {
 		var modelSpreadSheetFile = SpreadsheetApp.openById(greportModelID);
 		var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getRdoFolder());
-		spreadSheetFileCopy.setName(`${this.missionName} - RDO ${this.rdo} - ${this.date} - ${this.getWeekDay()}`);
+		spreadSheetFileCopy.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
 		this.reportSpreadSheetFile = spreadSheetFileCopy;
 	}
 
 	updateReportSpreadsheetFile(reportDb) {
 		this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId());
 		var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
-		this.rdo = oldReportFirstSheet.getRange(ReportHeaderCells.RdoNumber).getValue();
+		this.reportNum = oldReportFirstSheet.getRange(ReportHeaderCells.RdoNumber).getValue();
 		var modelSheet = SpreadsheetApp.openById(greportModelID).getSheets()[0];
 
 		this.reportFirstSheet = modelSheet.copyTo(this.reportSpreadSheet);

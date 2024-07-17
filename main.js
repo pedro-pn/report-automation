@@ -1,6 +1,6 @@
 function onFormSubmit(formEvent) {
 	var formResponse = formEvent.response;
-	let reportDb = new ReportDb(formResponse);
+	let reportDb = new ReportDb.ReportDb(formResponse);
 	reportDb.setEditFlag();
 	let reportData = new ReportData(formResponse);
 	reportData.makeReportSpreadsheetFile(reportDb);

@@ -30,6 +30,7 @@ function remakeReports() {
 			setAllValuesToZero(counters);
 			setAllValuesToZero(reportBuffer);
 			reportBuffer.fill(0);
+			isEdit = false;
 		}
 	} else {
 		Logger.log('No responses found.');

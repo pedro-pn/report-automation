@@ -126,7 +126,7 @@ function fillReportSubHeader(reportData) {
   }
 
 function fillReportHeader(reportData) {
-	setValueToBuffer(ReportHeaderCells.RdoNumber, reportData.rdo);
+	setValueToBuffer(ReportHeaderCells.RdoNumber, reportData.reportNum);
 	setValueToBuffer(ReportHeaderCells.Date, reportData.date);
 	setValueToBuffer(ReportHeaderCells.Client, reportData.getClient());
 	setValueToBuffer(ReportHeaderCells.CNPJ, reportData.getCNPJ());
