@@ -2,7 +2,7 @@ function onFormSubmit(formEvent) {
 	var formResponse = formEvent.response;
 	let reportDb = new ReportDb.ReportDb(formResponse);
 	reportDb.setEditFlag();
-	let reportData = new ReportData(formResponse);
+	let reportData = new ReportData.ReportData(formResponse);
 	reportData.makeReportSpreadsheetFile(reportDb);
 	reportData.openReportSpreadSheet();
 	fillReport(reportData);
@@ -12,7 +12,7 @@ function onFormSubmit(formEvent) {
 	sendReportViaEmail(reportData);
 	if (isEdit === true)
 		return ;
-	reportData.reportInfo.updateRDO(reportData.missionName);
+	reportData.reportInfo.updateReportNumber(reportData.missionName);
 	reportData.reportInfo.updateReportInfo();
 	reportDb.logResponse(reportData.reportSpreadSheet.getId());
 	

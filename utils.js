@@ -77,9 +77,11 @@ function getExportUrlRequest(spreadSheetId, sheetId) {
 		reportSheetId: sheetId}));
 }
 
-function sendPostRequest(formResponseId, isEdit=false) {
+function sendPostRequest(formResponseId, reportType, item, isEdit=false) {
 	var payload = {
 	  formResponseId: formResponseId,
+	  reportType: reportType,
+	  item: item,
 	  isEdit: isEdit
 	};
   

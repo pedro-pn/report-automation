@@ -106,6 +106,7 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
 	counters.LQ++;
+	sendPostRequest(reportData.formResponse.getId(), reportTypes.RLQ, item, isEdit);
 }
 //#endregion
 

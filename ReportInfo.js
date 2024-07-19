@@ -24,8 +24,44 @@ var ReportLib = (function() {
 			return (this.reportInfoData.Parameters);
 		}
 
+		updateReportNumber(missionName) {
+			switch (reportType) {
+				case reportTypes.RDO:
+					this.updateRDO(missionName);
+					break;
+				case reportTypes.RTP:
+					this.updateRTP(missionName);
+					break ;
+				case reportTypes.RLQ:
+					this.updateRLQ(missionName);
+					break ;
+				case reportTypes.RCP:
+					this.updateRCP(missionName);
+					break ;
+				case reportTypes.RLR:
+					this.updateRLR(missionName);
+					break ;
+			};
+		}
+
 		updateRDO(missionName) {
 			this.getMissionInfo(missionName).RDO += 1;
+		}
+
+		updateRTP(missionName) {
+			this.getMissionInfo(missionName).RTP += 1;
+		}
+
+		updateRLQ(missionName) {
+			this.getMissionInfo(missionName).RLQ += 1;
+		}
+
+		updateRCP(missionName) {
+			this.getMissionInfo(missionName).RCP += 1;
+		}
+
+		updateRLR(missionName) {
+			this.getMissionInfo(missionName).RLR += 1;
 		}
 	}
 	return ({

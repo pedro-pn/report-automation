@@ -1,12 +1,27 @@
 var reportBuffer;
 var isEdit = false;
 
-var greportModelID = "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM" 
 var reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"
 var formId = "15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk"
 var reportFolderID = "1Fal8CBjtATle0l7MnhmP1LSJqUk7cB-9"
 var reportStandardFolderID = "10Yoluq2U6o5sQS-YGSMNs83a6GnwRru5"
 var spreadsheetDbId = "17P66MgM18LxaFnCZO3h82ai0F7vkSscbo8Ngvr9h9u8"
+
+var ReportModelIds = {
+	0: "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM", // RDO
+	2: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU" // RLQ
+
+}
+
+var reportTypes = {
+	RDO: 0,
+	RTP: 1,
+	RLQ: 2,
+	RCP: 3,
+	RLR: 4,
+}
+
+var reportType = 0;
 
 var counters = {
 	TP: 0,
