@@ -12,7 +12,7 @@ function onFormSubmit(formEvent) {
 	sendReportViaEmail(reportData);
 	if (isEdit === true)
 		return ;
-	reportData.reportInfo.updateReportNumber(reportData.missionName);
+	reportData.reportInfo.updateRDO(reportData.missionName);
 	reportData.reportInfo.updateReportInfo();
 	reportDb.logResponse(reportData.reportSpreadSheet.getId());
 	

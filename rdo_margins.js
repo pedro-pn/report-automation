@@ -96,7 +96,6 @@ function fillStandByField(reportData) {
 	setValueToBuffer(ReportFooterCells.StandByMotive, standByMotive);
 }
 
-
 function fillLeaderField(reportData) {
 	const leaderId = reportData.reportInfo.getMissionInfo(reportData.missionName).Leader;
 	const leaderInfo = reportData.reportInfo.getLeaderInfo(leaderId);

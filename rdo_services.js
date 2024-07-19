@@ -10,17 +10,30 @@ function fillItem(reportData, item) {
     var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
 	if (service === "Teste de pressão")
 		fillPressureTest(reportData, item);
-    else if (service === "Limpeza química")
+	else if (service === "Limpeza química")
 		fillDescaling(reportData, item)
-    else if (service === "Flushing")
+	else if (service === "Flushing")
 		fillFlushing(reportData, item);
-    else if (service === "Filtragem absoluta")
+	else if (service === "Filtragem absoluta")
 		fillFiltration(reportData, item)
-    else if (service === "Limpeza de reservatório")
+	else if (service === "Limpeza de reservatório")
 		fillTankCleaning(reportData, item)
-    else
-    return (0)
-return (1);
+	else
+		return (0)
+	return (1);
+}
+
+function makeServiceReport(reportData, reportNumber, type, item) {
+	var reportId = reportData.formResponse.getId();
+
+	try {
+		sendPostRequest(reportId, reportNumber, type, item);
+		return (true);
+  
+	} catch (error) {
+	  Logger.log(`Could not make ${Object.keys(reportTypes)[type]} ${error}`)
+	}
+	return (false)
 }
 
 //#endregion
@@ -106,7 +119,9 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
 	counters.LQ++;
-	sendPostRequest(reportData.formResponse.getId(), reportTypes.RLQ, item, isEdit);
+	var status = makeServiceReport(reportData, reportData.getRLQNumber(), reportTypes.RLQ, item)
+	if (status)
+		reportData.reportInfo.updateRLQ(reportData.missionName)
 }
 //#endregion
 
