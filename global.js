@@ -21,6 +21,14 @@ var reportTypes = {
 	RLR: 4,
 }
 
+var reportTypesString = {
+	0: "RDO",
+	1: "RTP",
+	2: "RLQ",
+	3: "RCP",
+	4: "RLR",
+}
+
 var reportType = 0;
 
 var counters = {
