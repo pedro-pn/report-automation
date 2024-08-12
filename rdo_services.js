@@ -85,7 +85,7 @@ function	fillPressureTest(reportData, item) {
 
 //#region DESCALING
 function fillDescalingStatements(cells) {
-	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.pipeMaterial);
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.PipeMaterial);
 }
 
 function getDescalingSpecs(reportData, item) {
@@ -218,7 +218,7 @@ function fillFiltration(reportData, item) {
 
 //#region TANK CLEANING
 function fillTankCleaningStatements(cells) {
-	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.tankMaterial);
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.TankMaterial);
 }
 
 function getTankCleaningSpecs(reportData, item) {
@@ -247,7 +247,7 @@ function fillTankCleaning(reportData, item) {
 	setValueToBuffer(cells.System, tankCleaningSpecs.System);
 	setValueToBuffer(cells.Service, tankCleaningSpecs.Service);
 	setValueToBuffer(cells.Status, tankCleaningSpecs.Status);
-	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.pipeMaterial);
+	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
 
