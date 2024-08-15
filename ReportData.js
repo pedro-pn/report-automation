@@ -18,13 +18,13 @@ var ReportData = (function() {
 
 		getReportNumber() {
 			switch (reportType) {
-				case reportTypes.RDO:
+				case ReportTypes.RDO:
 					return (this.getRDONumber());
-				case (reportTypes.RLQ):
+				case (ReportTypes.RLQ):
 					return (this.getRLQNumber());
-				case (reportType.RCP):
+				case (ReportTypes.RCP):
 					return (this.getRCPNumber());
-				case (reportType.RLR):
+				case (ReportTypes.RLR):
 					return (this.getRLRNumber());
 			}
 		}
@@ -143,7 +143,7 @@ var ReportData = (function() {
 
 		getReportFolder() {
 			let reportsFolder = DriveApp.getFolderById(reportFolderID);
-			let folderName = Object.keys(reportTypes)[reportType];
+			let folderName = Object.keys(ReportTypes)[reportType];
 			try {
 				let currentReportFolder = reportsFolder.getFoldersByName(this.searchFieldResponse(HeaderFields.Mission)).next();
 				var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
@@ -202,11 +202,14 @@ var ReportData = (function() {
 
 		setReportName() {
 			switch (reportType) {
-				case reportTypes.RDO:
+				case ReportTypes.RDO:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
 					break ;
-				case reportTypes.RLQ:
+				case ReportTypes.RLQ:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - `);
+					break ;
+				case ReportTypes.RCP:
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RCP ${this.reportNum} - `);
 					break ;
 			}
 		}

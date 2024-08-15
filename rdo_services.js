@@ -118,7 +118,7 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
-	var status = makeServiceReport(reportData, reportData.getRLQNumber(), reportTypes.RLQ, item)
+	var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
 	if (status)
 		reportData.reportInfo.updateRLQ(reportData.missionName)
 	counters.LQ++;
