@@ -1,6 +1,6 @@
 const weekDays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
-const ReportTypes = {
+var ReportTypes = {
 	RDO: 0,
 	RTP: 1,
 	RLQ: 2,
@@ -8,7 +8,7 @@ const ReportTypes = {
 	RLR: 4,
 }
 
-const ReportTypesString = {
+var ReportTypesString = {
 	0: "RDO",
 	1: "RTP",
 	2: "RLQ",
@@ -16,13 +16,13 @@ const ReportTypesString = {
 	4: "RLR",
 }
 
-const ReportModelIds = {
+var ReportModelIds = {
 	0: "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM", // RDO
 	2: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU", // RLQ
 	3: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so", // RCPU
 }
 
-const ReportServiceStatements = {
+var ReportServiceStatements = {
 	InicialAnalysis: "Análise inicial:",
 	FinalAnalysis: "Análise final:",
 	Volume: "Volume:",
@@ -55,7 +55,7 @@ var HeaderFields = {
 	AddService: "Selecione o tipo de serviço que deseja adicionar informações"
 }
 
-const FormServicesFields = {
+var FormServicesFields = {
 	Service: "Selecione o tipo de serviço que deseja adicionar informações",
 	Equipament: "Nome do equipamento",
 	System: "Nome do sistema",
@@ -79,7 +79,7 @@ const FormServicesFields = {
 }
 
 
-const ReportHeaderCells = {
+var ReportHeaderCells = {
 	DayShiftStartTime: "B7",
 	DayShiftExitTime: "B8",
 	DayShiftLunchTime: "I7",
@@ -96,7 +96,7 @@ const ReportHeaderCells = {
 	Activities: "C10"
 }
 
-const ReportFooterCells = {
+var ReportFooterCells = {
 	NightShiftOvertime: "D56",
 	DayShiftOvertime: "D55",
 	OvertimeComment: "B57",
@@ -108,7 +108,7 @@ const ReportFooterCells = {
 	ClientPosition: "I59"
 }
 
-const ReportServiceRespCells = {
+var ReportServiceRespCells = {
 	1: {
 		Service: "C12",
 		Equipament: "C13",
@@ -191,8 +191,8 @@ const ReportServiceRespCells = {
 		ParamOneKey: "G41",
 		ParamTwoKey: "K41",
 		InfoKey: "L42",
-		Steps: "B43",
-		Obs: "B44"
+		Steps: "B44",
+		Obs: "B45"
 	},	
 
 	6: {

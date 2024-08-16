@@ -31,7 +31,7 @@ function makeServiceReport(reportData, reportNumber, type, item) {
 		return (true);
   
 	} catch (error) {
-	  Logger.log(`Could not make ${Object.keys(reportTypes)[type]} ${error}`)
+	  Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
 	}
 	return (false)
 }
@@ -142,9 +142,9 @@ function getFlushingSpecs(reportData, item) {
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
-		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, counters.FLU),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2),
+		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, counters.OIL),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -167,6 +167,9 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
 
+  var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+	if (status)
+		reportData.reportInfo.updateRCP(reportData.missionName)
 	counters.FLU++;
 }
 //#endregion
@@ -187,8 +190,8 @@ function getFiltrationSpecs(reportData, item) {
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1++),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2++),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2),
 		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.FIL),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}

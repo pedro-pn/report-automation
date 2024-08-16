@@ -10,7 +10,12 @@ var counters = {
 	FIL: 0,
 	PC1: 0,
 	PC2: 0,
-	LR: 0
+  DHY: 0,
+	DHY1: 0,
+	DHY2: 0,
+  LSR: 0,
+	LR: 0,
+  OIL: 0
 }
 
 function setValueToBuffer(cellString, content) {

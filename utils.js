@@ -98,7 +98,12 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
   
 	var response = UrlFetchApp.fetch(serviceReportApi, options);
 	Logger.log('Response from Script A: ' + response.getContentText());
-  }
+  if (response.status === false)
+    return ;
+  var responseCounters = JSON.parse(response).counters
+  console.log(responseCounters)
+  counters = responseCounters;
+}
 
 function showAllRespondsLink() {
 	var form = FormApp.openById(formId);
