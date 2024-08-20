@@ -9,6 +9,7 @@ function onFormSubmit(formEvent) {
 	SpreadsheetApp.flush();
 
 	reportData.exportSheetToPDF();
+  	reportBlobs.push(reportData.reportBlob);
 	sendReportViaEmail(reportData);
 	if (isEdit === true)
 		return ;

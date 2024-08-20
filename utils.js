@@ -100,9 +100,11 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	Logger.log('Response from Script A: ' + response.getContentText());
   if (response.status === false)
     return ;
-  var responseCounters = JSON.parse(response).counters
-  console.log(responseCounters)
+  var responseObject = JSON.parse(response)
+  var responseCounters = responseObject.counters
   counters = responseCounters;
+  var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
+  reportBlobs.push(serviceReportBlob)
 }
 
 function showAllRespondsLink() {

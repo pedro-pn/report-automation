@@ -192,7 +192,7 @@ function getFiltrationSpecs(reportData, item) {
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2),
-		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.FIL),
+		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.VOL),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
 	}
 	
@@ -215,6 +215,9 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
 
+	var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+	if (status)
+		reportData.reportInfo.updateRCP(reportData.missionName)
 	counters.FIL++;
 }
 //#endregion

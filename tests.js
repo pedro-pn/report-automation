@@ -41,7 +41,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[29];
+		var testResponse = responses[79];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -88,12 +88,13 @@ function showResponsesAndTitle() {
 function testSearchResponse() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var testResponse = responses[60];
-	let reportData = new ReportData(testResponse);
+	var testResponse = responses[69];
+	let reportData = new ReportData.ReportData(testResponse);
 
-	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 3));
-	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 2));
-	// console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
+	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 0));
+	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
+	console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 0));
+	console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 1));
 
 	sendPostRequest(testResponse.getId());
 }

@@ -7,7 +7,7 @@ function sendReportViaEmail(reportData) {
         to: recipient,
         subject: subject,
         htmlBody: body,
-        attachments: [reportData.reportBlob],
+        attachments: reportBlobs,
     })
 }
 

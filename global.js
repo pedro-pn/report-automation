@@ -1,6 +1,6 @@
 var reportBuffer;
 var isEdit = false;
-
+var reportBlobs = [];
 var reportType = 0;
 
 var counters = {
@@ -16,6 +16,7 @@ var counters = {
 	DHYIMG: 0,
   	LSR: 0,
 	LR: 0,
+	VOL: 0,
   	OIL: 0
 }
 
