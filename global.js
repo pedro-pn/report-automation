@@ -2,6 +2,7 @@ var reportBuffer;
 var isEdit = false;
 var reportBlobs = [];
 var reportType = 0;
+var reportIds = ["", "", "", "", "", ""];
 
 var counters = {
 	TP: 0,
@@ -10,6 +11,7 @@ var counters = {
 	FIL: 0,
 	PC1: 0,
 	PC2: 0,
+	PCIMG: 0,
   	DHY: 0,
 	DHY1: 0,
 	DHY2: 0,
@@ -40,4 +42,13 @@ function setAllValuesToZero(obj) {
 	Object.keys(obj).forEach(key => {
 	  obj[key] = 0;
 	});
+}
+
+function getCounterByType(service) {
+  switch (service) {
+    case ReportTypes.RCP:
+      return (counters.FLU + counters.FIL - 1);
+    case ReportTypes.RLQ:
+      return (counters.LQ + 1);
+  }
 }

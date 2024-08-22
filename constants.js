@@ -89,6 +89,7 @@ var ReportHeaderCells = {
 	NightShiftDinnerTime: "I8",
 	NightShiftNumOfEmployees: "N8",
 	RdoNumber: "L5",
+	ServiceNumber: "J5",
 	Date: "N5",
 	Client: "B6",
 	CNPJ: "G6",

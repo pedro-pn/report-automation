@@ -97,14 +97,16 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	};
   
 	var response = UrlFetchApp.fetch(serviceReportApi, options);
-	Logger.log('Response from Script A: ' + response.getContentText());
+	// Logger.log('Response from Script A: ' + response.getContentText());
   if (response.status === false)
     return ;
+
   var responseObject = JSON.parse(response)
   var responseCounters = responseObject.counters
   counters = responseCounters;
   var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
   reportBlobs.push(serviceReportBlob)
+  reportIds[responseObject.type] +=`${responseObject.reportId},`;
 }
 
 function showAllRespondsLink() {

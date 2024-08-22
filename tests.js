@@ -15,7 +15,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [13, 14, 17, 19, 23, 24, 25]
+	var responsesNumber = [68, 85, 69, 87, 78, 84, 86, ]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -30,7 +30,10 @@ function remakeReports() {
 			setAllValuesToZero(counters);
 			setAllValuesToZero(reportBuffer);
 			reportBuffer.fill(0);
+      reportIds = ["", "", "", "", "", ""];
 			isEdit = false;
+      reportBlobs = [];
+      reportType = 0;
 		}
 	} else {
 		Logger.log('No responses found.');
@@ -41,7 +44,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[79];
+		var testResponse = responses[86];
 		
 		// Create a fake event object
 		var fakeEvent = {

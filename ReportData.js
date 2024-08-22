@@ -198,6 +198,7 @@ var ReportData = (function() {
 			var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getReportFolder());
 			this.reportSpreadSheetFile = spreadSheetFileCopy;
 			this.setReportName();
+      reportIds[0] = this.reportSpreadSheetFile.getId();
 		}
 
 		setReportName() {
@@ -214,20 +215,30 @@ var ReportData = (function() {
 			}
 		}
 
-		updateReportSpreadsheetFile(reportDb) {
+		getOldReportNum(reportSheet) {
+			switch (reportType) {
+				case ReportTypes.RDO:
+					return (reportSheet.getRange(ReportHeaderCells.RdoNumber).getValue());
+				default:
+					return (reportSheet.getRange(ReportHeaderCells.ServiceNumber).getValue());
+			}
+		}
+
+		updateReportSpreadsheetFile(reportDb) { // generalize this function
 			this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId());
 			var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
-			this.reportNum = oldReportFirstSheet.getRange(ReportHeaderCells.RdoNumber).getValue();
+			this.reportNum = this.getOldReportNum(oldReportFirstSheet);
 			var modelSheet = SpreadsheetApp.openById(ReportModelIds[reportType]).getSheets()[0];
 
 			this.reportFirstSheet = modelSheet.copyTo(this.reportSpreadSheet);
 			this.reportSpreadSheet.deleteSheet(oldReportFirstSheet);
-			this.reportFirstSheet.setName("RDO")
-
+			this.reportFirstSheet.setName(ReportTypesString[reportType])
+			
+			if (reportType !== ReportTypes.RDO)
+				return ;
 			var reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
 			var newReportName = this.reportSpreadSheet.getName().replace(reportNameModel, `${this.date} - ${this.getWeekDay()}`);
 			this.reportSpreadSheet.rename(newReportName);
-
 		}
 	}
 	return ({ReportData: ReportData});

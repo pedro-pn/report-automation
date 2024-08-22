@@ -5,7 +5,7 @@ function addItemToSpecificSectionAndPlace() {
     // Get all the items in the form
   
     // Define the section title where you want to add the item
-    var sectionTitle = "Limpeza química";
+    var sectionTitle = "Flushing";
     var targetSectionIndex = -1;
     
     // Loop through items to find the target section
@@ -28,11 +28,10 @@ function addItemToSpecificSectionAndPlace() {
     
       // Create a new multiple-choice item
       var newItem = form.addMultipleChoiceItem();
-      newItem.setTitle('Tipo de inspeção')
+      newItem.setTitle('Serviço aprovado pelo cliente?')
             .setChoices([
-              newItem.createChoice("Visual"),
-              newItem.createChoice('Corpo de prova'),
-              newItem.createChoice('Vídeo boroscopia')
+              newItem.createChoice("Sim"),
+              newItem.createChoice('Não'),
             ]);
     
       // Get the items again, including the newly created one

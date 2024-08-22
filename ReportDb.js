@@ -22,22 +22,28 @@ var ReportDb = (function() {
             var cellValues= this.reportDbSheet.getDataRange().getValues();
 
             for (var i = 1; i < cellValues.length; i++) {
-                if (cellValues[i][0] === this.formResponseId)
-                    return (cellValues[i][1]);
+                if (cellValues[i][0] === this.formResponseId) {
+                  if (reportType === ReportTypes.RDO)
+                    return (cellValues[i][reportType + 1]);
+                  var reportIds = cellValues[i][reportType + 1].split(",");
+
+                  return (reportIds[getCounterByType(reportType) + 1]);
+                }
             }
         }
 
         logResponse(reportSpreadsheetId) {
             var cellValues = this.reportDbSheet.getDataRange().getValues();
-
+            console.log(reportSpreadsheetId)
             for (var i = 1; i < cellValues.length; i++) {
                 if (cellValues[i][0] === this.formResponseId) {
-                    cellValues[i][1] = reportSpreadsheetId;
+                    cellValues[i][reportType + 1] = reportSpreadsheetId;
                     return ;
                 }
             }
-            this.reportDbSheet.appendRow([this.formResponseId, reportSpreadsheetId]);
+            this.reportDbSheet.appendRow([this.formResponseId].concat(reportIds));
         }
     }
+
     return ({ReportDb: ReportDb});
 })();

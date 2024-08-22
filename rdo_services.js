@@ -26,13 +26,13 @@ function fillItem(reportData, item) {
 function makeServiceReport(reportData, reportNumber, type, item) {
 	var reportId = reportData.formResponse.getId();
 
-	try {
+	// try {
 		sendPostRequest(reportId, reportNumber, type, item);
 		return (true);
   
-	} catch (error) {
+	// } catch (error) {
 	  Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
-	}
+	// }
 	return (false)
 }
 
@@ -118,9 +118,11 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
-	var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
-	if (status)
-		reportData.reportInfo.updateRLQ(reportData.missionName)
+  if (descalingSpecs.Status === "Finalizado") {
+	  var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
+	  if (status)
+		  reportData.reportInfo.updateRLQ(reportData.missionName)
+  }
 	counters.LQ++;
 }
 //#endregion
@@ -167,9 +169,11 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
 
-  var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
-	if (status)
-		reportData.reportInfo.updateRCP(reportData.missionName)
+  if (flushingSpecs.Status === "Finalizado") {
+    var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+    if (status)
+      reportData.reportInfo.updateRCP(reportData.missionName)
+  }
 	counters.FLU++;
 }
 //#endregion
@@ -215,9 +219,11 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
 
-	var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
-	if (status)
-		reportData.reportInfo.updateRCP(reportData.missionName)
+  if (filtrationSpecs.Status === "Finalizado") {
+    var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+    if (status)
+      reportData.reportInfo.updateRCP(reportData.missionName)
+  }
 	counters.FIL++;
 }
 //#endregion
