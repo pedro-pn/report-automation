@@ -83,7 +83,6 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	  reportNumber: reportNumber,
 	  reportType: reportType,
 	  item: item,
-	  counters: counters,
 	  isEdit: isEdit
 	};
   
@@ -102,8 +101,6 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
     return ;
 
   var responseObject = JSON.parse(response)
-  var responseCounters = responseObject.counters
-  counters = responseCounters;
   var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
   reportBlobs.push(serviceReportBlob)
   reportIds[responseObject.type] +=`${responseObject.reportId},`;

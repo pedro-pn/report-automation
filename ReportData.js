@@ -105,7 +105,7 @@ var ReportData = (function() {
 			return (weekDays[weekDay]);
 		}
 		
-		searchFieldResponse(fieldName, item=0) {
+		searchFieldResponse(fieldName, item=1) {
 			var responses = [];
 			this.formResponsesDict.forEach(responseDict => {
 				for (let key in responseDict) {
@@ -115,7 +115,7 @@ var ReportData = (function() {
 					}
 				}
 			});
-			return (responses[item]);
+			return (responses[item - 1]);
 		}
 
 		getReportDate() {
@@ -156,14 +156,26 @@ var ReportData = (function() {
 		}
 
 		getFormResponsesAsDictionary() {
-			var allResponses = [];
-			this.formResponse.getItemResponses().forEach(function(itemResponse) {
-			var responseDict = {};
-			responseDict[itemResponse.getItem().getTitle()] = itemResponse.getResponse();
-			allResponses.push(responseDict);
-			});
+			var form = FormApp.getActiveForm();
+			var formItems = form.getItems();
+		  
+			var allResponses = new Array(formItems.length).fill("");
+			this.formResponse.getItemResponses().forEach( response => {
+				let responseItem = response.getItem();
+				let responseDict = {};
+				let responseIndex = formItems.findIndex(item => 
+					item.getId() === responseItem.getId()
+				);
+
+				if (responseIndex !== -1) {
+					responseDict[responseItem.getTitle()] = response.getResponse();
+					allResponses[responseIndex] = responseDict;
+				}
+			})
+
 			return (allResponses);
 		}
+
 
 		exportSheetToPDF() {
 			var token = ScriptApp.getOAuthToken();
@@ -186,9 +198,9 @@ var ReportData = (function() {
 			this.getReportFolder().createFile(blob)
 		}
 
-		makeReportSpreadsheetFile(reportDb) {
+		makeReportSpreadsheetFile(reportDb, item = 1) {
 			if (isEdit)
-				this.updateReportSpreadsheetFile(reportDb);
+				this.updateReportSpreadsheetFile(reportDb, item);
 			else
 				this.createReportSpreadSheetFile();
 		}
@@ -224,8 +236,8 @@ var ReportData = (function() {
 			}
 		}
 
-		updateReportSpreadsheetFile(reportDb) { // generalize this function
-			this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId());
+		updateReportSpreadsheetFile(reportDb, item = 1) { // generalize this function
+			this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId(item));
 			var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 			this.reportNum = this.getOldReportNum(oldReportFirstSheet);
 			var modelSheet = SpreadsheetApp.openById(ReportModelIds[reportType]).getSheets()[0];

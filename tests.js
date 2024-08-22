@@ -27,7 +27,6 @@ function remakeReports() {
 			}
 			// Call form submission handler with the fake event
 			onFormSubmit(fakeEvent);
-			setAllValuesToZero(counters);
 			setAllValuesToZero(reportBuffer);
 			reportBuffer.fill(0);
       reportIds = ["", "", "", "", "", ""];
@@ -44,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[86];
+		var testResponse = responses[79];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -102,4 +101,30 @@ function testSearchResponse() {
 	sendPostRequest(testResponse.getId());
 }
 
+function newDataStructTest() {
+	var form = FormApp.openById(formId); // Replace with your form ID
+  var responses = form.getResponses();
+	  if (responses.length > 0) {
+		  var testResponse = responses[79].getItemResponses();
+
+    var items = form.getItems();
+  console.log(testResponse)
+  var responseDict = new Array(items.length).fill(null);
+  testResponse.forEach( response => {
+    let responseItem = response.getItem();
+    let responseDict = {};
+    let responseIndex = items.findIndex(item => 
+      item.getId() === responseItem.getId()
+    );
+    if (responseIndex !== -1) {
+      responseDict[responseItem.getTitle()] = response.getResponse()
+      responseDict[responseIndex] = responseDict;
+    }
+  })
+
+  
+  console.log(responseDict); 
+
+}
+}
 //#endregion

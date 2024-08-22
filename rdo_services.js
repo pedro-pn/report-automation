@@ -7,7 +7,7 @@ function fillServicesFields(reportData) {
 }
 
 function fillItem(reportData, item) {
-    var service = reportData.searchFieldResponse(FormServicesFields.Service, item - 1)
+    var service = reportData.searchFieldResponse(FormServicesFields.Service, item)
 	if (service === "Teste de pressão")
 		fillPressureTest(reportData, item);
 	else if (service === "Limpeza química")
@@ -47,17 +47,17 @@ function	fillPressureTestStatements(cells) {
 
 function getPressureTestSpecs(reportData, item) {
 	var pressureTestSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, counters.TP),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, counters.TP),
-		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, counters.TP),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
+		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, item),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, item),
+		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
 	
 	return (pressureTestSpecs);
@@ -78,8 +78,6 @@ function	fillPressureTest(reportData, item) {
 	setValueToBuffer(cells.Info, pressureTestSpecs.Fluid);
 	setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
-
-	counters.TP++;
 }
 //#endregion
 
@@ -90,15 +88,15 @@ function fillDescalingStatements(cells) {
 
 function getDescalingSpecs(reportData, item) {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, counters.LQ),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
 	
 	return (descalingSpecs);
@@ -123,7 +121,6 @@ function fillDescaling(reportData, item) {
 	  if (status)
 		  reportData.reportInfo.updateRLQ(reportData.missionName)
   }
-	counters.LQ++;
 }
 //#endregion
 
@@ -136,18 +133,18 @@ function fillFlushingStatements(cells) {
 
 function getFlushingSpecs(reportData, item) {
 	var flushingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, counters.FLU),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2),
-		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, counters.OIL),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
+		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
+		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
 	
 	return (flushingSpecs);
@@ -174,7 +171,6 @@ function fillFlushing(reportData, item) {
     if (status)
       reportData.reportInfo.updateRCP(reportData.missionName)
   }
-	counters.FLU++;
 }
 //#endregion
 
@@ -187,17 +183,17 @@ function fillFiltrationStatements(cells) {
 
 function getFiltrationSpecs(reportData, item) {
 	var filtrationSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, counters.PC1),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, counters.PC2),
-		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, counters.VOL),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
+		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
 	
 	return (filtrationSpecs);
@@ -224,7 +220,6 @@ function fillFiltration(reportData, item) {
     if (status)
       reportData.reportInfo.updateRCP(reportData.missionName)
   }
-	counters.FIL++;
 }
 //#endregion
 
@@ -235,15 +230,15 @@ function fillTankCleaningStatements(cells) {
 
 function getTankCleaningSpecs(reportData, item) {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item - 1),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item - 1),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item - 1),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item - 1),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item - 1),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item - 1),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item - 1),
-		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.TankMaterial, counters.LR),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item - 1))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.TankMaterial, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
 	
 	return (descalingSpecs);
@@ -262,8 +257,6 @@ function fillTankCleaning(reportData, item) {
 	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
-
-	counters.LR++;
 }
 //#endregion
 

@@ -18,7 +18,7 @@ var ReportDb = (function() {
             }
         }
 
-        getReportSpreadsheetId() {
+        getReportSpreadsheetId(item = 1) {
             var cellValues= this.reportDbSheet.getDataRange().getValues();
 
             for (var i = 1; i < cellValues.length; i++) {
@@ -27,7 +27,7 @@ var ReportDb = (function() {
                     return (cellValues[i][reportType + 1]);
                   var reportIds = cellValues[i][reportType + 1].split(",");
 
-                  return (reportIds[getCounterByType(reportType) + 1]);
+                  return (reportIds[item - 1]);
                 }
             }
         }

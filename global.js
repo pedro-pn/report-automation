@@ -43,12 +43,3 @@ function setAllValuesToZero(obj) {
 	  obj[key] = 0;
 	});
 }
-
-function getCounterByType(service) {
-  switch (service) {
-    case ReportTypes.RCP:
-      return (counters.FLU + counters.FIL - 1);
-    case ReportTypes.RLQ:
-      return (counters.LQ + 1);
-  }
-}
