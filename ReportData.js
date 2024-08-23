@@ -105,18 +105,9 @@ var ReportData = (function() {
 			return (weekDays[weekDay]);
 		}
 		
-		searchFieldResponse(fieldName, item=1) {
-			var responses = [];
-			this.formResponsesDict.forEach(responseDict => {
-				for (let key in responseDict) {
-					if (responseDict.hasOwnProperty(key)) {
-						if (key.trim() === fieldName) 
-							responses.push(responseDict[key]);
-					}
-				}
-			});
-			return (responses[item - 1]);
-		}
+    searchFieldResponse(fieldName, item = 0) {
+      return (this.formResponsesDict[item][fieldName]);
+    }
 
 		getReportDate() {
 				var date = this.searchFieldResponse(HeaderFields.Date);
@@ -156,26 +147,25 @@ var ReportData = (function() {
 		}
 
 		getFormResponsesAsDictionary() {
-			var form = FormApp.getActiveForm();
-			var formItems = form.getItems();
+      var index = 0;
 		  
-			var allResponses = new Array(formItems.length).fill("");
+			var allResponses = {};
 			this.formResponse.getItemResponses().forEach( response => {
-				let responseItem = response.getItem();
-				let responseDict = {};
-				let responseIndex = formItems.findIndex(item => 
-					item.getId() === responseItem.getId()
-				);
+        let title = response.getItem().getTitle().trim();
+        if (title === "Selecione o tipo de serviço que deseja adicionar informações")
+          index++;
+        else if (title === "Em caso de hora extra, indicar o responsável a mesma")
+          index = 0;
+        else if (title === "Atividades/Observações")
+          index = 0;
+        if (!(index in allResponses))
+          allResponses[index] = {};
+				allResponses[index][title] = response.getResponse();
 
-				if (responseIndex !== -1) {
-					responseDict[responseItem.getTitle()] = response.getResponse();
-					allResponses[responseIndex] = responseDict;
-				}
 			})
 
 			return (allResponses);
 		}
-
 
 		exportSheetToPDF() {
 			var token = ScriptApp.getOAuthToken();

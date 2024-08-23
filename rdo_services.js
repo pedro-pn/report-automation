@@ -146,6 +146,7 @@ function getFlushingSpecs(reportData, item) {
 		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
 	}
+  console.log(flushingSpecs)
 	
 	return (flushingSpecs);
 }

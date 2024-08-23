@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[79];
+		var testResponse = responses[91];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -90,15 +90,15 @@ function showResponsesAndTitle() {
 function testSearchResponse() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var testResponse = responses[69];
+	var testResponse = responses[91];
 	let reportData = new ReportData.ReportData(testResponse);
 
-	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 0));
-	console.log(reportData.searchFieldResponse(FormServicesFields.InicialPartCount, 1));
-	console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 0));
-	console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 1));
+	console.log(reportData.searchFieldResponse(FormServicesFields.Type, 3));
+	console.log(reportData.searchFieldResponse(FormServicesFields.Type, 4));
+	// console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 0));
+	// console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 1));
 
-	sendPostRequest(testResponse.getId());
+	// sendPostRequest(testResponse.getId());
 }
 
 function newDataStructTest() {
@@ -109,7 +109,7 @@ function newDataStructTest() {
 
     var items = form.getItems();
   console.log(testResponse)
-  var responseDict = new Array(items.length).fill(null);
+  var responseDict = new Array(items.length).fill({});
   testResponse.forEach( response => {
     let responseItem = response.getItem();
     let responseDict = {};
