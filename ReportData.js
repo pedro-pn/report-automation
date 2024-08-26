@@ -106,7 +106,10 @@ var ReportData = (function() {
 		}
 		
     searchFieldResponse(fieldName, item = 0) {
-      return (this.formResponsesDict[item][fieldName]);
+      let responseField = this.formResponsesDict[item];
+      if (responseField !== undefined)
+        return (this.formResponsesDict[item][fieldName]);
+      return (null)
     }
 
 		getReportDate() {
@@ -163,7 +166,7 @@ var ReportData = (function() {
 				allResponses[index][title] = response.getResponse();
 
 			})
-
+      console.log(allResponses)
 			return (allResponses);
 		}
 
