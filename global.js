@@ -2,7 +2,7 @@ var reportBuffer;
 var isEdit = false;
 var reportBlobs = [];
 var reportType = 0;
-var reportIds = ["", "", "", "", "", ""];
+var reportIds = "";
 
 var counters = {
 	TP: 0,

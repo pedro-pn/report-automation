@@ -11,12 +11,11 @@ function onFormSubmit(formEvent) {
 	reportData.exportSheetToPDF();
   	reportBlobs.push(reportData.reportBlob);
 	sendReportViaEmail(reportData);
+	reportDb.logResponse(reportData.reportSpreadSheet.getId());
 	if (isEdit === true)
 		return ;
 	reportData.reportInfo.updateRDO(reportData.missionName);
 	reportData.reportInfo.updateReportInfo();
-	reportDb.logResponse(reportData.reportSpreadSheet.getId());
-	
 }
 
 function  fillReport(reportData) {

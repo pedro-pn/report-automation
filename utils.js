@@ -79,41 +79,41 @@ function getExportUrlRequest(spreadSheetId, sheetId) {
 
 function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	var payload = {
-	  formResponseId: formResponseId,
-	  reportNumber: reportNumber,
-	  reportType: reportType,
-	  item: item,
-	  isEdit: isEdit
+		formResponseId: formResponseId,
+		reportNumber: reportNumber,
+		reportType: reportType,
+		item: item,
+		isEdit: isEdit
 	};
-  
+
 	var options = {
-	  'method': 'POST',
-	  'contentType': 'application/json',
-	  'payload': JSON.stringify(payload),
-	  'headers': {
+		'method': 'POST',
+		'contentType': 'application/json',
+		'payload': JSON.stringify(payload),
+		'headers': {
 		'Authorization': 'Bearer ' + ScriptApp.getOAuthToken()
-	  }
+		}
 	};
-  
+
 	var response = UrlFetchApp.fetch(serviceReportApi, options);
 	// Logger.log('Response from Script A: ' + response.getContentText());
-  if (response.status === false)
-    return ;
+	if (response.status === false)
+		return ;
 
-  var responseObject = JSON.parse(response)
-  var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
-  reportBlobs.push(serviceReportBlob)
-  reportIds[responseObject.type] +=`${responseObject.reportId},`;
+	var responseObject = JSON.parse(response)
+	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
+	reportBlobs.push(serviceReportBlob)
+	reportIds += `,${responseObject.reportId}`;
 }
 
 function showAllRespondsLink() {
 	var form = FormApp.openById(formId);
 	var formResponds = form.getResponses();
-  var index = 0;
+	var index = 0;
 	formResponds.forEach(function(formResponse) {
 		Logger.log(formResponse.getItemResponses().map(function(itemResponse) {
 			return (itemResponse.getResponse());}));
 		console.log(formResponse.getEditResponseUrl());
-    console.log(index++)
+		console.log(index++)
 	})
 }

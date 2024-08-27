@@ -29,7 +29,7 @@ function remakeReports() {
 			onFormSubmit(fakeEvent);
 			setAllValuesToZero(reportBuffer);
 			reportBuffer.fill(0);
-      reportIds = ["", "", "", "", "", ""];
+      reportIds = "";
 			isEdit = false;
       reportBlobs = [];
       reportType = 0;
@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[70];
+		var testResponse = responses[94];
 		
 		// Create a fake event object
 		var fakeEvent = {

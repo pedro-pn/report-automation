@@ -191,7 +191,7 @@ var ReportData = (function() {
 			this.getReportFolder().createFile(blob)
 		}
 
-		makeReportSpreadsheetFile(reportDb, item = 1) {
+		makeReportSpreadsheetFile(reportDb, item = 0) {
 			if (isEdit)
 				this.updateReportSpreadsheetFile(reportDb, item);
 			else
@@ -203,7 +203,6 @@ var ReportData = (function() {
 			var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getReportFolder());
 			this.reportSpreadSheetFile = spreadSheetFileCopy;
 			this.setReportName();
-      reportIds[0] = this.reportSpreadSheetFile.getId();
 		}
 
 		setReportName() {
@@ -229,8 +228,13 @@ var ReportData = (function() {
 			}
 		}
 
-		updateReportSpreadsheetFile(reportDb, item = 1) { // generalize this function
-			this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId(item));
+		updateReportSpreadsheetFile(reportDb, item = 0) { // generalize this function
+			try {
+				this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId(item));
+			} catch {
+				this.createReportSpreadSheetFile();
+				return ;
+			}
 			var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 			this.reportNum = this.getOldReportNum(oldReportFirstSheet);
 			var modelSheet = SpreadsheetApp.openById(ReportModelIds[reportType]).getSheets()[0];
@@ -244,6 +248,8 @@ var ReportData = (function() {
 			var reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
 			var newReportName = this.reportSpreadSheet.getName().replace(reportNameModel, `${this.date} - ${this.getWeekDay()}`);
 			this.reportSpreadSheet.rename(newReportName);
+
+
 		}
 	}
 	return ({ReportData: ReportData});
