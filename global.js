@@ -1,5 +1,6 @@
 var reportBuffer;
 var isEdit = false;
+var newService = false;
 var reportBlobs = [];
 var reportType = 0;
 var reportIds = "";

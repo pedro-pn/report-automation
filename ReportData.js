@@ -30,23 +30,19 @@ var ReportData = (function() {
 		}
 		
 		getRDONumber() {
-			if (isEdit === false)
-				return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
+			return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
 		}
 
 		getRLQNumber() {
-			if (isEdit === false)
-				return (this.reportInfo.getMissionInfo(this.missionName).RLQ + 1);
+			return (this.reportInfo.getMissionInfo(this.missionName).RLQ + 1);
 		}
 
 		getRCPNumber() {
-			if (isEdit === false)
-				return (this.reportInfo.getMissionInfo(this.missionName).RCP + 1)
+			return (this.reportInfo.getMissionInfo(this.missionName).RCP + 1)
 		}
 
 		getRLRNumber() {
-			if (isEdit === false)
-				return (this.reportInfo.getMissionInfo(this.missionName).RLR + 1)
+			return (this.reportInfo.getMissionInfo(this.missionName).RLR + 1)
 		}
 		
 		getClient() {
@@ -133,8 +129,6 @@ var ReportData = (function() {
 		}
 
 		openReportSpreadSheet() {
-			if (isEdit)
-				return ;
 			this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
 			this.reportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 		}
@@ -207,6 +201,9 @@ var ReportData = (function() {
 			var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getReportFolder());
 			this.reportSpreadSheetFile = spreadSheetFileCopy;
 			this.setReportName();
+      this.openReportSpreadSheet()
+      if (reportType)
+        newService = true;
 		}
 
 		setReportName() {
@@ -232,13 +229,26 @@ var ReportData = (function() {
 			}
 		}
 
+    openExistingReportSpreadsheet(reportDb, item = 0) {
+      try {
+        this.reportSpreadSheetFile = DriveApp.getFileById(reportDb.getReportSpreadsheetId(item));
+      } catch {
+        this.createReportSpreadSheetFile()
+        return (false);
+      }
+      if (this.reportSpreadSheetFile.isTrashed()) {
+        this.createReportSpreadSheetFile();
+        return (false);
+      }
+      else
+			  this.openReportSpreadSheet();
+        return (true);
+    }
+
 		updateReportSpreadsheetFile(reportDb, item = 0) { // generalize this function
-			try {
-				this.reportSpreadSheet = SpreadsheetApp.openById(reportDb.getReportSpreadsheetId(item));
-			} catch {
-				this.createReportSpreadSheetFile();
-				return ;
-			}
+			let openStatus = this.openExistingReportSpreadsheet(reportDb, item);
+      if (openStatus === false)
+        return ;
 			var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
 			this.reportNum = this.getOldReportNum(oldReportFirstSheet);
 			var modelSheet = SpreadsheetApp.openById(ReportModelIds[reportType]).getSheets()[0];
@@ -252,8 +262,6 @@ var ReportData = (function() {
 			var reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
 			var newReportName = this.reportSpreadSheet.getName().replace(reportNameModel, `${this.date} - ${this.getWeekDay()}`);
 			this.reportSpreadSheet.rename(newReportName);
-
-
 		}
 	}
 	return ({ReportData: ReportData});

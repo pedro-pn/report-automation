@@ -4,7 +4,6 @@ function onFormSubmit(formEvent) {
 	reportDb.setEditFlag();
 	let reportData = new ReportData.ReportData(formResponse);
 	reportData.makeReportSpreadsheetFile(reportDb);
-	reportData.openReportSpreadSheet();
 	fillReport(reportData);
 	SpreadsheetApp.flush();
 

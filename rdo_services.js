@@ -27,13 +27,13 @@ function makeServiceReport(reportData, reportNumber, type, item) {
 	var reportId = reportData.formResponse.getId();
 
 	// try {
-		sendPostRequest(reportId, reportNumber, type, item);
-		return (true);
+	let status = sendPostRequest(reportId, reportNumber, type, item);
+	return (status);
   
 	// } catch (error) {
 	  Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
 	// }
-	return (false)
+
 }
 
 //#endregion

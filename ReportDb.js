@@ -28,11 +28,12 @@ var ReportDb = (function() {
 		}
 
 		logResponse(reportSpreadsheetId) {
-			var cellValues = this.reportDbSheet.getDataRange().getValues();
+      var cellRange = this.reportDbSheet.getDataRange()
+			var cellValues = cellRange.getValues();
 
 			for (var i = 1; i < cellValues.length; i++) {
 				if (cellValues[i][0] === this.formResponseId) {
-					cellValues[i][1] == this.formResponseId + reportIds;
+					cellRange.getCell(i + 1, 2).setValue(reportSpreadsheetId + reportIds);
 					return ;
 				}
 			}

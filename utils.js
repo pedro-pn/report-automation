@@ -104,6 +104,7 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
 	reportBlobs.push(serviceReportBlob)
 	reportIds += `,${responseObject.reportId}`;
+  return (responseObject.newService);
 }
 
 function cellStringToNumber(cellString) {

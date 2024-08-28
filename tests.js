@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[64];
+		var testResponse = responses[95];
 		
 		// Create a fake event object
 		var fakeEvent = {
