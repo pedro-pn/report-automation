@@ -98,6 +98,7 @@ var ReportHeaderCells = {
 }
 
 var ReportFooterCells = {
+	Ass: "B60",
 	NightShiftOvertime: "D56",
 	DayShiftOvertime: "D55",
 	OvertimeComment: "B57",

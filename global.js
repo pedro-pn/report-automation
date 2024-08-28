@@ -23,10 +23,8 @@ var counters = {
 }
 
 function setValueToBuffer(cellString, content) {
-	var columnLetter = cellString.charAt(0);
-	var columnNumber = columnLetter.charCodeAt(0) - 65;
-	var rowNumber = parseInt(cellString.substring(1)) - 1;
-	reportBuffer[rowNumber][columnNumber] = content;
+	var cellNumbers = cellStringToNumber(cellString)
+	reportBuffer[cellNumbers[0]][cellNumbers[1]] = content;
 }
 
 function getValueFromBuffer(cellString) {

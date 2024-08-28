@@ -97,15 +97,15 @@ function fillStandByField(reportData) {
 }
 
 function fillLeaderField(reportData) {
-	const leaderId = reportData.reportInfo.getMissionInfo(reportData.missionName).Leader;
-	const leaderInfo = reportData.reportInfo.getLeaderInfo(leaderId);
+	const leaderId = reportData.getMissionInfos().Leader;
+	const leaderInfo = reportData.getLeaderInfos();
 
 	setValueToBuffer(ReportFooterCells.Leader, leaderInfo.Name);
 	setValueToBuffer(ReportFooterCells.Position, leaderInfo.Position);
 }
 
 function fillClientLeaderField(reportData) {
-	const leader = reportData.reportInfo.getMissionInfo(reportData.missionName).ClientLeader;
+	const leader = reportData.getMissionInfos().ClientLeader;
 	const position = reportData.reportInfo.getMissionInfo(reportData.missionName).ClientLeaderPosition;
 
 	setValueToBuffer(ReportFooterCells.ClientLeader, leader);
@@ -137,10 +137,22 @@ function fillReportFooter(reportData) {
 	fillStandByField(reportData);
 	fillLeaderField(reportData);
 	fillClientLeaderField(reportData);
+	fillSignField(reportData, ReportFooterCells.Ass, 100);
 }
 
 function fillActivities(reportData) {
     const activities = reportData.searchFieldResponse(HeaderFields.Activities)
 	setValueToBuffer(ReportHeaderCells.Activities, activities.replace(/\n{2,}/g, '\n'));
 }
+
+function fillSignField(reportData, cell, width) {
+	let imageBlob = DriveApp.getFileById(reportData.getLeaderInfos().Ass).getBlob();
+  let cellNum = cellStringToNumber(cell);
+ 
+	let image = reportData.reportFirstSheet.insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
+	let ratio = image.getHeight() / image.getWidth();
+	image.setWidth(width);
+	image.setHeight(width * ratio);
+}
+
 //#endregion

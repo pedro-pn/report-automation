@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[94];
+		var testResponse = responses[64];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -125,6 +125,20 @@ function newDataStructTest() {
   
   console.log(responseDict); 
 
+	}
 }
+
+function assCellTest() {
+	let assImage = DriveApp.getFileById("1PJYmqohN7Jr1JHZXKvid_lUTkM2lw8En").getBlob();
+	let reportSpreadSheet = SpreadsheetApp.openById(ReportModelIds[2]);
+	let reportSheet = reportSpreadSheet.getSheets()[0];
+	let range = reportSheet.getRange("B57");
+  
+	var image = reportSheet.insertImage(assImage, range.getColumn(), range.getRow())
+  
+	let imageRatio = image.getHeight()/image.getWidth();
+	image.setWidth(150);
+	image.setHeight(150 * imageRatio);
+	
 }
 //#endregion

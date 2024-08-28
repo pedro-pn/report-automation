@@ -53,6 +53,10 @@ var ReportData = (function() {
 			return (this.reportInfo.getMissionInfo(this.missionName).Client);
 		}
 
+		getMissionInfos() {
+			return (this.reportInfo.getMissionInfo(this.missionName));
+		}
+
 		getLeaderInfos() {
 			var leaderId = this.reportInfo.getMissionInfo(this.missionName).Leader;
 			return (this.reportInfo.getLeaderInfo(leaderId));

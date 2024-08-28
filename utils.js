@@ -106,6 +106,14 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item) {
 	reportIds += `,${responseObject.reportId}`;
 }
 
+function cellStringToNumber(cellString) {
+    var columnLetter = cellString.charAt(0);
+	  var columnNumber = columnLetter.charCodeAt(0) - 65;
+	  var rowNumber = parseInt(cellString.substring(1)) - 1;
+
+    return ([rowNumber, columnNumber]);
+}
+
 function showAllRespondsLink() {
 	var form = FormApp.openById(formId);
 	var formResponds = form.getResponses();
