@@ -24,6 +24,10 @@ var ReportLib = (function() {
 			return (this.reportInfoData.Parameters);
 		}
 
+		getManometers() {
+			return (this.reportInfoData.Manometers);
+		}
+
 		updateRDO(missionName) {
 			this.getMissionInfo(missionName).RDO += 1;
 		}

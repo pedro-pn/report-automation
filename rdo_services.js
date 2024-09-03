@@ -78,6 +78,12 @@ function	fillPressureTest(reportData, item) {
 	setValueToBuffer(cells.Info, pressureTestSpecs.Fluid);
 	setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
+
+	if (pressureTestSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getRTPNumber(), ReportTypes.RTP, item)
+		if (status)
+			reportData.reportInfo.updateRTP(reportData.missionName)
+	}
 }
 //#endregion
 

@@ -18,6 +18,7 @@ var ReportTypesString = {
 
 var ReportModelIds = {
 	0: "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM", // RDO
+	1: "10LbzYMJzF-zMYsYk7N5zB1AgW7-9QQZ3nsZUWu-VKN4", // RTP
 	2: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU", // RLQ
 	3: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so", // RCPU
 }

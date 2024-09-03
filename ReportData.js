@@ -20,6 +20,8 @@ var ReportData = (function() {
 			switch (reportType) {
 				case ReportTypes.RDO:
 					return (this.getRDONumber());
+				case (ReportTypes.RTP):
+					return (this.getRTPNumber());
 				case (ReportTypes.RLQ):
 					return (this.getRLQNumber());
 				case (ReportTypes.RCP):
@@ -31,6 +33,10 @@ var ReportData = (function() {
 		
 		getRDONumber() {
 			return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
+		}
+
+		getRTPNumber() {
+			return (this.reportInfo.getMissionInfo(this.missionName).RTP + 1);
 		}
 
 		getRLQNumber() {
@@ -56,6 +62,10 @@ var ReportData = (function() {
 		getLeaderInfos() {
 			var leaderId = this.reportInfo.getMissionInfo(this.missionName).Leader;
 			return (this.reportInfo.getLeaderInfo(leaderId));
+		}
+
+		getManometer(name) {
+			return (this.reportInfo.getManometers()[name])
 		}
 
 		getShiftTime() {
@@ -210,6 +220,9 @@ var ReportData = (function() {
 			switch (reportType) {
 				case ReportTypes.RDO:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
+					break ;
+				case ReportTypes.RTP:
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} - `);
 					break ;
 				case ReportTypes.RLQ:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - `);

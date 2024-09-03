@@ -15,7 +15,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [71, 72, 73, 74, 77, 89, 90, 92, 93, 94]
+	var responsesNumber = [82, 76, 98]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[95];
+		var testResponse = responses[88];
 		
 		// Create a fake event object
 		var fakeEvent = {

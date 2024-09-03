@@ -5,7 +5,7 @@ function addItemToSpecificSectionAndPlace() {
     // Get all the items in the form
   
     // Define the section title where you want to add the item
-    var sectionTitle = "Flushing";
+    var sectionTitle = "Teste de pressão";
     var targetSectionIndex = -1;
     
     // Loop through items to find the target section
@@ -27,12 +27,43 @@ function addItemToSpecificSectionAndPlace() {
       }
     
       // Create a new multiple-choice item
-      var newItem = form.addMultipleChoiceItem();
-      newItem.setTitle('Serviço aprovado pelo cliente?')
+      var newItem = form.addCheckboxItem();
+      newItem.setTitle('Selecione os manômetros utilizados').setHelpText("O código PI pode ser encontrado na lateral do manômetro")
             .setChoices([
-              newItem.createChoice("Sim"),
-              newItem.createChoice('Não'),
-            ]);
+              newItem.createChoice('PI-04'),
+              newItem.createChoice('PI-05'),
+              newItem.createChoice('PI-19'),
+              newItem.createChoice('PI-22'),
+              newItem.createChoice('PI-26'),
+              newItem.createChoice('PI-32'),
+              newItem.createChoice('PI-33'),
+              newItem.createChoice('PI-34'),
+              newItem.createChoice('PI-35'),
+              newItem.createChoice('PI-36'),
+              newItem.createChoice('PI-37'),
+              newItem.createChoice('PI-38'),
+              newItem.createChoice('PI-39'),
+              newItem.createChoice('PI-40'),
+              newItem.createChoice('PI-41'),
+              newItem.createChoice('PI-43'),
+              newItem.createChoice('PI-44'),
+              newItem.createChoice('PI-45'),
+              newItem.createChoice('PI-46'),
+              newItem.createChoice('PI-47'),
+              newItem.createChoice('PI-48'),
+              newItem.createChoice('PI-49'),
+              newItem.createChoice('PI-50'),
+              newItem.createChoice('PI-51'),
+              newItem.createChoice('PI-52'),
+              newItem.createChoice('PI-53'),
+              newItem.createChoice('PI-54'),
+              newItem.createChoice('PI-55'),
+              newItem.createChoice('PI-56'),
+              newItem.createChoice('PI-57'),
+              newItem.createChoice('PI-59'),
+              newItem.createChoice('PI-60'),
+              newItem.createChoice('PI-61'),
+            ]).isRequired(true);
     
       // Get the items again, including the newly created one
       items = form.getItems();
@@ -42,7 +73,7 @@ function addItemToSpecificSectionAndPlace() {
       var newItemIndex = targetSectionIndex + 1;
     
       // Reorder the items
-      form.moveItem(items.length - 1, newItemIndex + 9);
+      form.moveItem(items.length - 1, newItemIndex + 12);
       }
     
   }
