@@ -34,3 +34,17 @@ function  fillReport(reportData) {
 	deleteEmptyServiceRows(reportData.reportFirstSheet, reportData.numOfServices);
 	setDotLineBorder(reportData);
 }
+
+//#region TEST AND DEBUG
+
+function onFormSubmitDEBUG(formEvent) {
+	var formResponse = formEvent.response;
+	let reportDb = new ReportDb.ReportDb(formResponse);
+	let reportData = new ReportData.ReportData(formResponse);
+	reportData.makeReportSpreadsheetFile(reportDb);
+	fillReport(reportData);
+	SpreadsheetApp.flush();
+
+}
+
+//#endregion

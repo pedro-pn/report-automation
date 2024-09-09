@@ -43,7 +43,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[88];
+		var testResponse = responses[105];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -56,6 +56,24 @@ var responses = form.getResponses();
 		Logger.log('No responses found.');
 	}
 }
+
+function testWithPreviousResponseDEBBUG() {
+	var form = FormApp.openById(formId); // Replace with your form ID
+	var responses = form.getResponses();
+		if (responses.length > 0) {
+			var testResponse = form.getResponse("2_ABaOnue64kTWlvDasOiyrF1IdSQbAjV99M2hfx8i5ttkeoJ44kpVFTb_bqaToVreRASSlII");
+			
+			// Create a fake event object
+			var fakeEvent = {
+			response: testResponse,
+			source: form
+			}
+			// Call form submission handler with the fake event
+			onFormSubmitDEBUG(fakeEvent);
+		} else {
+			Logger.log('No responses found.');
+		}
+	}
 
 function testReportData() {
 	var form = FormApp.openById(formId); // Replace with your form ID

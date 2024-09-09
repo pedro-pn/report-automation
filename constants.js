@@ -65,6 +65,7 @@ var FormServicesFields = {
 	Fluid: "Fluido do teste?",
 	Type: "Tipo de Flushing",
 	Status: "Serviço finalizado?",
+	Progress: "Este serviço começou em dias anteriores?",
 	Start: "Horário de início/continuação",
 	End: "Horário de término/pausa",
 	Inversion: "Inversão de fluxo",
@@ -231,8 +232,9 @@ var formId = "15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk"
 var reportFolderID = "1Fal8CBjtATle0l7MnhmP1LSJqUk7cB-9"
 var reportStandardFolderID = "10Yoluq2U6o5sQS-YGSMNs83a6GnwRru5"
 var spreadsheetDbId = "17P66MgM18LxaFnCZO3h82ai0F7vkSscbo8Ngvr9h9u8"
+var serviceDbId = "10HNrvBY8tx6VWzsOreN5HYV9Pdhq9eEB"
 
-const urlRequestString = "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
+var urlRequestString = "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
 /export?format=pdf\
 &size=A4\
 &portrait=true\

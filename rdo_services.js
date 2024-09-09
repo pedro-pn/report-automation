@@ -1,9 +1,13 @@
 //#region SERVICE HANDLER
 
 function fillServicesFields(reportData) {
+	serviceDbFile = DriveApp.getFileById(serviceDbId);
+	serviceDb = JSON.parse(serviceDbFile.getBlob().getDataAsString());
     for (var item = 1; item <= 6; item++) {
         reportData.numOfServices += fillItem(reportData, item);
     }
+	serviceDbFile.setContent(JSON.stringify(serviceDb, null, 2));
+  console.log(serviceDb)
 }
 
 function fillItem(reportData, item) {
@@ -84,6 +88,9 @@ function	fillPressureTest(reportData, item) {
 		if (status)
 			reportData.reportInfo.updateRTP(reportData.missionName)
 	}
+	else {
+		storeServiceData(reportData, item)
+	}
 }
 //#endregion
 
@@ -122,11 +129,15 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
-  if (descalingSpecs.Status === "Finalizado") {
-	  var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
-	  if (status)
-		  reportData.reportInfo.updateRLQ(reportData.missionName)
-  }
+	if (descalingSpecs.Status === "Finalizado") {
+		checkServiceProgress(reportData, item, RlqServiceDbFields)
+		// var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
+		// if (status)
+		// 	reportData.reportInfo.updateRLQ(reportData.missionName)
+	}
+  	else {
+		storeServiceData(reportData, item)
+  	}
 }
 //#endregion
 
@@ -178,6 +189,9 @@ function fillFlushing(reportData, item) {
     if (status)
       reportData.reportInfo.updateRCP(reportData.missionName)
   }
+  else {
+	storeServiceData(reportData, item, RlqCompareFields)
+}
 }
 //#endregion
 
@@ -227,6 +241,9 @@ function fillFiltration(reportData, item) {
     if (status)
       reportData.reportInfo.updateRCP(reportData.missionName)
   }
+  else {
+	storeServiceData(reportData, item)
+}
 }
 //#endregion
 
