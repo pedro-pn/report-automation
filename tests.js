@@ -15,7 +15,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [82, 76, 98]
+	var responsesNumber = [112, 113, 114, 117, 116]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -33,6 +33,7 @@ function remakeReports() {
 			isEdit = false;
       reportBlobs = [];
       reportType = 0;
+      serviceDb = {}
 		}
 	} else {
 		Logger.log('No responses found.');
@@ -119,8 +120,7 @@ function testSearchResponse() {
 	// sendPostRequest(testResponse.getId());
 }
 
-function newDataStructTest() {
-	var form = FormApp.openById(formId); // Replace with your form ID
+function newDataStructTest() { 
   var responses = form.getResponses();
 	  if (responses.length > 0) {
 		  var testResponse = responses[79].getItemResponses();

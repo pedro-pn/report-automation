@@ -34,6 +34,14 @@ function getDiffHour(startHourString, endHourString) {
 	return (hourDifference);
 }
 
+function sumTimeString(startTimeString, startTimeString) {
+	const startTime = hourStringToDate(startTimeString);
+	const endTime = hourStringToDate(startTimeString);
+	const timeSum = startTime.getTime() + endTime.getTime();
+	const hourSum = timeSum / (1000 * 60 * 60);
+
+	return (hoursToHourString(hourSum))
+}
 /**
  * Converts a time stamp number to a time stamp string in the format "XX:XX".
  *
@@ -77,13 +85,14 @@ function getExportUrlRequest(spreadSheetId, sheetId) {
 		reportSheetId: sheetId}));
 }
 
-function sendPostRequest(formResponseId, reportNumber, reportType, item) {
+function sendPostRequest(formResponseId, reportNumber, reportType, item, serviceObject) {
 	var payload = {
 		formResponseId: formResponseId,
 		reportNumber: reportNumber,
 		reportType: reportType,
 		item: item,
-		isEdit: isEdit
+		isEdit: isEdit,
+    	serviceObject: serviceObject
 	};
 
 	var options = {

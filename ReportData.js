@@ -174,7 +174,7 @@ var ReportData = (function() {
 				allResponses[index][title] = response.getResponse();
 
 			})
-      console.log(allResponses)
+      // console.log(allResponses)
 			return (allResponses);
 		}
 

@@ -9,7 +9,7 @@ function onFormSubmit(formEvent) {
 
 	reportData.exportSheetToPDF();
   	reportBlobs.push(reportData.reportBlob);
-	sendReportViaEmail(reportData);
+	// sendReportViaEmail(reportData);
 	reportDb.logResponse(reportData.reportSpreadSheet.getId());
 	if (isEdit === true)
 		return ;

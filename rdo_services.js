@@ -29,9 +29,9 @@ function fillItem(reportData, item) {
 
 function makeServiceReport(reportData, reportNumber, type, item) {
 	var reportId = reportData.formResponse.getId();
-
+  var serviceObject = reportData.formResponsesDict[item];
 	// try {
-	let status = sendPostRequest(reportId, reportNumber, type, item);
+	let status = sendPostRequest(reportId, reportNumber, type, item, serviceObject);
 	return (status);
   
 	// } catch (error) {
@@ -129,15 +129,12 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
 
+	checkServiceProgress(reportData, item, RlqServiceDbFields)
 	if (descalingSpecs.Status === "Finalizado") {
-		checkServiceProgress(reportData, item, RlqServiceDbFields)
-		// var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
-		// if (status)
-		// 	reportData.reportInfo.updateRLQ(reportData.missionName)
+		var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
+		if (status)
+			reportData.reportInfo.updateRLQ(reportData.missionName)
 	}
-  	else {
-		storeServiceData(reportData, item)
-  	}
 }
 //#endregion
 
@@ -161,9 +158,9 @@ function getFlushingSpecs(reportData, item) {
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
 		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
 	}
-  console.log(flushingSpecs)
 	
 	return (flushingSpecs);
 }
@@ -183,14 +180,13 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.Info, flushingSpecs.Oil);
 	setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
+	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
 
-  if (flushingSpecs.Status === "Finalizado") {
-    var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
-    if (status)
-      reportData.reportInfo.updateRCP(reportData.missionName)
-  }
-  else {
-	storeServiceData(reportData, item, RlqCompareFields)
+	checkServiceProgress(reportData, item, RcpServiceDbFields)
+	if (flushingSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+		if (status)
+			reportData.reportInfo.updateRCP(reportData.missionName)
 }
 }
 //#endregion
@@ -214,7 +210,8 @@ function getFiltrationSpecs(reportData, item) {
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
 		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
+		TotalTime: hoursToHourString(getDiffHour(this.StartTime, this.EndTime))
 	}
 	
 	return (filtrationSpecs);
@@ -235,15 +232,14 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.Info, filtrationSpecs.Volume);
 	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
+	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
 
-  if (filtrationSpecs.Status === "Finalizado") {
-    var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
-    if (status)
-      reportData.reportInfo.updateRCP(reportData.missionName)
-  }
-  else {
-	storeServiceData(reportData, item)
-}
+	checkServiceProgress(reportData, item, RcpServiceDbFields)
+	if (flushingSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+		if (status)
+			reportData.reportInfo.updateRCP(reportData.missionName)
+	}
 }
 //#endregion
 

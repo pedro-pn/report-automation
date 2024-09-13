@@ -15,26 +15,102 @@ var RlqServiceDbFields = {
     ]
 }
 
-var RlqConcatenationFields = [
-  "Tipo de inspeção",
-  "Método de limpeza",
-  FormServicesFields.Steps,
-  "Imagens de corpo de prova",
-  "Imagens da tubulação"
-]
+var RcpServiceDbFields = {
+    CompareFields: [
+      FormServicesFields.Service,
+      FormServicesFields.Equipament,
+      FormServicesFields.System,
+      FormServicesFields.Oil,
+      FormServicesFields.Type,
+    ],
+    ConcatenationFields: [
+      "Contagem de partículas",
+      FormServicesFields.DehydrationImg
+    ],
+    SubstituitionFields: [
+      FormServicesFields.InicialPartCount,
+      "Umidade inicial",
+    ],
+    TotalTimeField: [
+     "TotalTime"
+    ]
+}
 
-function concatenateServiceResponses(serviceObject, storedService, fields) {
+function checkServiceProgress(reportData, item, fields) {
+    isServiceNew = getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)" ? true: false;
+    isServiceFinished = getServiceFieldResponse(reportData, FormServicesFields.Status, item) === "Sim" ? true: false;
+
+    if (isServiceNew && isServiceFinished === false) {
+      storeServiceData(reportData, item);
+      return ;
+    }
+    else if (isServiceNew === true)
+      return ;
+
+    var currentServiceObject = reportData.formResponsesDict[item];
+    var dbStoredService = serviceDb[reportData.missionName];
+    var compareUnits = getCompareUnits(currentServiceObject, fields.CompareFields)
+    var bestScore = Infinity
+    var dbCompareUnits = []
+    var bestIndex = -1;
+
+    for (var i = 0; i < dbStoredService.length; i++) {
+      var score = calculateScore(compareUnits, dbStoredService[i], fields.CompareFields)
+        if (score < bestScore) {
+          bestScore = score;
+          bestIndex = i;
+        }
+        dbCompareUnits.push(dbStoredService[i])
+    }
+    // console.log(`=====================================\nservicesStored: \n${servicesStored}\n\nService in question: \n${serviceObject}\n\n\nBest score: ${bestScore}\tBest Index: ${bestIndex}\n\nBestService: ${servicesStored[bestIndex]}\n===================================`);
+    mergeServiceResponses(currentServiceObject, dbStoredService[bestIndex], fields)
+    // reportData.formResponsesDict[item] = dbStoredService[bestIndex]
+    console.log(reportData.formResponsesDict[item])
+    if (isServiceFinished)
+      dbStoredService.splice(bestIndex, 1)
+}
+
+function mergeServiceResponses(currentServiceObject, storedService, fields) {
+  if (fields.hasOwnProperty("SubstituitionFields"))
+    substituteServiceResponses(currentServiceObject, storedService, fields.SubstituitionFields)
+  if (fields.hasOwnProperty("TotalTimeField"))
+    sumTotalServiceTime(currentServiceObject, storedService, fields.TotalTimeField)
+  concatenateServiceResponses(currentServiceObject, storedService, fields.ConcatenationFields);
+}
+
+function sumTotalServiceTime(currentServiceObject, storedService, field) {
+  var currentTime = currentServiceObject[field[0]];
+  var storedTime = storedService[field[0]];
+  var totalTime = sumTimeString(currentTime, storedTime)
+  storedService[field[0]] = totalTime
+  currentServiceObject[field[0]] = totalTime
+}
+
+function substituteServiceResponses(currentServiceObject, storedService, fields) {
   for (let i = 0; i < fields.length; i++) {
-    console.log(`Dentro do concatenate loop: \nOriginal: `)
-    console.log(serviceObject[fields[i]])
-    let storeField = storedService[fields[i]];
-    let serviceField = serviceObject[fields[i]]
+    var storeField = storedService[fields[i]];
+    var serviceField = currentServiceObject[fields[i]]
     if (!(serviceField && storeField))
       continue ;
-    let concatenateService = storeField.concat(serviceField)
-    let fieldSet = new Set(concatenateService);
-    serviceField = Array.from(fieldSet);
-    console.log(`Stored: ${storeField}\nConcatenate: ${serviceField}`)
+    if (currentServiceObject.hasOwnProperty(fields[i]) && storedService.hasOwnProperty(fields[i])) {
+      if (serviceField < storeField)
+        currentServiceObject[fields[i]] = storeField;
+    }
+  }
+}
+
+function concatenateServiceResponses(currentServiceObject, storedService, fields) {
+  for (let i = 0; i < fields.length; i++) {
+    var storedField = storedService[fields[i]];
+    var serviceField = currentServiceObject[fields[i]]
+    if (!(serviceField && storedField))
+      continue ;
+    var concatenateService = storedField.concat(serviceField)
+    var fieldSet = new Set(concatenateService);
+    var fieldArray = Array.from(fieldSet);
+    storedService[fields[i]] = fieldArray
+    currentServiceObject[fields[i]] = fieldArray
+
   }
 }
 
@@ -47,49 +123,30 @@ function storeServiceData(reportData, item) {
       serviceDb[reportData.missionName] = [serviceObject];
 }
 
-function checkServiceProgress(reportData, item, fields) {
-    if (getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)")
-      return ;
-    var serviceObject = reportData.formResponsesDict[item];
-    var servicesStored = serviceDb[reportData.missionName];
-    var compareUnits = getCompareUnits(serviceObject, fields.CompareFields)
-    var bestScore = Infinity
-    var dbCompareUnits = []
-    var bestIndex = -1;
-
-    for (var i = 0; i < servicesStored.length; i++) {
-      let score = calculateScore(compareUnits, servicesStored[i], fields.CompareFields)
-        if (score < bestScore) {
-          bestScore = score;
-          bestIndex = i;
-        }
-        dbCompareUnits.push(servicesStored[i])
-    }
-    console.log(`=====================================\nservicesStored: \n${servicesStored}\n\nService in question: \n${serviceObject}\n\n\nBest score: ${bestScore}\tBest Index: ${bestIndex}\n\nBestService: ${servicesStored[bestIndex]}\n===================================`);
-    concatenateServiceResponses(serviceObject, servicesStored[bestIndex], fields.ConcatenationFields)
-    servicesStored.splice(bestIndex, 1)
-}
 
 function calculateScore(compareUnits, serviceStored, fields) {
-  console.log(compareUnits)
-  console.log(serviceStored)
   var storedCompareUnits = getCompareUnits(serviceStored, fields);
   var score = 0;
 
   if (storedCompareUnits[0] !== compareUnits[0])
     return (Infinity)
   for (let i = 1; i < compareUnits.length; i++) {
-    score += Levenshtein(compareUnits[i], storedCompareUnits[i]);
+    if (compareUnits[i])
+      score += Levenshtein(compareUnits[i], storedCompareUnits[i]);
   }
   
   return (score);
 }
 
-function getCompareUnits(serviceObject, fields) {
+function getCompareUnits(currentServiceObject, fields) {
   var compareUnits = [];
 
-  for (let i = 0; i < fields.length; i++)
-    compareUnits.push(serviceObject[fields[i]])
+  for (let i = 0; i < fields.length; i++) {
+    if (currentServiceObject.hasOwnProperty(fields[i]) == false)
+        continue ;
+    var unit = currentServiceObject[fields[i]];
+    compareUnits.push(unit)
+  }
 
   return (compareUnits);
 }
