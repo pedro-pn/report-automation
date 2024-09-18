@@ -93,7 +93,7 @@ function substituteServiceResponses(currentServiceObject, storedService, fields)
     if (!(serviceField && storeField))
       continue ;
     if (currentServiceObject.hasOwnProperty(fields[i]) && storedService.hasOwnProperty(fields[i])) {
-      if (serviceField < storeField)
+      if (serviceField < storeField && storeField !== "Não realizada")
         currentServiceObject[fields[i]] = storeField;
     }
   }
