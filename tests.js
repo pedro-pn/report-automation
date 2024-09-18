@@ -15,7 +15,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [112, 113, 114, 117, 116]
+	var responsesNumber = [121]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -44,7 +44,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[105];
+		var testResponse = responses[128];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -158,5 +158,75 @@ function assCellTest() {
 	image.setWidth(150);
 	image.setHeight(150 * imageRatio);
 	
+}
+
+// function showDiameters() {
+// 	var form = FormApp.openById(formId);
+// 	var formResponds = form.getResponses();
+// 	var index = 0;
+// 	var sectionPosition = false
+// 	var questionTitle = "Diâmetro e comprimento das tubulações"
+// 	formResponds.forEach(function(formResponse) {
+// 		Logger.log(formResponse.getItemResponses().map(function(itemResponse) {
+//       if (itemResponse.getTitle === "Missão" || )
+// 			if (itemResponse.getItem().getTitle() === "Limpeza química" && itemResponse.getItem().getType() === FormApp.ItemType.PAGE_BREAK)
+// 				sectionPosition = true
+// 			  if (sectionPosition && itemResponse.getItem().getTitle() == questionTitle) {
+// 				console.log(itemResponse.getResponse())
+// 				sectionPosition = false;
+// 			  }
+// 			return (itemResponse.getResponse());}));
+
+// 	})
+// }
+
+function getSpecificAnswers() {
+  // Open the form by its ID
+  var form = FormApp.openById(formId); // Replace with your form's ID
+  var responses = form.getResponses(); // Get all responses
+  
+  // Variables to hold the desired responses
+  var specificAnswers = [];
+
+  // Iterate through all form responses
+  for (var i = 0; i < responses.length; i++) {
+    if ([98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 133].includes(i) === false)
+      continue ;
+    var response = responses[i]
+    var itemResponses = response.getItemResponses(); // Get item responses for each form submission
+    // var foundSection = false;
+    var missaoIsGPS = false;
+    var tamanhoAnswer = "";
+
+    // Loop through each item response in the form submission
+    itemResponses.forEach(function(itemResponse) {
+      var item = itemResponse.getItem(); // Get the form item (question)
+      var title = item.getTitle();       // Get the title of the question
+
+      // Check for "Missão" field with value "GPS"
+      if (title === "Missão" && itemResponse.getResponse() === "Missão 5623 - UHE Monte Claro - GPS") {
+        missaoIsGPS = true;
+      }
+
+      // Check for the section with title "Limpeza Química"
+      // if (item.getHelpText() === "Limpeza química") {
+      //   foundSection = true;
+      // }
+
+      // Capture the "Tamanho" field response if found
+      if (title === "Diâmetro e comprimento das tubulações") {
+        tamanhoAnswer = itemResponse.getResponse();
+      }
+    });
+
+    // Store the answer if both the section and Missão conditions are met
+    if (missaoIsGPS && tamanhoAnswer !== "") {
+      specificAnswers.push(tamanhoAnswer);
+    }
+  };
+
+  // Log all specific answers
+  Logger.log("Specific Answers for 'Tamanho' where 'Missão' is 'GPS' and Section is 'Limpeza Química': ");
+  Logger.log(specificAnswers);
 }
 //#endregion
