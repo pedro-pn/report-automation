@@ -5,6 +5,7 @@ function sendReportViaEmail(reportData) {
 
     MailApp.sendEmail( {
         to: recipient,
+        cc: "leandro.correa@filtrovali.com.br, messias.fortunato@filtrovali.com.br, diego.monteiro@filtrovali.com.br",
         subject: subject,
         htmlBody: body,
         attachments: reportBlobs,
