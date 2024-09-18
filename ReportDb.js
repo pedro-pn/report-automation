@@ -27,17 +27,17 @@ var ReportDb = (function() {
 			return (null);
 		}
 
-		logResponse(reportSpreadsheetId) {
+		logResponse(reportData) {
       var cellRange = this.reportDbSheet.getDataRange()
 			var cellValues = cellRange.getValues();
 
 			for (var i = 1; i < cellValues.length; i++) {
 				if (cellValues[i][0] === this.formResponseId) {
-					cellRange.getCell(i + 1, 2).setValue(reportSpreadsheetId + reportIds);
+					cellRange.getCell(i + 1, 2).setValue(reportData.reportSpreadSheet.getId() + reportIds);
 					return ;
 				}
 			}
-			this.reportDbSheet.appendRow([this.formResponseId, `${reportSpreadsheetId}${reportIds}`]);
+			this.reportDbSheet.appendRow([this.formResponseId, `${reportData.reportSpreadSheet.getId()}${reportIds}`, reportData.missionName, reportData.reportNum, reportData.date]);
 		}
 	}
 

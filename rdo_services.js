@@ -211,7 +211,7 @@ function getFiltrationSpecs(reportData, item) {
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
 		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
-		TotalTime: hoursToHourString(getDiffHour(this.StartTime, this.EndTime))
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
 	}
 	
 	return (filtrationSpecs);
@@ -232,10 +232,10 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.Info, filtrationSpecs.Volume);
 	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
-	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
+	reportData.formResponsesDict[item]["TotalTime"] = filtrationSpecs.TotalTime;
 
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
-	if (flushingSpecs.Status === "Finalizado") {
+	if (filtrationSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
 		if (status)
 			reportData.reportInfo.updateRCP(reportData.missionName)

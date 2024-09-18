@@ -9,8 +9,8 @@ function onFormSubmit(formEvent) {
 
 	reportData.exportSheetToPDF();
   	reportBlobs.push(reportData.reportBlob);
-	// sendReportViaEmail(reportData);
-	reportDb.logResponse(reportData.reportSpreadSheet.getId());
+	sendReportViaEmail(reportData);
+	reportDb.logResponse(reportData);
 	if (isEdit === true)
 		return ;
 	reportData.reportInfo.updateRDO(reportData.missionName);
