@@ -15,6 +15,24 @@ var RlqServiceDbFields = {
     ]
 }
 
+var RtpServiceDbFields = {
+    CompareFields: [
+      FormServicesFields.Service,
+      FormServicesFields.Equipament,
+      FormServicesFields.System,
+      FormServicesFields.WorkPressure
+    ],
+    ConcatenationFields: [
+      FormServicesFields.Steps,
+      "Selecione os manômetros utilizados",
+      "Fotos dos manômetros (tag e escala)",
+      "Foto do sistema"
+    ],
+    TotalTimeField: [
+      "TotalTime"
+     ]
+}
+
 var RcpServiceDbFields = {
     CompareFields: [
       FormServicesFields.Service,

@@ -38,6 +38,8 @@ var ReportDb = (function() {
 				}
 			}
 			this.reportDbSheet.appendRow([this.formResponseId, `${reportData.reportSpreadSheet.getId()}${reportIds}`, reportData.missionName, reportData.reportNum, reportData.date]);
+      let lastRow = this.reportDbSheet.getLastRow();
+      this.reportDbSheet.getRange(lastRow, 6).setFormula('=HYPERLINK("' + reportData.formResponse.getEditResponseUrl() + '"; "' + "Edit" + '")');
 		}
 	}
 

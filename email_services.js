@@ -1,11 +1,23 @@
 function sendReportViaEmail(reportData) {
     var recipient = reportData.getLeaderInfos().Email;
     var subject = generateEmailSubject(reportData);
+    var cc = reportData.reportParams.Cc;
+    var bcc = reportData.reportParams.Bcc;
     var body = generateEmailBody(reportData);
 
+    if (debug) {
+      MailApp.sendEmail( {
+        to: bcc,
+        subject: subject,
+        htmlBody: body,
+        attachments: reportBlobs,
+       })
+      return ;
+    }
     MailApp.sendEmail( {
         to: recipient,
-        cc: "leandro.correa@filtrovali.com.br, messias.fortunato@filtrovali.com.br, diego.monteiro@filtrovali.com.br",
+        cc: cc,
+        bcc: bcc,
         subject: subject,
         htmlBody: body,
         attachments: reportBlobs,

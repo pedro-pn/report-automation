@@ -203,32 +203,32 @@ var ReportData = (function() {
 			if (isEdit)
 				this.updateReportSpreadsheetFile(reportDb, item);
 			else
-				this.createReportSpreadSheetFile();
+				this.createReportSpreadSheetFile(item);
 		}
 
-		createReportSpreadSheetFile() {
+		createReportSpreadSheetFile(item = 0) {
 			var modelSpreadSheetFile = SpreadsheetApp.openById(ReportModelIds[reportType]);
 			var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getReportFolder());
 			this.reportSpreadSheetFile = spreadSheetFileCopy;
-			this.setReportName();
+			this.setReportName(item);
       this.openReportSpreadSheet()
       if (reportType)
         newService = true;
 		}
 
-		setReportName() {
+		setReportName(item = 0) {
 			switch (reportType) {
 				case ReportTypes.RDO:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
 					break ;
 				case ReportTypes.RTP:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} - `);
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} teste - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
 				case ReportTypes.RLQ:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - `);
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
 				case ReportTypes.RCP:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RCP ${this.reportNum} - `);
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RCP ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
 			}
 		}

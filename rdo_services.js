@@ -7,7 +7,7 @@ function fillServicesFields(reportData) {
         reportData.numOfServices += fillItem(reportData, item);
     }
 	serviceDbFile.setContent(JSON.stringify(serviceDb, null, 2));
-  console.log(serviceDb)
+  // console.log(serviceDb)
 }
 
 function fillItem(reportData, item) {
@@ -61,7 +61,8 @@ function getPressureTestSpecs(reportData, item) {
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
 		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, item),
 		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
 	}
 	
 	return (pressureTestSpecs);
@@ -82,15 +83,14 @@ function	fillPressureTest(reportData, item) {
 	setValueToBuffer(cells.Info, pressureTestSpecs.Fluid);
 	setValueToBuffer(cells.Steps, pressureTestSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
+	reportData.formResponsesDict[item]["TotalTime"] = pressureTestSpecs.TotalTime;
 
+	checkServiceProgress(reportData, item, RtpServiceDbFields)
 	if (pressureTestSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRTPNumber(), ReportTypes.RTP, item)
 		if (status)
 			reportData.reportInfo.updateRTP(reportData.missionName)
-	}
-	else {
-		storeServiceData(reportData, item)
-	}
+}
 }
 //#endregion
 
@@ -107,6 +107,7 @@ function getDescalingSpecs(reportData, item) {
 		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
+    Size: getServiceFieldResponse(reportData, FormServicesFields.Size, item),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
 		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, item),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
@@ -127,7 +128,7 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Status, descalingSpecs.Status);
 	setValueToBuffer(cells.ParamOne, descalingSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
-	setValueToBuffer(cells.Obs, descalingSpecs.Obs);
+	setValueToBuffer(cells.Obs, descalingSpecs.Obs + (descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"" + descalingSpecs.Size);
 
 	checkServiceProgress(reportData, item, RlqServiceDbFields)
 	if (descalingSpecs.Status === "Finalizado") {

@@ -5,6 +5,7 @@ var reportBlobs = [];
 var reportType = 0;
 var reportIds = "";
 var serviceDb = {};
+var debug = false;
 
 function setValueToBuffer(cellString, content) {
 	var cellNumbers = cellStringToNumber(cellString)

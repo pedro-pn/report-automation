@@ -15,7 +15,7 @@ function showAllResponses() {
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
-	var responsesNumber = [121]
+	var responsesNumber = [137, 139]
 	if (responses.length > 0) {
 		for (var i = 0; i < responsesNumber.length; i++) {
 			var testResponse = responses[responsesNumber[i]];
@@ -44,7 +44,7 @@ function testWithPreviousResponse() {
 var form = FormApp.openById(formId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
-		var testResponse = responses[128];
+		var testResponse = responses[137];
 		
 		// Create a fake event object
 		var fakeEvent = {
@@ -59,10 +59,11 @@ var responses = form.getResponses();
 }
 
 function testWithPreviousResponseDEBBUG() {
+  debug = true;
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
 		if (responses.length > 0) {
-			var testResponse = form.getResponse("2_ABaOnue64kTWlvDasOiyrF1IdSQbAjV99M2hfx8i5ttkeoJ44kpVFTb_bqaToVreRASSlII");
+			var testResponse = form.getResponse("2_ABaOnufrOR5jLVd9Bdg0vrdqiYB7vWEQy70QQqmKrIU4hgv9-gDeqf-TzIbymAYEtUF1mAo");
 			
 			// Create a fake event object
 			var fakeEvent = {
@@ -70,7 +71,7 @@ function testWithPreviousResponseDEBBUG() {
 			source: form
 			}
 			// Call form submission handler with the fake event
-			onFormSubmitDEBUG(fakeEvent);
+			onFormSubmit(fakeEvent);
 		} else {
 			Logger.log('No responses found.');
 		}
