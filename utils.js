@@ -25,6 +25,7 @@ function getDiffHourAbs(hourStringOne, hourStringTwo) {
  */
 
 function getDiffHour(startHourString, endHourString) {
+  console.log(`Start ${startHourString},   end: ${endHourString}`)
 	const startTime = hourStringToDate(startHourString);
 	const endTime = hourStringToDate(endHourString);
 	if (endTime.getTime() < startTime.getTime())
@@ -34,14 +35,23 @@ function getDiffHour(startHourString, endHourString) {
 	return (hourDifference);
 }
 
-function sumTimeString(startTimeString, startTimeString) {
-	const startTime = hourStringToDate(startTimeString);
-	const endTime = hourStringToDate(startTimeString);
-	const timeSum = startTime.getTime() + endTime.getTime();
-	const hourSum = timeSum / (1000 * 60 * 60);
+function sumTimeString(time1, time2) {
+  // Split the time strings by ":"
+  let [hours1, minutes1] = time1.split(":").map(Number);
+  let [hours2, minutes2] = time2.split(":").map(Number);
+  
+  // Sum hours and minutes
+  let totalMinutes = minutes1 + minutes2;
+  let totalHours = hours1 + hours2;
 
-	return (hoursToHourString(hourSum))
+  // If total minutes are 60 or more, add the extra hour
+  totalHours += Math.floor(totalMinutes / 60);
+  totalMinutes = totalMinutes % 60;  // Get remaining minutes
+
+  // Return the result in "HH:MM" format
+  return `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}`;
 }
+
 /**
  * Converts a time stamp number to a time stamp string in the format "XX:XX".
  *
