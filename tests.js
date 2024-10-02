@@ -14,11 +14,19 @@ function showAllResponses() {
 
 function remakeReports() {
 	var form = FormApp.openById(formId); // Replace with your form ID
-	var responses = form.getResponses();
+	// var responses = form.getResponses();
 	var responsesNumber = [137, 139]
-	if (responses.length > 0) {
-		for (var i = 0; i < responsesNumber.length; i++) {
-			var testResponse = responses[responsesNumber[i]];
+  var responsesIds = [
+    // "2_ABaOnueZu97B3knl3FGFj3aULqC0Thf2fztSqrWIQ5RffeoqTld_cWyHGVKs7coIE20-lUg",
+    // "2_ABaOnue7_WMD_mQzlhjrZEFWXPseXAy9Y-vn0CCLvnwTtxl5-_PF8AUHzsn4SPf7KgQU6bM",
+    // "2_ABaOnudae6VYMOuAlmpxbP9JqT_8lRP7e3i099OYgbV1G7uGm2RVLq8W3oC8RV_Lf8fRUqg",
+    // "2_ABaOnudcv8Uu5eE4fWt8IfzwmnZRzliaSe9MHJ7jw0cMbc0Mj4fFWcjCU9tiJVpi7XWYCeY",
+    // "2_ABaOnudhVSGgjodLWEp5f2xNJ9TDY70xpiM2p20QIWDvwmsZt7RCxD8tAAYr8WsTXNCcNFk",
+    "2_ABaOnueDzaZjjS5f6fq535kNw_XFslQ0cp-Q5ym996-z77JoIG9MQCJ-Ri-CZMaqL-yIuDA"
+  ]
+	if (responsesIds.length > 0) {
+		for (var i = 0; i < responsesIds.length; i++) {
+			var testResponse = form.getResponse(responsesIds[i]);
 
 			// Create a fake event object
 			var fakeEvent = {
@@ -63,7 +71,7 @@ function testWithPreviousResponseDEBBUG() {
 	var form = FormApp.openById(formId); // Replace with your form ID
 	var responses = form.getResponses();
 		if (responses.length > 0) {
-			var testResponse = form.getResponse("2_ABaOnufrOR5jLVd9Bdg0vrdqiYB7vWEQy70QQqmKrIU4hgv9-gDeqf-TzIbymAYEtUF1mAo");
+			var testResponse = form.getResponse("2_ABaOnudd728UG0s4KXxUVibnLeiJXd0QXBAYyfUgU2DkCmFxEK869pZ6i4k1kLZ4uVtZxr0");
 			
 			// Create a fake event object
 			var fakeEvent = {

@@ -81,7 +81,7 @@ function addItemToSpecificSectionAndPlace() {
 function editItemOfSpecificSections() {
   var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
   var sectionTitle = "Limpeza química";
-  var questionTitle = "Imagens da tubulação "
+  var questionTitle = "Etapas realizadas no dia"
   var sectionPosition = false;
   var items = form.getItems();
 
@@ -89,7 +89,21 @@ function editItemOfSpecificSections() {
       if (items[i].getTitle() === sectionTitle && items[i].getType() === FormApp.ItemType.PAGE_BREAK)
         sectionPosition = true
       if (sectionPosition && items[i].getTitle() == questionTitle) {
-        items[i].setHelpText("Adicionar fotos antes e depois da decapagem. Não é necessário repetir fotos já adicionadas, caso tenham sido adicionadas em dias anteriores.\nCada RLQ só aceita até 8 imagens.")
+        console.log("Ihu")
+        var choices = [
+          "Montagem do Sistema",
+          "Teste de estanqueidade",
+          "Desengraxe",
+          "Fase ácida",
+          "Fase sequestrante",
+          "Fase neutralizante",
+          "Fase passivante",
+          "Secagem",
+          "Desmontagem do sistema",
+          "Inspeção por boroscopia"
+        ]
+        items[i].asCheckboxItem().setChoiceValues(choices);
+
         sectionPosition = false;
       }
   }
