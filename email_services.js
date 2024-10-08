@@ -1,7 +1,7 @@
 function sendReportViaEmail(reportData) {
-    var recipient = reportData.getLeaderInfos().Email;
+    var recipient = reportData.reportParams.Recipient;
     var subject = generateEmailSubject(reportData);
-    var cc = reportData.reportParams.Cc;
+    var cc = reportData.getLeaderInfos().Email;
     var bcc = reportData.reportParams.Bcc;
     var body = generateEmailBody(reportData);
 
