@@ -100,16 +100,16 @@ var ReportHeaderCells = {
 }
 
 var ReportFooterCells = {
-	Ass: "B60",
-	NightShiftOvertime: "D56",
-	DayShiftOvertime: "D55",
-	OvertimeComment: "B57",
-	StandByTime: "J55",
-	StandByMotive: "J56",
-	Leader: "B58",
-	Position: "B59",
-	ClientLeader: "I58",
-	ClientPosition: "I59"
+	Ass: "B81",
+	NightShiftOvertime: "D77",
+	DayShiftOvertime: "D76",
+	OvertimeComment: "B78",
+	StandByTime: "J76",
+	StandByMotive: "J77",
+	Leader: "B79",
+	Position: "B80",
+	ClientLeader: "I79",
+	ClientPosition: "I80"
 }
 
 var ReportServiceRespCells = {
@@ -214,6 +214,57 @@ var ReportServiceRespCells = {
 		InfoKey: "L49",
 		Steps: "B51",
 		Obs: "B52"
+	},
+
+	7: {
+		Service: "C54",
+		Equipament: "C55",
+		System: "C56",
+		StartTime: "I54",
+		EndTime: "M54",
+		Status: "I56",
+		ParamOne: "I55",
+		ParamTwo: "M55",
+		Info: "M56",
+		ParamOneKey: "G55",
+		ParamTwoKey: "K55",
+		InfoKey: "L56",
+		Steps: "B58",
+		Obs: "B59"
+	},
+
+	8: {
+		Service: "C61",
+		Equipament: "C62",
+		System: "C63",
+		StartTime: "I61",
+		EndTime: "M61",
+		Status: "I63",
+		ParamOne: "I62",
+		ParamTwo: "M62",
+		Info: "M63",
+		ParamOneKey: "G62",
+		ParamTwoKey: "K62",
+		InfoKey: "L63",
+		Steps: "B65",
+		Obs: "B66"
+	},
+
+	9: {
+		Service: "C68",
+		Equipament: "C69",
+		System: "C70",
+		StartTime: "I68",
+		EndTime: "M68",
+		Status: "I70",
+		ParamOne: "I69",
+		ParamTwo: "M49",
+		Info: "M70",
+		ParamOneKey: "G69",
+		ParamTwoKey: "K69",
+		InfoKey: "L70",
+		Steps: "B72",
+		Obs: "B73"
 	}	
 }
 
@@ -224,7 +275,10 @@ const ServiceRows = {
 	4: 32,
 	5: 39,
 	6: 46,
-	LastRow: 52
+	7: 53,
+	8: 60,
+	9: 67,
+	LastRow: 73
 }
 
 var reportInfoID = "1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk"

@@ -33,7 +33,7 @@ var ReportDb = (function() {
 
 			for (var i = 1; i < cellValues.length; i++) {
 				if (cellValues[i][0] === this.formResponseId) {
-					cellRange.getCell(i + 1, 2).setValue(reportData.reportSpreadSheet.getId() + reportIds);
+					this.reportDbSheet.getRange(i + 1, 1, 1, 5).setValues([[this.formResponseId, `${reportData.reportSpreadSheet.getId()}${reportIds}`, reportData.missionName, reportData.reportNum, reportData.date]]) // setValue(reportData.reportSpreadSheet.getId() + reportIds);
 					return ;
 				}
 			}

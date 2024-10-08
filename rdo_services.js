@@ -3,7 +3,7 @@
 function fillServicesFields(reportData) {
 	serviceDbFile = DriveApp.getFileById(serviceDbId);
 	serviceDb = JSON.parse(serviceDbFile.getBlob().getDataAsString());
-    for (var item = 1; item <= 6; item++) {
+    for (var item = 1; item <= 9; item++) {
         reportData.numOfServices += fillItem(reportData, item);
     }
 	serviceDbFile.setContent(JSON.stringify(serviceDb, null, 2));
@@ -85,6 +85,8 @@ function	fillPressureTest(reportData, item) {
 	setValueToBuffer(cells.Obs, pressureTestSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = pressureTestSpecs.TotalTime;
 
+  if (isEdit)
+    return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields)
 	if (pressureTestSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRTPNumber(), ReportTypes.RTP, item)
@@ -130,6 +132,8 @@ function fillDescaling(reportData, item) {
 	setValueToBuffer(cells.Steps, descalingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, descalingSpecs.Obs + (descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"" + descalingSpecs.Size);
 
+  if (isEdit)
+    return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields)
 	if (descalingSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
@@ -183,6 +187,8 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
 
+  if (isEdit)
+    return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
 	if (flushingSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
@@ -235,6 +241,8 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = filtrationSpecs.TotalTime;
 
+  if (isEdit)
+      return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
 	if (filtrationSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)

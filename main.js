@@ -18,7 +18,7 @@ function onFormSubmit(formEvent) {
 }
 
 function  fillReport(reportData) {
-	var reportCellsRange = reportData.reportFirstSheet.getRange("A1:P68");
+	var reportCellsRange = reportData.reportFirstSheet.getRange("A1:P82");
 	reportBuffer = reportCellsRange.getValues();
 	var formulas = reportCellsRange.getFormulas();
 	

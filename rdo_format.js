@@ -13,7 +13,7 @@ function setDotLineBorder(reportData) {
 }
 
 function deleteEmptyServiceRows(reportFirstSheet, servicesCount) {
-	if (servicesCount > 5)
+	if (servicesCount > 8)
 		return ;
 	var startRow = ServiceRows[servicesCount + 1]
 	var endRow = ServiceRows.LastRow - startRow + 1;
