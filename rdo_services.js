@@ -286,6 +286,15 @@ function fillTankCleaning(reportData, item) {
 	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
+
+	if (isEdit)
+		return ;
+	  checkServiceProgress(reportData, item, RlrServiceDbFields)
+	  if (tankCleaningSpecs.Status === "Finalizado") {
+		  var status = makeServiceReport(reportData, reportData.getRLRNumber(), ReportTypes.RLR, item)
+		  if (status)
+			  reportData.reportInfo.updateRLR(reportData.missionName)
+	  }
 }
 //#endregion
 

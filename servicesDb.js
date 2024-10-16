@@ -54,6 +54,20 @@ var RcpServiceDbFields = {
     ]
 }
 
+var RlrServiceDbFields = {
+  CompareFields: [
+    FormServicesFields.Service,
+    FormServicesFields.Equipament,
+    FormServicesFields.System,
+    FormServicesFields.Material
+  ],
+  ConcatenationFields: [
+    FormServicesFields.Steps,
+    "Imagens do reservatório",
+    "Imagens da boroscopia"
+  ]
+}
+
 function checkServiceProgress(reportData, item, fields) {
     isServiceNew = getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)" ? true: false;
     isServiceFinished = getServiceFieldResponse(reportData, FormServicesFields.Status, item) === "Sim" ? true: false;

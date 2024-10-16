@@ -230,6 +230,9 @@ var ReportData = (function() {
 				case ReportTypes.RCP:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RCP ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
+				case ReportTypes.RLR:
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RLR ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
+					break ;
 			}
 		}
 
