@@ -47,6 +47,10 @@ var ReportLib = (function() {
 		updateRLR(missionName) {
 			this.getMissionInfo(missionName).RLR += 1;
 		}
+
+		updateRLI(missionName) {
+			this.getMissionInfo(missionName).RLI += 1;
+		}
 	}
 	return ({
 		ReportInfo: ReportInfo

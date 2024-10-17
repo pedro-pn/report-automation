@@ -6,6 +6,7 @@ var ReportTypes = {
 	RLQ: 2,
 	RCP: 3,
 	RLR: 4,
+	RLI: 5,
 }
 
 var ReportTypesString = {
@@ -14,6 +15,7 @@ var ReportTypesString = {
 	2: "RLQ",
 	3: "RCP",
 	4: "RLR",
+	5: "RLI"
 }
 
 var ReportModelIds = {
@@ -78,6 +80,36 @@ var FormServicesFields = {
 	TankMaterial: "Material do reservatório",
 	Steps: "Etapas realizadas no dia",
 	Volume: "Volume de óleo",
+	Obs: "Observações"
+}
+
+var FormRLIFields = {
+	Service: "Selecione o tipo de serviço que deseja adicionar informações",
+	Equipament: "Nome do equipamento",
+	System: "Nome do sistema",
+	PipeMaterial: "Material das tubulações",
+	Size: "Diâmetro e comprimento das tubulações",
+	Status: "Serviço finalizado?",
+	Progress: "Este serviço começou em dias anteriores?",
+	Start: "Horário de início/continuação",
+	End: "Horário de término/pausa",
+	Degreasing: "Houve desengraxe do sistema neste dia?",
+	DegreasingDuration: "Duração do desengraxe",
+	DegreasingMethod: "Método de desengraxe",
+	DegreasingTemperature: "Temperatura durante o desengraxe",
+	Flushing: "Houve flushing do sistema neste dia?",
+	FlushingDuration: "Duração do flushing",
+	FlushingMethod: "Método de flushing",
+	FlushingTemperature: "Temperatura durante o flushing",
+	Inibition: "Houve inibição do sistema neste dia?",
+	InibitionDuration: "Duração da inibição",
+	InibitionMethod: "Método de inibição",
+	InibitionTemperature: "Temperatura durante a inibição",
+  Inspection: "Tipo de inspeção",
+	FilterImgs: "Imagens do filtro",
+	PlateImgs: "Imagens das plaquetas",
+	PhmeterImgs: "Imagens do phmetro",
+	Code: "Código do desenho da tubulação",
 	Obs: "Observações"
 }
 

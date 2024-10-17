@@ -50,6 +50,10 @@ var ReportData = (function() {
 		getRLRNumber() {
 			return (this.reportInfo.getMissionInfo(this.missionName).RLR + 1)
 		}
+
+		getRLINumber() {
+			return (this.reportInfo.getMissionInfo(this.missionName).RLI + 1)
+		}
 		
 		getClient() {
 			return (this.reportInfo.getMissionInfo(this.missionName).Client);
@@ -232,6 +236,9 @@ var ReportData = (function() {
 					break ;
 				case ReportTypes.RLR:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RLR ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
+					break ;
+				case ReportTypes.RLI:
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RLI ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
 			}
 		}

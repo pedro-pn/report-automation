@@ -15,6 +15,31 @@ var RlqServiceDbFields = {
     ]
 }
 
+var RliServiceDbFields = {
+    CompareFields: [
+      FormRLIFields.Service,
+      FormRLIFields.Equipament,
+      FormRLIFields.System,
+      FormRLIFields.PipeMaterial,
+      FormRLIFields.Size
+    ],
+    ConcatenationFields: [
+      FormRLIFields.DegreasingMethod,
+      FormRLIFields.FlushingMethod,
+      FormRLIFields.InibitionMethod,
+      FormRLIFields.Inspection,
+      FormRLIFields.FilterImgs,
+      FormRLIFields.PlateImgs,
+      FormRLIFields.PhmeterImgs
+
+    ],
+    TotalIntervalFields: [
+      "DegreaseInterval",
+      "FlushingInterval",
+      "InibitionInterval"
+    ]
+}
+
 var RtpServiceDbFields = {
     CompareFields: [
       FormServicesFields.Service,
@@ -107,7 +132,19 @@ function mergeServiceResponses(currentServiceObject, storedService, fields) {
     substituteServiceResponses(currentServiceObject, storedService, fields.SubstituitionFields)
   if (fields.hasOwnProperty("TotalTimeField"))
     sumTotalServiceTime(currentServiceObject, storedService, fields.TotalTimeField)
+  if (fields.hasOwnProperty("TotalIntervalFields"))
+    sumTotalIntervalFields(currentServiceObject, storedService, fields.TotalIntervalFields);
   concatenateServiceResponses(currentServiceObject, storedService, fields.ConcatenationFields);
+}
+
+function sumTotalIntervalFields(currentServiceObject, storedService, fields) {
+  for (let i = 0; i < fields.length; i++) {
+    let currentInterval = currentServiceObject[fields[i]];
+    let storedInterval = storedService[fields[i]];
+    let totalInterval = sumTimeString(currentInterval, storedInterval);
+    currentServiceObject[fields[i]] = totalInterval;
+    storedService[fields[i]] = totalInterval;
+  }
 }
 
 function sumTotalServiceTime(currentServiceObject, storedService, field) {

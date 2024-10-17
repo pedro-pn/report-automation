@@ -22,6 +22,8 @@ function fillItem(reportData, item) {
 		fillFiltration(reportData, item)
 	else if (service === "Limpeza de reservatório")
 		fillTankCleaning(reportData, item)
+	else if (service === "Limpeza e inibição")
+		fillInibition(reportData, item)
 	else
 		return (0)
 	return (1);
@@ -295,6 +297,76 @@ function fillTankCleaning(reportData, item) {
 		  if (status)
 			  reportData.reportInfo.updateRLR(reportData.missionName)
 	  }
+}
+//#endregion
+
+//#region Inibition
+function fillInibitionStatements(cells) {
+	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.PipeMaterial);
+}
+
+function getInibitionSpecs(reportData, item) {
+	var inibitionSpecs = {
+		StartTime: getServiceFieldResponse(reportData, FormRLIFields.Start, item),
+		EndTime: getServiceFieldResponse(reportData, FormRLIFields.End, item),
+		Equipament: getServiceFieldResponse(reportData, FormRLIFields.Equipament, item),
+		System: getServiceFieldResponse(reportData, FormRLIFields.System, item),
+		Service: getServiceFieldResponse(reportData, FormRLIFields.Service, item),
+		Obs: getInibitionObs(reportData, item),
+ 	    Size: getServiceFieldResponse(reportData, FormRLIFields.Size, item),
+		Steps:getInibitionSteps(reportData, item),
+		PipeMaterial: getServiceFieldResponse(reportData, FormRLIFields.PipeMaterial, item),
+		Status: getStatus(getServiceFieldResponse(reportData, FormRLIFields.Status, item)),
+		Code: getServiceFieldResponse(reportData, FormRLIFields.Code, item),
+		DegreaseInterval: getServiceFieldResponse(reportData, FormRLIFields.DegreasingDuration, item).slice(0, -3),
+		FlushingInterval: getServiceFieldResponse(reportData, FormRLIFields.FlushingDuration, item).slice(0, -3),
+		InibitionInterval: getServiceFieldResponse(reportData, FormRLIFields.InibitionDuration, item).slice(0, -3)
+	}
+	
+	return (inibitionSpecs);
+}
+
+function getInibitionObs(reportData, item) {
+	let code = getServiceFieldResponse(reportData, FormRLIFields.Code, item);
+	
+	return (`${code != "" ? `${code}\n`:""}${getServiceFieldResponse(reportData, FormRLIFields.Obs, item)}`)
+}
+
+function getInibitionSteps(reportData, item) {
+	let steps = [];
+
+	steps.push((getServiceFieldResponse(reportData, FormRLIFields.Degreasing, item) === "Sim") ? "Desengraxe":"")
+	steps.push((getServiceFieldResponse(reportData, FormRLIFields.Flushing, item) === "Sim") ? "Flushing":"")
+	steps.push((getServiceFieldResponse(reportData, FormRLIFields.Inibition, item) === "Sim") ? "Aplicação do inibidor":"")
+
+	return (steps.join(", "));
+}
+
+function fillInibition(reportData, item) {
+	var cells = ReportServiceRespCells[item];
+	var inibitionSpecs = getInibitionSpecs(reportData, item);
+	fillInibitionStatements(cells)
+	setValueToBuffer(cells.StartTime, inibitionSpecs.StartTime);
+	setValueToBuffer(cells.EndTime, inibitionSpecs.EndTime);
+	setValueToBuffer(cells.Equipament, inibitionSpecs.Equipament);
+	setValueToBuffer(cells.System, inibitionSpecs.System);
+	setValueToBuffer(cells.Service, inibitionSpecs.Service);
+	setValueToBuffer(cells.Status, inibitionSpecs.Status);
+	setValueToBuffer(cells.ParamOne, inibitionSpecs.PipeMaterial);
+	setValueToBuffer(cells.Steps, inibitionSpecs.Steps);
+	setValueToBuffer(cells.Obs, inibitionSpecs.Obs + (inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"" + inibitionSpecs.Size);
+	reportData.formResponsesDict[item]["DegreaseInterval"] = inibitionSpecs.DegreaseInterval;
+	reportData.formResponsesDict[item]["FlushingInterval"] = inibitionSpecs.FlushingInterval;
+	reportData.formResponsesDict[item]["InibitionInterval"] = inibitionSpecs.InibitionInterval;
+
+  if (isEdit)
+    return ;
+	checkServiceProgress(reportData, item, RliServiceDbFields)
+	// if (inibitionSpecs.Status === "Finalizado") {
+	// 	// var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
+	// 	if (status)
+	// 		reportData.reportInfo.updateRLI(reportData.missionName)
+	// }
 }
 //#endregion
 
