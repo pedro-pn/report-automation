@@ -354,7 +354,7 @@ function fillInibition(reportData, item) {
 	setValueToBuffer(cells.Status, inibitionSpecs.Status);
 	setValueToBuffer(cells.ParamOne, inibitionSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, inibitionSpecs.Steps);
-	setValueToBuffer(cells.Obs, inibitionSpecs.Obs + (inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"" + inibitionSpecs.Size);
+	setValueToBuffer(cells.Obs, inibitionSpecs.Obs + ((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size); //((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size)
 	reportData.formResponsesDict[item]["DegreaseInterval"] = inibitionSpecs.DegreaseInterval;
 	reportData.formResponsesDict[item]["FlushingInterval"] = inibitionSpecs.FlushingInterval;
 	reportData.formResponsesDict[item]["InibitionInterval"] = inibitionSpecs.InibitionInterval;
