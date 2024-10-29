@@ -362,11 +362,11 @@ function fillInibition(reportData, item) {
   if (isEdit)
     return ;
 	checkServiceProgress(reportData, item, RliServiceDbFields)
-	// if (inibitionSpecs.Status === "Finalizado") {
-	// 	// var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateRLI(reportData.missionName)
-	// }
+	if (inibitionSpecs.Status === "Finalizado") {
+		// var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
+		if (status)
+			reportData.reportInfo.updateRLI(reportData.missionName)
+	}
 }
 //#endregion
 

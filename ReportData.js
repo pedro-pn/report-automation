@@ -28,6 +28,8 @@ var ReportData = (function() {
 					return (this.getRCPNumber());
 				case (ReportTypes.RLR):
 					return (this.getRLRNumber());
+				case (ReportTypes.RLI):
+					return (this.getRLINumber());
 			}
 		}
 		

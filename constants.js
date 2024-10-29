@@ -23,7 +23,8 @@ var ReportModelIds = {
 	1: "10LbzYMJzF-zMYsYk7N5zB1AgW7-9QQZ3nsZUWu-VKN4", // RTP
 	2: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU", // RLQ
 	3: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so", // RCPU
-	4: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0" // RLR
+	4: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0", // RLR
+	5: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg" // RLI
 }
 
 var ReportServiceStatements = {
