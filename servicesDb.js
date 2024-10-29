@@ -139,17 +139,18 @@ function mergeServiceResponses(currentServiceObject, storedService, fields) {
 
 function sumTotalIntervalFields(currentServiceObject, storedService, fields) {
   for (let i = 0; i < fields.length; i++) {
-    let currentInterval = currentServiceObject[fields[i]];
-    let storedInterval = storedService[fields[i]];
+    let currentInterval = currentServiceObject[fields[i]] == "" ? "00:00": currentServiceObject[fields[i]];
+    let storedInterval = storedService[fields[i]] == "" ? "00:00":storedService[fields[i]];
     let totalInterval = sumTimeString(currentInterval, storedInterval);
+
     currentServiceObject[fields[i]] = totalInterval;
     storedService[fields[i]] = totalInterval;
   }
 }
 
 function sumTotalServiceTime(currentServiceObject, storedService, field) {
-  var currentTime = currentServiceObject[field[0]];
-  var storedTime = storedService[field[0]];
+  var currentTime = currentServiceObject[field[0]] == "" ? "00:00": currentServiceObject[field[0]] ;
+  var storedTime = storedService[field[0]] == "" ? "00:00":storedService[field[0]];
   var totalTime = sumTimeString(currentTime, storedTime)
   storedService[field[0]] = totalTime
   currentServiceObject[field[0]] = totalTime
@@ -172,9 +173,9 @@ function concatenateServiceResponses(currentServiceObject, storedService, fields
   for (let i = 0; i < fields.length; i++) {
     var storedField = storedService[fields[i]];
     var serviceField = currentServiceObject[fields[i]]
-    if (!(serviceField && storedField))
-      continue ;
-    var concatenateService = storedField.concat(serviceField)
+    // if (!(serviceField && storedField))
+    //   continue ;
+    var concatenateService = (storedField ?? []).concat(serviceField ?? [])
     var fieldSet = new Set(concatenateService);
     var fieldArray = Array.from(fieldSet);
     storedService[fields[i]] = fieldArray
