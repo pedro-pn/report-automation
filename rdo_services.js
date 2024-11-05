@@ -315,7 +315,7 @@ function getInibitionSpecs(reportData, item) {
 		Obs: getInibitionObs(reportData, item),
  	    Size: getServiceFieldResponse(reportData, FormRLIFields.Size, item),
 		Steps:getInibitionSteps(reportData, item),
-		PipeMaterial: getServiceFieldResponse(reportData, FormRLIFields.PipeMaterial, item),
+		PipeMaterial: getServiceFieldResponse(reportData, FormRLIFields.Material, item),
 		Status: getStatus(getServiceFieldResponse(reportData, FormRLIFields.Status, item)),
 		Code: getServiceFieldResponse(reportData, FormRLIFields.Code, item),
 		DegreaseInterval: getServiceFieldResponse(reportData, FormRLIFields.DegreasingDuration, item).slice(0, -3),
@@ -363,7 +363,7 @@ function fillInibition(reportData, item) {
     return ;
 	checkServiceProgress(reportData, item, RliServiceDbFields)
 	if (inibitionSpecs.Status === "Finalizado") {
-		// var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
+		var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
 		if (status)
 			reportData.reportInfo.updateRLI(reportData.missionName)
 	}

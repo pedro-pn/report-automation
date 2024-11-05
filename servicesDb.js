@@ -31,7 +31,11 @@ var RliServiceDbFields = {
       FormRLIFields.FilterImgs,
       FormRLIFields.PlateImgs,
       FormRLIFields.PhmeterImgs
-
+    ],
+    SubstituitionFields: [
+      FormRLIFields.FlushingTemperature,
+      FormRLIFields.DegreasingTemperature,
+      FormRLIFields.InibitionTemperature
     ],
     TotalIntervalFields: [
       "DegreaseInterval",
@@ -158,13 +162,15 @@ function sumTotalServiceTime(currentServiceObject, storedService, field) {
 
 function substituteServiceResponses(currentServiceObject, storedService, fields) {
   for (let i = 0; i < fields.length; i++) {
-    var storeField = storedService[fields[i]];
+    var storedField = storedService[fields[i]] ?? "";
     var serviceField = currentServiceObject[fields[i]]
-    if (!(serviceField && storeField))
+    if (storedField == "" && serviceField != "")
+      storedService[fields[i]] = serviceField;
+    else if (!(serviceField && storedField))
       continue ;
     if (currentServiceObject.hasOwnProperty(fields[i]) && storedService.hasOwnProperty(fields[i])) {
-      if (storeField !== "Não realizada")
-        currentServiceObject[fields[i]] = storeField;
+      if (storedField !== "Não realizada")
+        currentServiceObject[fields[i]] = storedField;
     }
   }
 }
