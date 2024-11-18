@@ -141,7 +141,7 @@ var ReportFooterCells = {
 	DayShiftOvertime: "D76",
 	OvertimeComment: "B78",
 	StandByTime: "J76",
-	StandByMotive: "J77",
+	StandByMotive: "J78",
 	Leader: "B79",
 	Position: "B80",
 	ClientLeader: "I79",
