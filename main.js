@@ -1,16 +1,20 @@
 function onFormSubmit(formEvent) {
 	var formResponse = formEvent.response;
 	let reportDb = new ReportDb.ReportDb(formResponse);
-	reportDb.setEditFlag();
 	let reportData = new ReportData.ReportData(formResponse);
+	reportDb.setEditFlag();
+  if (reportDb.checkReportStatus(reportData) === false)
+    return ;
 	reportData.makeReportSpreadsheetFile(reportDb);
 	fillReport(reportData);
 	SpreadsheetApp.flush();
 
 	reportData.exportSheetToPDF();
-  	reportBlobs.push(reportData.reportBlob);
+  reportBlobs.push(reportData.reportBlob);
 	sendReportViaEmail(reportData);
 	reportDb.logResponse(reportData);
+  if (isEdit === false)
+    reportDb.removePendingService()
 	if (isEdit === true)
 		return ;
 	reportData.reportInfo.updateRDO(reportData.missionName);
@@ -41,10 +45,22 @@ function onFormSubmitDEBUG(formEvent) {
 	var formResponse = formEvent.response;
 	let reportDb = new ReportDb.ReportDb(formResponse);
 	let reportData = new ReportData.ReportData(formResponse);
+	reportDb.setEditFlag();
+  // if (reportDb.checkReportStatus(reportData) === false)
+  //   return ;
 	reportData.makeReportSpreadsheetFile(reportDb);
 	fillReport(reportData);
 	SpreadsheetApp.flush();
 
+	reportData.exportSheetToPDF();
+  reportBlobs.push(reportData.reportBlob);
+	// sendReportViaEmail(reportData);
+	reportDb.logResponse(reportData);
+  // reportDb.removePendingService()
+	// if (isEdit === true)
+	// 	return ;
+	// reportData.reportInfo.updateRDO(reportData.missionName);
+	// reportData.reportInfo.updateReportInfo();
 }
 
 //#endregion
