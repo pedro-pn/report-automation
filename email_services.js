@@ -5,23 +5,27 @@ function sendReportViaEmail(reportData) {
     var bcc = reportData.reportParams.Bcc;
     var body = generateEmailBody(reportData);
 
-    if (debug) {
+    try {
+      if (debug) {
+        MailApp.sendEmail( {
+          to: bcc,
+          subject: subject,
+          htmlBody: body,
+          attachments: reportBlobs,
+        })
+        return ;
+      }
       MailApp.sendEmail( {
-        to: bcc,
-        subject: subject,
-        htmlBody: body,
-        attachments: reportBlobs,
-       })
-      return ;
+          to: recipient,
+          cc: cc,
+          bcc: bcc,
+          subject: subject,
+          htmlBody: body,
+          attachments: reportBlobs,
+      })
+    } catch {
+      console.log("Cannot send more e-mails today.")
     }
-    MailApp.sendEmail( {
-        to: recipient,
-        cc: cc,
-        bcc: bcc,
-        subject: subject,
-        htmlBody: body,
-        attachments: reportBlobs,
-    })
 }
 
 function generateEmailSubject(reportData) {
