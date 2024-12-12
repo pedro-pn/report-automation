@@ -162,16 +162,16 @@ function sumTotalServiceTime(currentServiceObject, storedService, field) {
 
 function substituteServiceResponses(currentServiceObject, storedService, fields) {
   for (let i = 0; i < fields.length; i++) {
-    var storedField = storedService[fields[i]] ?? "";
-    var serviceField = currentServiceObject[fields[i]]
-    if (storedField == "" && serviceField != "")
-      storedService[fields[i]] = serviceField;
-    else if (!(serviceField && storedField))
-      continue ;
-    if (currentServiceObject.hasOwnProperty(fields[i]) && storedService.hasOwnProperty(fields[i])) {
-      if (storedField !== "Não realizada")
+      var storedField = storedService[fields[i]] ?? "";
+      var serviceField = currentServiceObject[fields[i]] ?? "";
+      if (storedField === "" && serviceField === "")
+        continue ;
+      else if (storedField === "" && serviceField !== "") // se não tiver nada armazenado e o atual for um valor, armazena este valor.
+        storedService[fields[i]] = serviceField;
+      else if (serviceField === "" && storedField !== "") // se o atual for vazio e tiver algo armazenado, passa o valor armazenado para o atual.
         currentServiceObject[fields[i]] = storedField;
-    }
+      else if (storedField < currentServiceObject[fields[i]]) // se o valor armazenado for menor que o valor atual, armazenar o valor atual.
+        storedService[fields[i]] = serviceField;
   }
 }
 

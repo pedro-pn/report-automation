@@ -163,6 +163,7 @@ function getFlushingSpecs(reportData, item) {
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
+		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
 		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item),
 		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
@@ -182,8 +183,8 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.System, flushingSpecs.System);
 	setValueToBuffer(cells.Service, flushingSpecs.Service + " " + flushingSpecs.Type);
 	setValueToBuffer(cells.Status, flushingSpecs.Status);
-	setValueToBuffer(cells.ParamOne, flushingSpecs.InicialPartCount);
-	setValueToBuffer(cells.ParamTwo, flushingSpecs.FinalPartCount);
+	setValueToBuffer(cells.ParamOne, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.InicialPartCount}`);
+	setValueToBuffer(cells.ParamTwo, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.FinalPartCount}`);
 	setValueToBuffer(cells.Info, flushingSpecs.Oil);
 	setValueToBuffer(cells.Steps, flushingSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
@@ -216,6 +217,7 @@ function getFiltrationSpecs(reportData, item) {
 		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
 		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
 		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
+		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item),
 		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
 		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
 		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item),
@@ -236,8 +238,8 @@ function fillFiltration(reportData, item) {
 	setValueToBuffer(cells.System, filtrationSpecs.System);
 	setValueToBuffer(cells.Service, filtrationSpecs.Service);
 	setValueToBuffer(cells.Status, filtrationSpecs.Status);
-	setValueToBuffer(cells.ParamOne, filtrationSpecs.InicialPartCount);
-	setValueToBuffer(cells.ParamTwo, filtrationSpecs.FinalPartCount);
+	setValueToBuffer(cells.ParamOne, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.InicialPartCount}`);
+	setValueToBuffer(cells.ParamTwo, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.FinalPartCount}`);
 	setValueToBuffer(cells.Info, filtrationSpecs.Volume);
 	setValueToBuffer(cells.Steps, filtrationSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, filtrationSpecs.Obs);

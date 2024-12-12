@@ -228,7 +228,7 @@ var ReportData = (function() {
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
 					break ;
 				case ReportTypes.RTP:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} teste - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
+					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
 					break ;
 				case ReportTypes.RLQ:
 					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);

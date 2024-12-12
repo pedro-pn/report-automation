@@ -73,6 +73,7 @@ var FormServicesFields = {
 	Start: "Horário de início/continuação",
 	End: "Horário de término/pausa",
 	Inversion: "Inversão de fluxo",
+	OilNorm: "Selecione a norma de análise utilizada",
 	InicialPartCount: "Contagem de partículas inicial",
 	FinalPartCount: "Contagem de partículas final",
 	WorkPressure: "Pressão de trabalho",
@@ -132,7 +133,8 @@ var ReportHeaderCells = {
 	Client: "B6",
 	CNPJ: "G6",
 	Proposal: "M6",
-	Activities: "C10"
+	Activities: "C10",
+  Mission: "F5"
 }
 
 var ReportFooterCells = {
