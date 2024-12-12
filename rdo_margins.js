@@ -130,6 +130,7 @@ function fillReportHeader(reportData) {
 	setValueToBuffer(ReportHeaderCells.Client, reportData.getClient());
 	setValueToBuffer(ReportHeaderCells.CNPJ, reportData.getCNPJ());
 	setValueToBuffer(ReportHeaderCells.Proposal, reportData.getProposal());
+  setValueToBuffer(ReportHeaderCells.Mission, reportData.missionName);
 }
 
 function fillReportFooter(reportData) {
