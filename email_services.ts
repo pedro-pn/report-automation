@@ -1,4 +1,4 @@
-function sendReportViaEmail(reportData) {
+function sendReportViaEmail(reportData: ReportData) {
     var recipient = reportData.reportParams.Recipient;
     var subject = generateEmailSubject(reportData);
     var cc = reportData.getLeaderInfos().Email;
@@ -31,7 +31,7 @@ function sendReportViaEmail(reportData) {
 function generateEmailSubject(reportData) {
     var subjectTemplate = reportData.reportParams.EmailSubject;
     var subject = fillTemplate(subjectTemplate, {
-        type: ReportTypesString[reportType],
+        type: ReportTypes[reportType],
         number: reportData.reportNum,
         reportName: reportData.missionName
     });

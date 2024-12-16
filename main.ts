@@ -1,10 +1,10 @@
-function onFormSubmit(formEvent) {
+function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit) {
 	var formResponse = formEvent.response;
 	let reportDb = new ReportDb.ReportDb(formResponse);
 	let reportData = new ReportData.ReportData(formResponse);
 	reportDb.setEditFlag();
-  if (reportDb.checkReportStatus(reportData) === false)
-    return ;
+  	if (reportDb.checkReportStatus(reportData) === false)
+    	return ;
 	reportData.makeReportSpreadsheetFile(reportDb);
 	fillReport(reportData);
 	SpreadsheetApp.flush();
@@ -21,7 +21,7 @@ function onFormSubmit(formEvent) {
 	reportData.reportInfo.updateReportInfo();
 }
 
-function  fillReport(reportData) {
+function  fillReport(reportData: ReportData) {
 	var reportCellsRange = reportData.reportFirstSheet.getRange("A1:P82");
 	reportBuffer = reportCellsRange.getValues();
 	var formulas = reportCellsRange.getFormulas();
@@ -41,7 +41,7 @@ function  fillReport(reportData) {
 
 //#region TEST AND DEBUG
 
-function onFormSubmitDEBUG(formEvent) {
+function onFormSubmitDEBUG(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit) {
 	var formResponse = formEvent.response;
 	let reportDb = new ReportDb.ReportDb(formResponse);
 	let reportData = new ReportData.ReportData(formResponse);

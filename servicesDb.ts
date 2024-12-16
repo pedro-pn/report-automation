@@ -1,4 +1,13 @@
-var RlqServiceDbFields = {
+interface ServiceDbFields {
+  CompareFields: string[];
+  ConcatenationFields: string[];
+  SubstituitionFields?: string[];
+  TotalIntervalFields?: string[];
+  TotalTimeField?: string[];
+}
+
+
+var RlqServiceDbFields: ServiceDbFields = {
     CompareFields: [
       FormServicesFields.Service,
       FormServicesFields.Equipament,
@@ -15,12 +24,12 @@ var RlqServiceDbFields = {
     ]
 }
 
-var RliServiceDbFields = {
+var RliServiceDbFields: ServiceDbFields = {
     CompareFields: [
       FormRLIFields.Service,
       FormRLIFields.Equipament,
       FormRLIFields.System,
-      FormRLIFields.PipeMaterial,
+      FormRLIFields.Material,
       FormRLIFields.Size
     ],
     ConcatenationFields: [
@@ -44,7 +53,7 @@ var RliServiceDbFields = {
     ]
 }
 
-var RtpServiceDbFields = {
+var RtpServiceDbFields: ServiceDbFields = {
     CompareFields: [
       FormServicesFields.Service,
       FormServicesFields.Equipament,
@@ -62,7 +71,7 @@ var RtpServiceDbFields = {
      ]
 }
 
-var RcpServiceDbFields = {
+var RcpServiceDbFields: ServiceDbFields = {
     CompareFields: [
       FormServicesFields.Service,
       FormServicesFields.Equipament,
@@ -83,12 +92,12 @@ var RcpServiceDbFields = {
     ]
 }
 
-var RlrServiceDbFields = {
+var RlrServiceDbFields: ServiceDbFields = {
   CompareFields: [
     FormServicesFields.Service,
     FormServicesFields.Equipament,
     FormServicesFields.System,
-    FormServicesFields.Material
+    FormServicesFields.TankMaterial
   ],
   ConcatenationFields: [
     FormServicesFields.Steps,
@@ -97,9 +106,9 @@ var RlrServiceDbFields = {
   ]
 }
 
-function checkServiceProgress(reportData, item, fields) {
-    isServiceNew = getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)" ? true: false;
-    isServiceFinished = getServiceFieldResponse(reportData, FormServicesFields.Status, item) === "Sim" ? true: false;
+function checkServiceProgress(reportData: ReportData, item: number, fields: ServiceDbFields): void {
+    var isServiceNew = getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)" ? true: false;
+    var isServiceFinished = getServiceFieldResponse(reportData, FormServicesFields.Status, item) === "Sim" ? true: false;
 
     if (isServiceNew && isServiceFinished === false) {
       storeServiceData(reportData, item);
@@ -131,7 +140,7 @@ function checkServiceProgress(reportData, item, fields) {
       dbStoredService.splice(bestIndex, 1)
 }
 
-function mergeServiceResponses(currentServiceObject, storedService, fields) {
+function mergeServiceResponses(currentServiceObject, storedService, fields: ServiceDbFields) {
   if (fields.hasOwnProperty("SubstituitionFields"))
     substituteServiceResponses(currentServiceObject, storedService, fields.SubstituitionFields)
   if (fields.hasOwnProperty("TotalTimeField"))
@@ -141,18 +150,18 @@ function mergeServiceResponses(currentServiceObject, storedService, fields) {
   concatenateServiceResponses(currentServiceObject, storedService, fields.ConcatenationFields);
 }
 
-function sumTotalIntervalFields(currentServiceObject, storedService, fields) {
-  for (let i = 0; i < fields.length; i++) {
-    let currentInterval = currentServiceObject[fields[i]] == "" ? "00:00": currentServiceObject[fields[i]];
-    let storedInterval = storedService[fields[i]] == "" ? "00:00":storedService[fields[i]];
+function sumTotalIntervalFields(currentServiceObject, storedService, field: string[]) {
+  for (let i = 0; i < field.length; i++) {
+    let currentInterval = currentServiceObject[field[i]] == "" ? "00:00": currentServiceObject[field[i]];
+    let storedInterval = storedService[field[i]] == "" ? "00:00":storedService[field[i]];
     let totalInterval = sumTimeString(currentInterval, storedInterval);
 
-    currentServiceObject[fields[i]] = totalInterval;
-    storedService[fields[i]] = totalInterval;
+    currentServiceObject[field[i]] = totalInterval;
+    storedService[field[i]] = totalInterval;
   }
 }
 
-function sumTotalServiceTime(currentServiceObject, storedService, field) {
+function sumTotalServiceTime(currentServiceObject, storedService, field: string[]) {
   var currentTime = currentServiceObject[field[0]] == "" ? "00:00": currentServiceObject[field[0]] ;
   var storedTime = storedService[field[0]] == "" ? "00:00":storedService[field[0]];
   var totalTime = sumTimeString(currentTime, storedTime)
@@ -160,37 +169,37 @@ function sumTotalServiceTime(currentServiceObject, storedService, field) {
   currentServiceObject[field[0]] = totalTime
 }
 
-function substituteServiceResponses(currentServiceObject, storedService, fields) {
-  for (let i = 0; i < fields.length; i++) {
-      var storedField = storedService[fields[i]] ?? "";
-      var serviceField = currentServiceObject[fields[i]] ?? "";
+function substituteServiceResponses(currentServiceObject, storedService, field: string[]) {
+  for (let i = 0; i < field.length; i++) {
+      var storedField = storedService[field[i]] ?? "";
+      var serviceField = currentServiceObject[field[i]] ?? "";
       if (storedField === "" && serviceField === "")
         continue ;
       else if (storedField === "" && serviceField !== "") // se não tiver nada armazenado e o atual for um valor, armazena este valor.
-        storedService[fields[i]] = serviceField;
+        storedService[field[i]] = serviceField;
       else if (serviceField === "" && storedField !== "") // se o atual for vazio e tiver algo armazenado, passa o valor armazenado para o atual.
-        currentServiceObject[fields[i]] = storedField;
-      else if (storedField < currentServiceObject[fields[i]]) // se o valor armazenado for menor que o valor atual, armazenar o valor atual.
-        storedService[fields[i]] = serviceField;
+        currentServiceObject[field[i]] = storedField;
+      else if (storedField < currentServiceObject[field[i]]) // se o valor armazenado for menor que o valor atual, armazenar o valor atual.
+        storedService[field[i]] = serviceField;
   }
 }
 
-function concatenateServiceResponses(currentServiceObject, storedService, fields) {
-  for (let i = 0; i < fields.length; i++) {
-    var storedField = storedService[fields[i]];
-    var serviceField = currentServiceObject[fields[i]]
+function concatenateServiceResponses(currentServiceObject, storedService, field: string[]) {
+  for (let i = 0; i < field.length; i++) {
+    var storedField = storedService[field[i]];
+    var serviceField = currentServiceObject[field[i]]
     // if (!(serviceField && storedField))
     //   continue ;
     var concatenateService = (storedField ?? []).concat(serviceField ?? [])
     var fieldSet = new Set(concatenateService);
     var fieldArray = Array.from(fieldSet);
-    storedService[fields[i]] = fieldArray
-    currentServiceObject[fields[i]] = fieldArray
+    storedService[field[i]] = fieldArray
+    currentServiceObject[field[i]] = fieldArray
 
   }
 }
 
-function storeServiceData(reportData, item) {
+function storeServiceData(reportData: ReportData, item: number) {
     var serviceObject = reportData.formResponsesDict[item];
     
     if (serviceDb.hasOwnProperty(reportData.missionName))
@@ -200,8 +209,8 @@ function storeServiceData(reportData, item) {
 }
 
 
-function calculateScore(compareUnits, serviceStored, fields) {
-  var storedCompareUnits = getCompareUnits(serviceStored, fields);
+function calculateScore(compareUnits, serviceStored, field: string[]) {
+  var storedCompareUnits = getCompareUnits(serviceStored, field);
   var score = 0;
 
   if (storedCompareUnits[0] !== compareUnits[0])
@@ -214,20 +223,20 @@ function calculateScore(compareUnits, serviceStored, fields) {
   return (score);
 }
 
-function getCompareUnits(currentServiceObject, fields) {
+function getCompareUnits(currentServiceObject, field: string[]) {
   var compareUnits = [];
 
-  for (let i = 0; i < fields.length; i++) {
-    if (currentServiceObject.hasOwnProperty(fields[i]) == false)
+  for (let i = 0; i < field.length; i++) {
+    if (currentServiceObject.hasOwnProperty(field[i]) == false)
         continue ;
-    var unit = currentServiceObject[fields[i]];
+    var unit = currentServiceObject[field[i]];
     compareUnits.push(unit)
   }
 
   return (compareUnits);
 }
 
-function Levenshtein(string, stringEntries) {
+function Levenshtein(string: string, stringEntries: string) {
   var tmp;
   if (string.length === 0) { return stringEntries.length; }
   if (stringEntries.length === 0) { return string.length; }
@@ -245,4 +254,4 @@ function Levenshtein(string, stringEntries) {
     }
   }
   return (score);
-  }
+}

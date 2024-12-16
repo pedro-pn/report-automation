@@ -63,7 +63,7 @@ function addItemToSpecificSectionAndPlace() {
               newItem.createChoice('PI-59'),
               newItem.createChoice('PI-60'),
               newItem.createChoice('PI-61'),
-            ]).isRequired(true);
+            ]).setRequired(true);
     
       // Get the items again, including the newly created one
       items = form.getItems();

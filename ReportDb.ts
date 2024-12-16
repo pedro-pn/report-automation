@@ -1,6 +1,12 @@
 var ReportDb = (function() {
 	class ReportDb {
-		constructor(formResponse) {
+    reportDbFile: GoogleAppsScript.Spreadsheet.Spreadsheet;
+    reportDbSheet: GoogleAppsScript.Spreadsheet.Sheet;
+    pendingDbSheet: GoogleAppsScript.Spreadsheet.Sheet;
+    formResponseId: string;
+    pendingIndex: number;
+    
+		constructor(formResponse: GoogleAppsScript.Forms.FormResponse) {
 			this.reportDbFile = SpreadsheetApp.openById(spreadsheetDbId);
 			this.reportDbSheet = this.reportDbFile.getSheets()[0];
       this.pendingDbSheet = this.reportDbFile.getSheetByName("Pendentes")
@@ -8,7 +14,7 @@ var ReportDb = (function() {
       this.pendingIndex;
 		}
 
-		setEditFlag() {
+		setEditFlag(): void {
 			var reportId = this.getReportSpreadsheetId(0);
 			if (reportId == null)
 			  return ;
@@ -16,7 +22,7 @@ var ReportDb = (function() {
 			  isEdit = true;
 		}
 
-		getReportSpreadsheetId(item) {
+		getReportSpreadsheetId(item: number): string | null {
 			var cellValues= this.reportDbSheet.getDataRange().getValues();
 
 			for (var i = 1; i < cellValues.length; i++) {
@@ -29,7 +35,7 @@ var ReportDb = (function() {
 			return (null);
 		}
 
-		logResponse(reportData) {
+		logResponse(reportData: ReportData): void {
       var cellRange = this.reportDbSheet.getDataRange()
 			var cellValues = cellRange.getValues();
 
@@ -44,7 +50,7 @@ var ReportDb = (function() {
       this.reportDbSheet.getRange(lastRow, 6).setFormula('=HYPERLINK("' + reportData.formResponse.getEditResponseUrl() + '"; "' + "Edit" + '")');
 		}
 
-    isReportPending() {
+    isReportPending(): boolean {
       var pendingIdColumnRange = this.pendingDbSheet.getRange("A2:A");
       var pendingIdColumnValues = pendingIdColumnRange.getValues();
 
@@ -56,7 +62,7 @@ var ReportDb = (function() {
       return (false);
     }
 
-    checkReportStatus(reportData) {
+    checkReportStatus(reportData: ReportData): boolean {
       if (isEdit)
         return (true);
       if (this.isReportPending() === false) {
@@ -69,7 +75,7 @@ var ReportDb = (function() {
       return (false);
     }
 
-    addPendingService(reportData) {
+    addPendingService(reportData: ReportData): void {
       const checkboxRule = SpreadsheetApp.newDataValidation()
       .requireCheckbox()
       .build();

@@ -1,7 +1,7 @@
 //#region SERVICE HANDLER
 
-function fillServicesFields(reportData) {
-	serviceDbFile = DriveApp.getFileById(serviceDbId);
+function fillServicesFields(reportData: ReportData): void {
+	var serviceDbFile = DriveApp.getFileById(serviceDbId);
 	serviceDb = JSON.parse(serviceDbFile.getBlob().getDataAsString());
     for (var item = 1; item <= 9; item++) {
         reportData.numOfServices += fillItem(reportData, item);
@@ -10,7 +10,7 @@ function fillServicesFields(reportData) {
   // console.log(serviceDb)
 }
 
-function fillItem(reportData, item) {
+function fillItem(reportData: ReportData, item: number): number {
     var service = reportData.searchFieldResponse(FormServicesFields.Service, item)
 	if (service === "Teste de pressão")
 		fillPressureTest(reportData, item);
@@ -29,7 +29,7 @@ function fillItem(reportData, item) {
 	return (1);
 }
 
-function makeServiceReport(reportData, reportNumber, type, item) {
+function makeServiceReport(reportData: ReportData, reportNumber: number, type: number, item: number) {
 	var reportId = reportData.formResponse.getId();
   var serviceObject = reportData.formResponsesDict[item];
 	// try {
@@ -37,7 +37,7 @@ function makeServiceReport(reportData, reportNumber, type, item) {
 	return (status);
   
 	// } catch (error) {
-	  Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
+	 // Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
 	// }
 
 }
@@ -45,32 +45,48 @@ function makeServiceReport(reportData, reportNumber, type, item) {
 //#endregion
 
 //#region PRESSURE TEST
-function	fillPressureTestStatements(cells) {
+function	fillPressureTestStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.WorkPressure);
 	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.TestPressure);
 	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Fluid);
 }
 
-function getPressureTestSpecs(reportData, item) {
+interface PressureTestSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Service: string;
+	Fluid: string;
+	Obs: string;
+	Steps: string[];
+	WorkPressure: string;
+	TestPressure: string;
+	Status: string;
+	TotalTime: string;
+}
+
+
+function getPressureTestSpecs(reportData: ReportData, item: number): PressureTestSpecs {
 	var pressureTestSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
-		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, item),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
-		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, item),
-		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item) as string,
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item) as string,
+		Fluid: getServiceFieldResponse(reportData, FormServicesFields.Fluid, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item) as string[],
+		WorkPressure: getServiceFieldResponse(reportData, FormServicesFields.WorkPressure, item) as string,
+		TestPressure: getServiceFieldResponse(reportData, FormServicesFields.TestPressure, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item) as string) as string,
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string, getServiceFieldResponse(reportData, FormServicesFields.End, item) as string))
 	}
 	
 	return (pressureTestSpecs);
 }
 
-function	fillPressureTest(reportData, item) {
+function	fillPressureTest(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var pressureTestSpecs = getPressureTestSpecs(reportData, item);
 	fillPressureTestStatements(cells);
@@ -94,33 +110,47 @@ function	fillPressureTest(reportData, item) {
 		var status = makeServiceReport(reportData, reportData.getRTPNumber(), ReportTypes.RTP, item)
 		if (status)
 			reportData.reportInfo.updateRTP(reportData.missionName)
-}
+	}
 }
 //#endregion
 
 //#region DESCALING
-function fillDescalingStatements(cells) {
+
+interface DescalingSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Service: string;
+	Obs: string;
+	Size: string;
+	Steps: string[];
+	PipeMaterial: string;
+	Status: string;
+}
+
+function fillDescalingStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.PipeMaterial);
 }
 
-function getDescalingSpecs(reportData, item) {
+function getDescalingSpecs(reportData: ReportData, item: number): DescalingSpecs {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
-    Size: getServiceFieldResponse(reportData, FormServicesFields.Size, item),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
-		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item) as string,
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item) as string,
+   		Size: getServiceFieldResponse(reportData, FormServicesFields.Size, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item) as string[],
+		PipeMaterial: getServiceFieldResponse(reportData, FormServicesFields.PipeMaterial, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item) as string)
 	}
 	
 	return (descalingSpecs);
 }
 
-function fillDescaling(reportData, item) {
+function fillDescaling(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var descalingSpecs = getDescalingSpecs(reportData, item);
 	fillDescalingStatements(cells)
@@ -146,34 +176,52 @@ function fillDescaling(reportData, item) {
 //#endregion
 
 //#region FLUSHING
-function fillFlushingStatements(cells) {
+
+interface FlushingSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Type: string;
+	Service: string;
+	Obs: string;
+	Steps: string[];
+	InicialPartCount: string;
+	OilNorm: string;
+	FinalPartCount: string;
+	Oil: string;
+	Status: string;
+	TotalTime: string;
+}
+
+function fillFlushingStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
 	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
 	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Oil);
 }
 
-function getFlushingSpecs(reportData, item) {
+function getFlushingSpecs(reportData: ReportData, item: number): FlushingSpecs {
 	var flushingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
-		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, item),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
-		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
-		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item) as string,
+		Type: getServiceFieldResponse(reportData, FormServicesFields.Type, item) as string,
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item) as string[],
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item) as string,
+		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item) as string,
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item) as string,
+		Oil: getServiceFieldResponse(reportData, FormServicesFields.Oil, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item) as string),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string, getServiceFieldResponse(reportData, FormServicesFields.End, item) as string))
 	}
 	
 	return (flushingSpecs);
 }
 
-function fillFlushing(reportData, item) {
+function fillFlushing(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var flushingSpecs = getFlushingSpecs(reportData, item);
 	fillFlushingStatements(cells)
@@ -190,45 +238,63 @@ function fillFlushing(reportData, item) {
 	setValueToBuffer(cells.Obs, flushingSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
 
-  if (isEdit)
-    return ;
+  	if (isEdit)
+   		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
 	if (flushingSpecs.Status === "Finalizado") {
 		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
 		if (status)
 			reportData.reportInfo.updateRCP(reportData.missionName)
-}
+	}
 }
 //#endregion
 
 //#region FILTRATION
-function fillFiltrationStatements(cells) {
+
+interface FiltrationSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Service: string;
+	Obs: string;
+	Steps: string[];
+	OilNorm: string;
+	InicialPartCount: string;
+	FinalPartCount: string;
+	Volume: string;
+	Status: string;
+	TotalTime: string;
+
+}
+
+function fillFiltrationStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.InicialAnalysis);
 	setValueToBuffer(cells.ParamTwoKey, ReportServiceStatements.FinalAnalysis);
 	setValueToBuffer(cells.InfoKey, ReportServiceStatements.Volume);
 }
 
-function getFiltrationSpecs(reportData, item) {
+function getFiltrationSpecs(reportData: ReportData, item: number): FiltrationSpecs {
 	var filtrationSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
-		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item),
-		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item),
-		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item),
-		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item)),
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item), getServiceFieldResponse(reportData, FormServicesFields.End, item)))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item) as string,
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item) as string[],
+		OilNorm: getServiceFieldResponse(reportData, FormServicesFields.OilNorm, item) as string,
+		InicialPartCount: getServiceFieldResponse(reportData, FormServicesFields.InicialPartCount, item) as string,
+		FinalPartCount: getServiceFieldResponse(reportData, FormServicesFields.FinalPartCount, item) as string,
+		Volume: getServiceFieldResponse(reportData, FormServicesFields.Volume, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item) as string),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string, getServiceFieldResponse(reportData, FormServicesFields.End, item) as string))
 	}
 	
 	return (filtrationSpecs);
 }
 
-function fillFiltration(reportData, item) {
+function fillFiltration(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var filtrationSpecs = getFiltrationSpecs(reportData, item);
 	fillFiltrationStatements(cells)
@@ -257,27 +323,40 @@ function fillFiltration(reportData, item) {
 //#endregion
 
 //#region TANK CLEANING
-function fillTankCleaningStatements(cells) {
+
+interface TankCleaningSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Service: string;
+	Obs: string;
+	Steps: string[];
+	tankMaterial: string;
+	Status: string;
+}
+
+function fillTankCleaningStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.TankMaterial);
 }
 
-function getTankCleaningSpecs(reportData, item) {
+function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleaningSpecs {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormServicesFields.System, item),
-		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item),
-		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item),
-		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item),
-		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.TankMaterial, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item))
+		StartTime: getServiceFieldResponse(reportData, FormServicesFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormServicesFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormServicesFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormServicesFields.System, item) as string,
+		Service: getServiceFieldResponse(reportData, FormServicesFields.Service, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormServicesFields.Obs, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormServicesFields.Steps, item) as string[],
+		tankMaterial: getServiceFieldResponse(reportData, FormServicesFields.TankMaterial, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormServicesFields.Status, item) as string)
 	}
 	
 	return (descalingSpecs);
 }
 
-function fillTankCleaning(reportData, item) {
+function fillTankCleaning(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
 	fillTankCleaningStatements(cells)
@@ -287,7 +366,6 @@ function fillTankCleaning(reportData, item) {
 	setValueToBuffer(cells.System, tankCleaningSpecs.System);
 	setValueToBuffer(cells.Service, tankCleaningSpecs.Service);
 	setValueToBuffer(cells.Status, tankCleaningSpecs.Status);
-	setValueToBuffer(cells.ParamOne, tankCleaningSpecs.PipeMaterial);
 	setValueToBuffer(cells.Steps, tankCleaningSpecs.Steps.join(", "));
 	setValueToBuffer(cells.Obs, tankCleaningSpecs.Obs);
 
@@ -303,38 +381,56 @@ function fillTankCleaning(reportData, item) {
 //#endregion
 
 //#region Inibition
-function fillInibitionStatements(cells) {
+
+interface InibitionSpecs {
+	StartTime: string;
+	EndTime: string;
+	Equipament: string;
+	System: string;
+	Service: string;
+	Obs: string;
+	Size: string;
+	Steps: string;
+	PipeMaterial: string;
+	Status: string;
+	Code: string;
+	DegreaseInterval: string;
+	FlushingInterval: string;
+	InibitionInterval: string;
+}
+
+function fillInibitionStatements(cells: ReportServiceCells): void {
 	setValueToBuffer(cells.ParamOneKey, ReportServiceStatements.PipeMaterial);
 }
 
-function getInibitionSpecs(reportData, item) {
+function getInibitionSpecs(reportData: ReportData, item: number): InibitionSpecs {
 	var inibitionSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormRLIFields.Start, item),
-		EndTime: getServiceFieldResponse(reportData, FormRLIFields.End, item),
-		Equipament: getServiceFieldResponse(reportData, FormRLIFields.Equipament, item),
-		System: getServiceFieldResponse(reportData, FormRLIFields.System, item),
-		Service: getServiceFieldResponse(reportData, FormRLIFields.Service, item),
-		Obs: getInibitionObs(reportData, item),
- 	    Size: getServiceFieldResponse(reportData, FormRLIFields.Size, item),
-		Steps:getInibitionSteps(reportData, item),
-		PipeMaterial: getServiceFieldResponse(reportData, FormRLIFields.Material, item),
-		Status: getStatus(getServiceFieldResponse(reportData, FormRLIFields.Status, item)),
-		Code: getServiceFieldResponse(reportData, FormRLIFields.Code, item),
-		DegreaseInterval: getServiceFieldResponse(reportData, FormRLIFields.DegreasingDuration, item).slice(0, -3),
-		FlushingInterval: getServiceFieldResponse(reportData, FormRLIFields.FlushingDuration, item).slice(0, -3),
-		InibitionInterval: getServiceFieldResponse(reportData, FormRLIFields.InibitionDuration, item).slice(0, -3)
+		StartTime: getServiceFieldResponse(reportData, FormRLIFields.Start, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormRLIFields.End, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormRLIFields.Equipament, item) as string,
+		System: getServiceFieldResponse(reportData, FormRLIFields.System, item) as string,
+		Service: getServiceFieldResponse(reportData, FormRLIFields.Service, item) as string,
+		Obs: getInibitionObs(reportData, item) as string,
+ 	    Size: getServiceFieldResponse(reportData, FormRLIFields.Size, item) as string,
+		Steps: getInibitionSteps(reportData, item) as string,
+		PipeMaterial: getServiceFieldResponse(reportData, FormRLIFields.Material, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormRLIFields.Status, item) as string),
+		Code: getServiceFieldResponse(reportData, FormRLIFields.Code, item) as string,
+		DegreaseInterval: getServiceFieldResponse(reportData, FormRLIFields.DegreasingDuration, item).slice(0, -3) as string,
+		FlushingInterval: getServiceFieldResponse(reportData, FormRLIFields.FlushingDuration, item).slice(0, -3) as string,
+		InibitionInterval: getServiceFieldResponse(reportData, FormRLIFields.InibitionDuration, item).slice(0, -3) as string
 	}
 	
 	return (inibitionSpecs);
 }
 
-function getInibitionObs(reportData, item) {
+function getInibitionObs(reportData: ReportData, item: number): string {
 	let code = getServiceFieldResponse(reportData, FormRLIFields.Code, item);
 	
 	return (`${code != "" ? `${code}\n`:""}${getServiceFieldResponse(reportData, FormRLIFields.Obs, item)}`)
 }
 
-function getInibitionSteps(reportData, item) {
+function getInibitionSteps(reportData: ReportData, item: number): string {
 	let steps = [];
 
 	steps.push((getServiceFieldResponse(reportData, FormRLIFields.Degreasing, item) === "Sim") ? "Desengraxe":"")
@@ -344,7 +440,7 @@ function getInibitionSteps(reportData, item) {
 	return (steps.join(", "));
 }
 
-function fillInibition(reportData, item) {
+function fillInibition(reportData: ReportData, item: number): void {
 	var cells = ReportServiceRespCells[item];
 	var inibitionSpecs = getInibitionSpecs(reportData, item);
 	fillInibitionStatements(cells)
@@ -373,17 +469,17 @@ function fillInibition(reportData, item) {
 //#endregion
 
 //#region SERVICE_UTILS
-function getServiceFieldResponse(reportData, field, item) {
+function getServiceFieldResponse(reportData: ReportData, field: string, item: number): fieldResponse {
     return (reportData.searchFieldResponse(field, item));
 }
 
-function getStatus(status) {
+function getStatus(status: string): string {
 	if (status === "Sim")
 		return ("Finalizado");
 	return ("Em andamento");
 }
 
-function	mergeValuesAndFormulas(formulas, values) {
+function	mergeValuesAndFormulas(formulas: string[][], values: string[][]): string[][] {
 	let result = formulas
 	for (var i = 0; i < formulas.length; i++) {
 		for (var j = 0; j < formulas[i].length; j++) {

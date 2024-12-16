@@ -1,4 +1,4 @@
-function hourStringToDate(hourString) {
+function hourStringToDate(hourString: string): Date {
 	const [hours, minutes] = hourString.split(':');
 	const date = new Date();
 	date.setHours(parseInt(hours, 10));
@@ -7,7 +7,7 @@ function hourStringToDate(hourString) {
 	return (date);
 }
 
-function getDiffHourAbs(hourStringOne, hourStringTwo) {
+function getDiffHourAbs(hourStringOne: string, hourStringTwo: string): number {
 	const hourOne = hourStringToDate(hourStringOne);
 	const hourTwo = hourStringToDate(hourStringTwo);
 	const timeDifference = hourOne.getTime() - hourTwo.getTime();
@@ -24,7 +24,7 @@ function getDiffHourAbs(hourStringOne, hourStringTwo) {
  * @return {number} 
  */
 
-function getDiffHour(startHourString, endHourString) {
+function getDiffHour(startHourString: string, endHourString: string): number {
   console.log(`Start ${startHourString},   end: ${endHourString}`)
 	const startTime = hourStringToDate(startHourString);
 	const endTime = hourStringToDate(endHourString);
@@ -35,7 +35,7 @@ function getDiffHour(startHourString, endHourString) {
 	return (hourDifference);
 }
 
-function sumTimeString(time1, time2) {
+function sumTimeString(time1: string, time2: string): string {
   // Split the time strings by ":"
   let [hours1, minutes1] = time1.split(":").map(Number);
   let [hours2, minutes2] = time2.split(":").map(Number);
@@ -58,7 +58,7 @@ function sumTimeString(time1, time2) {
  * @param {number} hours
  * @return {string} 
  */
-function hoursToHourString(hours) {
+function hoursToHourString(hours: number): string {
 	const wholeHours = Math.floor(hours);
 	const minutes = Math.round((hours - wholeHours) * 60);
 
@@ -70,7 +70,7 @@ function hoursToHourString(hours) {
 	return (hourString);
 }
 
-function getShiftTime(reportData) {
+function getShiftTime(reportData: ReportData): string {
 	const weekday = reportData.getWeekDayNum();
 	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSaturday;
 	const sundayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSunday;
@@ -85,17 +85,17 @@ function getShiftTime(reportData) {
 	return ("00:00");
 }
 
-function fillTemplate(template, variables) {
+function fillTemplate(template: string, variables: Object): string {
 	return template.replace(/\${(.*?)}/g, (match, p1) => variables[p1] || '');
 }
 
-function getExportUrlRequest(spreadSheetId, sheetId) {
+function getExportUrlRequest(spreadSheetId: string, sheetId: number): string {
 	return (fillTemplate(urlRequestString, {
 		reportSpreadsheetId: spreadSheetId,
 		reportSheetId: sheetId}));
 }
 
-function sendPostRequest(formResponseId, reportNumber, reportType, item, serviceObject) {
+function sendPostRequest(formResponseId: string, reportNumber: number, reportType: number, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
 	var payload = {
 		formResponseId: formResponseId,
 		reportNumber: reportNumber,
@@ -105,8 +105,8 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item, service
     	serviceObject: serviceObject
 	};
 
-	var options = {
-		'method': 'POST',
+	var options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+		'method': 'post',
 		'contentType': 'application/json',
 		'payload': JSON.stringify(payload),
 		'headers': {
@@ -115,18 +115,19 @@ function sendPostRequest(formResponseId, reportNumber, reportType, item, service
 	};
 
 	var response = UrlFetchApp.fetch(serviceReportApi, options);
-	// Logger.log('Response from Script A: ' + response.getContentText());
-	if (response.status === false)
-		return ;
+	if (response.getResponseCode() !== 200) {
+	  Logger.log('Error: Failed to fetch the data from the API');
+	  return null;  // If not successful, return null
+	}
 
-	var responseObject = JSON.parse(response)
+	var responseObject = JSON.parse(response.getContentText())
 	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
 	reportBlobs.push(serviceReportBlob)
 	reportIds += `,${responseObject.reportId}`;
-  return (responseObject.newService);
+  	return (responseObject.newService);
 }
 
-function cellStringToNumber(cellString) {
+function cellStringToNumber(cellString: string): number[] {
     var columnLetter = cellString.charAt(0);
 	  var columnNumber = columnLetter.charCodeAt(0) - 65;
 	  var rowNumber = parseInt(cellString.substring(1)) - 1;
