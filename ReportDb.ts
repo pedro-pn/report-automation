@@ -84,6 +84,8 @@ var ReportDb = (function() {
       this.pendingDbSheet.getRange(lastRow, 5).setFormula('=HYPERLINK("' + reportData.formResponse.getEditResponseUrl() + '"; "' + "Conferir" + '")');
       let statusCell = this.pendingDbSheet.getRange(lastRow, 6);
       statusCell.setDataValidation(checkboxRule);
+      let makeReportCell = this.pendingDbSheet.getRange(lastRow, 7);
+      makeReportCell.setDataValidation(checkboxRule);
     }
 
     removePendingService() {
