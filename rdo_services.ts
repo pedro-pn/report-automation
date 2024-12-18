@@ -107,9 +107,9 @@ function	fillPressureTest(reportData: ReportData, item: number): void {
     return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields)
 	if (pressureTestSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getRTPNumber(), ReportTypes.RTP, item)
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RTP), ReportTypes.RTP, item)
 		if (status)
-			reportData.reportInfo.updateRTP(reportData.missionName)
+			reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RTP);
 	}
 }
 //#endregion
@@ -168,9 +168,9 @@ function fillDescaling(reportData: ReportData, item: number): void {
     return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields)
 	if (descalingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getRLQNumber(), ReportTypes.RLQ, item)
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLQ), ReportTypes.RLQ, item)
 		if (status)
-			reportData.reportInfo.updateRLQ(reportData.missionName)
+			reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLQ);
 	}
 }
 //#endregion
@@ -242,9 +242,9 @@ function fillFlushing(reportData: ReportData, item: number): void {
    		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
 	if (flushingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
 		if (status)
-			reportData.reportInfo.updateRCP(reportData.missionName)
+			reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RCP);
 	}
 }
 //#endregion
@@ -315,9 +315,9 @@ function fillFiltration(reportData: ReportData, item: number): void {
       return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields)
 	if (filtrationSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getRCPNumber(), ReportTypes.RCP, item)
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
 		if (status)
-			reportData.reportInfo.updateRCP(reportData.missionName)
+			reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RCP);
 	}
 }
 //#endregion
@@ -373,9 +373,9 @@ function fillTankCleaning(reportData: ReportData, item: number): void {
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields)
 	  if (tankCleaningSpecs.Status === "Finalizado") {
-		  var status = makeServiceReport(reportData, reportData.getRLRNumber(), ReportTypes.RLR, item)
+		  var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLR), ReportTypes.RLR, item)
 		  if (status)
-			  reportData.reportInfo.updateRLR(reportData.missionName)
+			  reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLR);
 	  }
 }
 //#endregion
@@ -461,9 +461,9 @@ function fillInibition(reportData: ReportData, item: number): void {
     return ;
 	checkServiceProgress(reportData, item, RliServiceDbFields)
 	if (inibitionSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getRLINumber(), ReportTypes.RLI, item)
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLI), ReportTypes.RLI, item)
 		if (status)
-			reportData.reportInfo.updateRLI(reportData.missionName)
+			reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLI);
 	}
 }
 //#endregion

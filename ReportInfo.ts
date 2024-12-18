@@ -33,24 +33,6 @@ interface ReportInfoLeaders {
 	Ass: string
 }
 
-interface ReportInfo {
-	reportInfoFile: GoogleAppsScript.Drive.File;
-	reportInfoString: string;
-	reportInfoData: ReportInfoJSON;
-	getMissionInfo(missionName: string): ReportInfoMission;
-	getLeaderInfo(leaderId: number): ReportInfoLeaders;
-	getParameters(): ReportInfoParameters;
-	getManometers(): ReportInfoManometers;
-	updateReportInfo(): void;
-	updateRDO(missionName: string): void
-	updateRTP(missionName: string): void;
-	updateRLQ(missionName: string): void;
-	updateRCP(missionName: string): void;
-	updateRLR(missionName: string): void;
-	updateRLI(missionName: string): void;
-
-}
-
 interface ReportInfoParameters {
 	exportUrlRequest: string;
     EmailSubject: string;
@@ -68,7 +50,19 @@ interface ManometerEntry {
 
 interface ReportInfoManometers {
 	[key: string]: ManometerEntry;
-  }
+}
+
+interface ReportInfo {
+	reportInfoFile: GoogleAppsScript.Drive.File;
+	reportInfoString: string;
+	reportInfoData: ReportInfoJSON;
+	getMissionInfo(missionName: string): ReportInfoMission;
+	getLeaderInfo(leaderId: number): ReportInfoLeaders;
+	getParameters(): ReportInfoParameters;
+	getManometers(): ReportInfoManometers;
+	updateReportInfo(): void;
+	updateReportNumber(missionName: string, reportType: ReportTypes): void;
+}
 
 var ReportLib = (function() {
 	class ReportInfo {
@@ -103,29 +97,10 @@ var ReportLib = (function() {
 			return (this.reportInfoData.Manometers);
 		}
 
-		updateRDO(missionName: string) {
-			this.getMissionInfo(missionName).RDO += 1;
+		updateReportNumber(missionName: string, reportType: ReportTypes): void {
+			this.getMissionInfo(missionName)[ReportTypes[reportType]] += 1;
 		}
 
-		updateRTP(missionName: string) {
-			this.getMissionInfo(missionName).RTP += 1;
-		}
-
-		updateRLQ(missionName: string) {
-			this.getMissionInfo(missionName).RLQ += 1;
-		}
-
-		updateRCP(missionName: string) {
-			this.getMissionInfo(missionName).RCP += 1;
-		}
-
-		updateRLR(missionName: string) {
-			this.getMissionInfo(missionName).RLR += 1;
-		}
-
-		updateRLI(missionName: string) {
-			this.getMissionInfo(missionName).RLI += 1;
-		}
 	}
 	return ({
 		ReportInfo: ReportInfo

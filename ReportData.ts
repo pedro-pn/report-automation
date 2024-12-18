@@ -12,13 +12,7 @@ interface ReportData {
 	reportSpreadSheetFile: GoogleAppsScript.Drive.File;
 	reportParams: ReportInfoParameters;
 	reportBlob: GoogleAppsScript.Base.Blob;
-	getReportNumber;
-	getRDONumber(): number;
-	getRTPNumber(): number;
-	getRLQNumber(): number;
-	getRCPNumber(): number;
-	getRLRNumber(): number;
-	getRLINumber(): number;
+	getReportNumber(reportType: ReportTypes): number;
 	getClient(): string;
 	getMissionInfos(): ReportInfoMission;
 	getLeaderInfos(): ReportInfoLeaders;
@@ -72,7 +66,7 @@ var ReportData = (function() {
 			this.reportInfo = new ReportLib.ReportInfo();
 			this.missionName = this.getMissionName();
 			this.date = this.getReportDate();
-			this.reportNum = this.getReportNumber();
+			this.reportNum = this.getReportNumber(reportType);
 			this.shiftTime = this.getShiftTime();
 			this.numOfServices = 0;
 			this.reportSpreadSheet;
@@ -82,45 +76,8 @@ var ReportData = (function() {
 			this.reportBlob;
 		}
 
-		getReportNumber(): number {
-			switch (reportType) {
-				case ReportTypes.RDO:
-					return (this.getRDONumber());
-				case (ReportTypes.RTP):
-					return (this.getRTPNumber());
-				case (ReportTypes.RLQ):
-					return (this.getRLQNumber());
-				case (ReportTypes.RCP):
-					return (this.getRCPNumber());
-				case (ReportTypes.RLR):
-					return (this.getRLRNumber());
-				case (ReportTypes.RLI):
-					return (this.getRLINumber());
-			}
-		}
-		
-		getRDONumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RDO + 1);
-		}
-
-		getRTPNumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RTP + 1);
-		}
-
-		getRLQNumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RLQ + 1);
-		}
-
-		getRCPNumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RCP + 1)
-		}
-
-		getRLRNumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RLR + 1)
-		}
-
-		getRLINumber(): number {
-			return (this.reportInfo.getMissionInfo(this.missionName).RLI + 1)
+		getReportNumber(reportType: ReportTypes): number {
+			return (this.reportInfo.getMissionInfo(this.missionName)[ReportTypes[reportType]])
 		}
 		
 		getClient(): string {
