@@ -1,27 +1,27 @@
 //#region NIGHT SHIFT
 function	fillReportNightShift(reportData: ReportData): void {
-    var nightShiftFlag = reportData.searchFieldResponse(HeaderFields.NightShift);
+    var nightShiftFlag = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT);
     
 	if (nightShiftFlag === "Não")
 		return ;
     
-    var nightShiftStartTime = reportData.searchFieldResponse(HeaderFields.NightShiftStartTime);
-	var nightShiftExitTime = reportData.searchFieldResponse(HeaderFields.NightShiftEndTime);
-	var nightShiftDinnerTime = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime);
-	var	nightShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.NightShiftNumOfEmployees);
+    var nightShiftStartTime = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_START_TIME);
+	var nightShiftExitTime = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_EXIT_TIME);
+	var dinnerTime = reportData.searchFieldResponse(FormFields.HEADER.TOTAL_DINNER_TIME);
+	var	nightShiftEmployeesNum = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_EMPLOYEES_NUM);
     
-	setValueToBuffer(ReportHeaderCells.NightShiftStartTime, nightShiftStartTime);
-	setValueToBuffer(ReportHeaderCells.NightShiftExitTime, nightShiftExitTime);
-	setValueToBuffer(ReportHeaderCells.NightShiftDinnerTime, nightShiftDinnerTime);
-	setValueToBuffer(ReportHeaderCells.NightShiftNumOfEmployees, nightShiftNumOfEmployees);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.NIGHT_SHIFT_START_TIME, nightShiftStartTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DAY_SHIFT_EXIT_TIME, nightShiftExitTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.NIGHT_SHIFT_DINNER_TIME, dinnerTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.NIGHT_SHIFT_EMPLOYEES_NUM, nightShiftEmployeesNum);
 }
 
 function calculateNightShiftTime(reportData: ReportData): number {
-    const nightShiftStartTime = reportData.searchFieldResponse(HeaderFields.NightShiftStartTime) as string;
-    const nightShiftExitTime = reportData.searchFieldResponse(HeaderFields.NightShiftEndTime) as string;
-    const dinnerInterval = reportData.searchFieldResponse(HeaderFields.TotalDinnerTime) as string;
+    const nightShiftStartTime = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_START_TIME) as string;
+    const nightShiftExitTime = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_EXIT_TIME) as string;
+    const dinnerTime = reportData.searchFieldResponse(FormFields.HEADER.TOTAL_DINNER_TIME) as string;
     const totalShiftTime = getDiffHour(nightShiftStartTime, nightShiftExitTime);
-    const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), dinnerInterval);
+    const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), dinnerTime);
 
     return (shiftTime);
 }
@@ -32,7 +32,7 @@ function fillNightShiftOvertimeField(reportData: ReportData): boolean {
 	const overtime = calculateOvertime(shiftTime, nightShiftTime);
 	if (overtime <= 0.5)
 			return false;
-	setValueToBuffer(ReportFooterCells.NightShiftOvertime, hoursToHourString(overtime));
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.NIGHT_SHIFT_OVERTIME, hoursToHourString(overtime));
 	
 	return (true);
 }
@@ -40,11 +40,11 @@ function fillNightShiftOvertimeField(reportData: ReportData): boolean {
 
 //#region DAY SHIFT
 function calculateDayShiftTime(reportData: ReportData): number {
-    const dayShiftStartTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime) as string;
-    const dayShiftExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime) as string;
-    const lunchInterval = reportData.searchFieldResponse(HeaderFields.TotalLunchTime) as string;
+    const dayShiftStartTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_START_TIME) as string;
+    const dayShiftExitTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_EXIT_TIME) as string;
+    const lunchtime = reportData.searchFieldResponse(FormFields.HEADER.TOTAL_LUNCHTIME) as string;
     const totalShiftTime = getDiffHour(dayShiftStartTime, dayShiftExitTime);
-    const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), lunchInterval);
+    const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), lunchtime);
 
     return (shiftTime);
 }
@@ -55,21 +55,21 @@ function fillDayShiftOvertimeField(reportData: ReportData): boolean {
     const overtime = calculateOvertime(shiftTime, dayShiftTime);
     if (overtime <= 0.5)
         return false;
-    setValueToBuffer(ReportFooterCells.DayShiftOvertime, hoursToHourString(overtime))
+    ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.DAY_SHIFT_OVERTIME, hoursToHourString(overtime))
     
     return (true);
 }
 //#endregion
 
 //#region OVERTIME
-function fillOvertimeCommentField(reportData: ReportData):void {
-    const overtimeComment = reportData.searchFieldResponse(HeaderFields.OvertimeComment);
-    setValueToBuffer(ReportFooterCells.OvertimeComment, overtimeComment);
+function fillOvertimeCommentField(reportData: ReportData): void {
+    const overtimeComment = reportData.searchFieldResponse(FormFields.HEADER.OVERTIME_COMMENT);
+    ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.OVERTIME_COMMENT, overtimeComment);
 }
 
 function fillOvertimeField(reportData: ReportData): void {
     const dayOvertime = fillDayShiftOvertimeField(reportData);
-    const NightShift = reportData.searchFieldResponse(HeaderFields.NightShift);
+    const NightShift = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT);
     var	nightOvertime = false;
     if (NightShift === "Sim")
         nightOvertime = fillNightShiftOvertimeField(reportData);
@@ -87,71 +87,61 @@ function calculateOvertime(shiftTime: string, totalShiftTime: string): number {
 
 //#region HEADER AND FOOTER
 function fillStandByField(reportData: ReportData): void {
-	if (reportData.searchFieldResponse(HeaderFields.StandByValidity) === "Não" || 
-			reportData.searchFieldResponse(HeaderFields.StandByFlag) === "Não")
+	if (reportData.searchFieldResponse(FormFields.HEADER.STAND_BY_VALIDITY) === "Não" || 
+			reportData.searchFieldResponse(FormFields.HEADER.STAND_BY_FLAG) === "Não")
 			return ;
-	const standByTime = reportData.searchFieldResponse(HeaderFields.StandByTime);
-	const standByMotive = reportData.searchFieldResponse(HeaderFields.StandByMotive);
-	setValueToBuffer(ReportFooterCells.StandByTime, standByTime);
-	setValueToBuffer(ReportFooterCells.StandByMotive, standByMotive);
+	const standByTime = reportData.searchFieldResponse(FormFields.HEADER.STAND_BY_TIME);
+	const standByMotive = reportData.searchFieldResponse(FormFields.HEADER.STAND_BY_MOTIVE);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.STAND_BY_TIME, standByTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.STAND_BY_MOTIVE, standByMotive);
 }
 
 function fillLeaderField(reportData: ReportData): void {
-	const leaderId = reportData.getMissionInfos().Leader;
 	const leaderInfo = reportData.getLeaderInfos();
 
-	setValueToBuffer(ReportFooterCells.Leader, leaderInfo.Name);
-	setValueToBuffer(ReportFooterCells.Position, leaderInfo.Position);
-}
-
-function fillClientLeaderField(reportData: ReportData): void {
-	const leader = reportData.getMissionInfos().ClientLeader;
-	const position = reportData.reportInfo.getMissionInfo(reportData.missionName).ClientLeaderPosition;
-
-	setValueToBuffer(ReportFooterCells.ClientLeader, leader);
-	setValueToBuffer(ReportFooterCells.ClientPosition, position);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.LEADER, leaderInfo.Name);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.FOOTER.POSITION, leaderInfo.Position);
 }
 
 function fillReportSubHeader(reportData: ReportData): void {
-	var dayShiftStartTime = reportData.searchFieldResponse(HeaderFields.DayShiftStartTime);
-	var dayShiftExitTime = reportData.searchFieldResponse(HeaderFields.DayShiftExitTime);
-	var dayShiftLunchTime = reportData.searchFieldResponse(HeaderFields.TotalLunchTime);
-	var dayShiftNumOfEmployees = reportData.searchFieldResponse(HeaderFields.DayShiftNumOfEmployees);
+	var dayShiftStartTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_START_TIME);
+	var dayShiftExitTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_EXIT_TIME);
+	var dayShiftLunchTime = reportData.searchFieldResponse(FormFields.HEADER.TOTAL_LUNCHTIME);
+	var dayShiftNumOfEmployees = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_EMPLOYEES_NUM);
 	
-	setValueToBuffer(ReportHeaderCells.DayShiftStartTime, dayShiftStartTime);
-	setValueToBuffer(ReportHeaderCells.DayShiftExitTime, dayShiftExitTime);
-	setValueToBuffer(ReportHeaderCells.DayShiftLunchTime, dayShiftLunchTime);
-	setValueToBuffer(ReportHeaderCells.DayShiftNumOfEmployees, dayShiftNumOfEmployees);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DAY_SHIFT_START_TIME, dayShiftStartTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DAY_SHIFT_EXIT_TIME, dayShiftExitTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DAY_SHIFT_LUNCH_TIME, dayShiftLunchTime);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DAY_SHIFT_EMPLOYEES_NUM, dayShiftNumOfEmployees);
   }
 
 function fillReportHeader(reportData: ReportData): void {
-	setValueToBuffer(ReportHeaderCells.RdoNumber, reportData.reportNum);
-	setValueToBuffer(ReportHeaderCells.Date, reportData.date);
-	setValueToBuffer(ReportHeaderCells.Client, reportData.getClient());
-	setValueToBuffer(ReportHeaderCells.CNPJ, reportData.getCNPJ());
-	setValueToBuffer(ReportHeaderCells.Proposal, reportData.getProposal());
-  setValueToBuffer(ReportHeaderCells.Mission, reportData.missionName);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.RDO_NUMBER, reportData.reportNum);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.DATE, reportData.date);
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.CLIENT, reportData.getClient());
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.CNPJ, reportData.getCNPJ());
+	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.PROPOSAL, reportData.getProposal());
+  	ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.MISSION_NAME, reportData.missionName);
 }
 
-function fillReportFooter(reportData: ReportData): void {
+function fillReportFooter(reportData: ReportData, spreadsheetManager: SpreadsheetManager): void {
 	fillOvertimeField(reportData);
 	fillStandByField(reportData);
 	fillLeaderField(reportData);
-	fillClientLeaderField(reportData);
-	fillSignField(reportData, ReportFooterCells.Ass, 100);
+	// fillClientLeaderField(reportData);
 }
 
 function fillActivities(reportData: ReportData): void {
-    const activities = reportData.searchFieldResponse(HeaderFields.Activities)
+    const activities = reportData.searchFieldResponse(FormFields.HEADER.ACTIVITIES)
 	if (typeof activities === "string")
-		setValueToBuffer(ReportHeaderCells.Activities, activities.replace(/\n{2,}/g, '\n'));
+		ReportState.setValueToBuffer(ReportsRanges.RDO.CELLS.HEADER.ACTIVITIES, activities.replace(/\n{2,}/g, '\n'));
 }
 
-function fillSignField(reportData: ReportData, cell: string, width: number): void {
+function fillSignField(reportData: ReportData, spreadsheetManager: SpreadsheetManager, cell: string, width: number): void {
 	let imageBlob = DriveApp.getFileById(reportData.getLeaderInfos().Ass).getBlob();
-  let cellNum = cellStringToNumber(cell);
+  	let cellNum = cellStringToNumber(cell);
  
-	let image = reportData.reportFirstSheet.insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
+	let image = spreadsheetManager.getFirstSheet().insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
 	let ratio = image.getHeight() / image.getWidth();
 	image.setWidth(width);
 	image.setHeight(width * ratio);

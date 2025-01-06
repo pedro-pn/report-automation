@@ -7,44 +7,44 @@ interface ServiceDbFields {
 }
 
 
-var RlqServiceDbFields: ServiceDbFields = {
+const RlqServiceDbFields: ServiceDbFields = {
     CompareFields: [
-      FormServicesFields.Service,
-      FormServicesFields.Equipament,
-      FormServicesFields.System,
-      FormServicesFields.PipeMaterial,
-      FormServicesFields.Size
+      FormFields.SERVICES.SERVICE,
+      FormFields.SERVICES.EQUIPAMENT,
+      FormFields.SERVICES.SYSTEM,
+      FormFields.SERVICES.PIPE_MATERIAL,
+      FormFields.SERVICES.SIZE,
     ],
     ConcatenationFields: [
       "Tipo de inspeção",
       "Método de limpeza",
-      FormServicesFields.Steps,
+      FormFields.SERVICES.STEPS,
       "Imagens de corpo de prova",
       "Imagens da tubulação"
     ]
 }
 
-var RliServiceDbFields: ServiceDbFields = {
+const RliServiceDbFields: ServiceDbFields = {
     CompareFields: [
-      FormRLIFields.Service,
-      FormRLIFields.Equipament,
-      FormRLIFields.System,
-      FormRLIFields.Material,
-      FormRLIFields.Size
+
+      FormFields.RLI.SERVICE,
+      FormFields.RLI.EQUIPAMENT,
+      FormFields.RLI.SYSTEM,
+      FormFields.RLI.SIZE
     ],
     ConcatenationFields: [
-      FormRLIFields.DegreasingMethod,
-      FormRLIFields.FlushingMethod,
-      FormRLIFields.InibitionMethod,
-      FormRLIFields.Inspection,
-      FormRLIFields.FilterImgs,
-      FormRLIFields.PlateImgs,
-      FormRLIFields.PhmeterImgs
+      FormFields.RLI.DEGREASING_METHOD,
+      FormFields.RLI.FLUSHING_METHOD,
+      FormFields.RLI.INIBITION_METHOD,
+      FormFields.RLI.INSPECTION,
+      FormFields.RLI.FILTER_IMGS,
+      FormFields.RLI.PLATE_IMGS,
+      FormFields.RLI.PHMETER_IMGS
     ],
     SubstituitionFields: [
-      FormRLIFields.FlushingTemperature,
-      FormRLIFields.DegreasingTemperature,
-      FormRLIFields.InibitionTemperature
+      FormFields.RLI.FLUSHING_TEMPERATURE,
+      FormFields.RLI.DEGREASING_TEMPERATURE,
+      FormFields.RLI.INIBITION_TEMPERATURE
     ],
     TotalIntervalFields: [
       "DegreaseInterval",
@@ -53,15 +53,15 @@ var RliServiceDbFields: ServiceDbFields = {
     ]
 }
 
-var RtpServiceDbFields: ServiceDbFields = {
+const RtpServiceDbFields: ServiceDbFields = {
     CompareFields: [
-      FormServicesFields.Service,
-      FormServicesFields.Equipament,
-      FormServicesFields.System,
-      FormServicesFields.WorkPressure
+      FormFields.SERVICES.SERVICE,
+      FormFields.SERVICES.EQUIPAMENT,
+      FormFields.SERVICES.SYSTEM,
+      FormFields.SERVICES.WORK_PRESSURE
     ],
     ConcatenationFields: [
-      FormServicesFields.Steps,
+      FormFields.SERVICES.STEPS,
       "Selecione os manômetros utilizados",
       "Fotos dos manômetros (tag e escala)",
       "Foto do sistema"
@@ -71,20 +71,20 @@ var RtpServiceDbFields: ServiceDbFields = {
      ]
 }
 
-var RcpServiceDbFields: ServiceDbFields = {
+const RcpServiceDbFields: ServiceDbFields = {
     CompareFields: [
-      FormServicesFields.Service,
-      FormServicesFields.Equipament,
-      FormServicesFields.System,
-      FormServicesFields.Oil,
-      FormServicesFields.Type,
+      FormFields.SERVICES.SERVICE,
+      FormFields.SERVICES.EQUIPAMENT,
+      FormFields.SERVICES.SYSTEM,
+      FormFields.SERVICES.OIL,
+      FormFields.SERVICES.FLUSHING_TYPE,
     ],
     ConcatenationFields: [
       "Contagem de partículas",
-      FormServicesFields.DehydrationImg
+      FormFields.SERVICES.DEHYDRATION_IMG
     ],
     SubstituitionFields: [
-      FormServicesFields.InicialPartCount,
+      FormFields.SERVICES.INICIAL_PART_COUNT,
       "Umidade inicial",
     ],
     TotalTimeField: [
@@ -92,23 +92,23 @@ var RcpServiceDbFields: ServiceDbFields = {
     ]
 }
 
-var RlrServiceDbFields: ServiceDbFields = {
+const RlrServiceDbFields: ServiceDbFields = {
   CompareFields: [
-    FormServicesFields.Service,
-    FormServicesFields.Equipament,
-    FormServicesFields.System,
-    FormServicesFields.TankMaterial
+    FormFields.SERVICES.SERVICE,
+    FormFields.SERVICES.EQUIPAMENT,
+    FormFields.SERVICES.SYSTEM,
+    FormFields.SERVICES.TANK_MATERIAL
   ],
   ConcatenationFields: [
-    FormServicesFields.Steps,
+    FormFields.SERVICES.STEPS,
     "Imagens do reservatório",
     "Imagens da boroscopia"
   ]
 }
 
 function checkServiceProgress(reportData: ReportData, item: number, fields: ServiceDbFields): void {
-    var isServiceNew = getServiceFieldResponse(reportData, FormServicesFields.Progress, item) === "Não (começou hoje)" ? true: false;
-    var isServiceFinished = getServiceFieldResponse(reportData, FormServicesFields.Status, item) === "Sim" ? true: false;
+    var isServiceNew = getServiceFieldResponse(reportData, FormFields.SERVICES.PROGRESS, item) === "Não (começou hoje)" ? true: false;
+    var isServiceFinished = getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) === "Sim" ? true: false;
 
     if (isServiceNew && isServiceFinished === false) {
       storeServiceData(reportData, item);
@@ -118,7 +118,7 @@ function checkServiceProgress(reportData: ReportData, item: number, fields: Serv
       return ;
 
     var currentServiceObject = reportData.formResponsesDict[item];
-    var dbStoredService = serviceDb[reportData.missionName];
+    var dbStoredService = ReportState.serviceDb[reportData.missionName];
     var compareUnits = getCompareUnits(currentServiceObject, fields.CompareFields)
     var bestScore = Infinity
     var dbCompareUnits = []
@@ -192,7 +192,7 @@ function concatenateServiceResponses(currentServiceObject, storedService, field:
     //   continue ;
     var concatenateService = (storedField ?? []).concat(serviceField ?? [])
     var fieldSet = new Set(concatenateService);
-    var fieldArray = Array.from(fieldSet);
+    var fieldArray = new Array(fieldSet);
     storedService[field[i]] = fieldArray
     currentServiceObject[field[i]] = fieldArray
 
@@ -202,10 +202,10 @@ function concatenateServiceResponses(currentServiceObject, storedService, field:
 function storeServiceData(reportData: ReportData, item: number) {
     var serviceObject = reportData.formResponsesDict[item];
     
-    if (serviceDb.hasOwnProperty(reportData.missionName))
-      serviceDb[reportData.missionName].push(serviceObject);
+    if (ReportState.serviceDb.hasOwnProperty(reportData.missionName))
+      ReportState.serviceDb[reportData.missionName].push(serviceObject);
     else 
-      serviceDb[reportData.missionName] = [serviceObject];
+      ReportState.serviceDb[reportData.missionName] = [serviceObject];
 }
 
 

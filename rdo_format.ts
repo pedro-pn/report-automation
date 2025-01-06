@@ -1,22 +1,25 @@
-function setDotLineBorder(reportData: ReportData):void {
+function setDotLineBorder(reportData: ReportData, spreadsheetManager: SpreadsheetManager):void {
 	var reportCells = [];
 	for (var service = 1; service <= reportData.numOfServices; service++) {
-		var respCells = ReportServiceRespCells[service];
+		var respCells = ReportsRanges.RDO.CELLS.SERVICES[service];
 
-		getValueFromBuffer(respCells.ParamOne) ? reportCells.push(respCells.ParamOne): false;
-		getValueFromBuffer(respCells.ParamTwo) ? reportCells.push(respCells.ParamTwo): false;
-		getValueFromBuffer(respCells.Info) ? reportCells.push(respCells.Info): false;
+		ReportState.getValueFromBuffer(respCells.PARAM_ONE) ? reportCells.push(respCells.PARAM_ONE): false;
+		ReportState.getValueFromBuffer(respCells.PARAM_TWO) ? reportCells.push(respCells.PARAM_TWO): false;
+		ReportState.getValueFromBuffer(respCells.INFO) ? reportCells.push(respCells.INFO): false;
 	}
-	if (reportCells.length)
-		reportData.reportSpreadSheet.getRangeList(reportCells).activate()
+	if (reportCells.length) {
+		console.log(reportCells)
+		spreadsheetManager.getSpreadsheet().getRangeList(reportCells).activate()
 			.setBorder(null, null, true, null, null, null, '#000000', SpreadsheetApp.BorderStyle.DOTTED);
+
+	}
 }
 
 function deleteEmptyServiceRows(reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet, servicesCount: number): void {
 	if (servicesCount > 8)
 		return ;
-	var startRow = ServiceRows[servicesCount + 1]
-	var endRow = ServiceRows.LastRow - startRow + 1;
+	var startRow = ReportsRanges.RDO.SERVICES.FIRST_ROWS[servicesCount + 1]
+	var endRow = ReportsRanges.RDO.SERVICES.FIRST_ROWS.LAST_ROW - startRow + 1;
 	reportFirstSheet.deleteRows(startRow, endRow);
 }
 

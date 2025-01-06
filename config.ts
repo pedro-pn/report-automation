@@ -1,19 +1,7 @@
-export const weekDays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+const WeekDays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
-export const SpreadsheetIds = {
-    DATABASE: '17P66MgM18LxaFnCZO3h82ai0F7vkSscbo8Ngvr9h9u8',
-    MODEL_IDS: {
-        RDO: "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM",
-        RTP: "10LbzYMJzF-zMYsYk7N5zB1AgW7-9QQZ3nsZUWu-VKN4",
-        RLQ: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU",
-        RCPU: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so",
-        RLR: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
-        RLI: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg"
-    },
-};
-
-export enum ReportTypes {
-	RDO = 0,
+enum ReportTypes {
+    RDO = 0,
 	RTP = 1,
 	RLQ = 2,
 	RCP = 3,
@@ -21,17 +9,28 @@ export enum ReportTypes {
 	RLI = 5,
 }
 
-export const ReportSpreadSheetFolderIds = {
+const SpreadsheetIds = {
+    DATABASE: '17P66MgM18LxaFnCZO3h82ai0F7vkSscbo8Ngvr9h9u8',
+    MODEL_IDS: {
+        [ReportTypes.RDO]: "1stkfMCGdpIDEc1u4xfS3Ldl9qXirgR_4mPYMcCjSxBM",
+        [ReportTypes.RTP]: "10LbzYMJzF-zMYsYk7N5zB1AgW7-9QQZ3nsZUWu-VKN4",
+        [ReportTypes.RLQ]: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU",
+        [ReportTypes.RCP]: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so",
+        [ReportTypes.RLR]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
+        [ReportTypes.RLI]: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg"
+    },
+}
+const ReportSpreadSheetFolderIds = {
     REPORT_FOLDER_ID: "1Fal8CBjtATle0l7MnhmP1LSJqUk7cB-9",
     REPORT_STANDARD_FOLDER_ID: "10Yoluq2U6o5sQS-YGSMNs83a6GnwRru5"
 }
 
-export const ReportJSONIds = {
+const ReportJSONIds = {
     REPORT_INFO: '1CEXqNgVBJOohszlvzw3B10nchUQ2eUIk',
     SERVICE_DB_ID:"10HNrvBY8tx6VWzsOreN5HYV9Pdhq9eEB"
 }
 
-export const DBSheetColumns = {
+const DBSheetColumns = {
     FORM_RESPONSE_ID: 0,
     REPORT_ID: 1,
     MISSION_NAME: 2,
@@ -42,7 +41,24 @@ export const DBSheetColumns = {
     MAKE_REPORT: 7,
 };
 
-export const ReportsRanges = {
+type ReportServiceCells = {
+    SERVICE: string,
+    EQUIPAMENT: string,
+    SYSTEM: string,
+    START_TIME: string,
+    END_TIME: string,
+    STATUS: string,
+    PARAM_ONE: string,
+    PARA_TWO: string,
+    INFO: string,
+    PARAM_ONE_KEY: string,
+    PARAM_TWO_KEY: string,
+    INFO_KEY: string,
+    STEPS: string,
+    OBS: string
+}
+
+const ReportsRanges = {
     RDO: {
         CELLS: {
             HEADER: {
@@ -82,7 +98,7 @@ export const ReportsRanges = {
                     END_TIME: "M12",
                     STATUS: "I14",
                     PARAM_ONE: "I13",
-                    PARA_TWO: "M13",
+                    PARAM_TWO: "M13",
                     INFO: "M14",
                     PARAM_ONE_KEY: "G13",
                     PARAM_TWO_KEY: "K13",
@@ -100,7 +116,7 @@ export const ReportsRanges = {
                     END_TIME: "M19",
                     STATUS: "I21",
                     PARAM_ONE: "I20",
-                    PARA_TWO: "M20",
+                    PARAM_TWO: "M20",
                     INFO: "M21",
                     PARAM_ONE_KEY: "G20",
                     PARAM_TWO_KEY: "K20",
@@ -117,7 +133,7 @@ export const ReportsRanges = {
                     END_TIME: "M26",
                     STATUS: "I28",
                     PARAM_ONE: "I27",
-                    PARA_TWO: "M27",
+                    PARAM_TWO: "M27",
                     INFO: "M28",
                     PARAM_ONE_KEY: "G27",
                     PARAM_TWO_KEY: "K27",
@@ -134,7 +150,7 @@ export const ReportsRanges = {
                     END_TIME: "M33",
                     STATUS: "I35",
                     PARAM_ONE: "I34",
-                    PARA_TWO: "M34",
+                    PARAM_TWO: "M34",
                     INFO: "M35",
                     PARAM_ONE_KEY: "G34",
                     PARAM_TWO_KEY: "K34",
@@ -151,7 +167,7 @@ export const ReportsRanges = {
                     END_TIME: "M40",
                     STATUS: "I42",
                     PARAM_ONE: "I41",
-                    PARA_TWO: "M41",
+                    PARAM_TWO: "M41",
                     INFO: "M42",
                     PARAM_ONE_KEY: "G41",
                     PARAM_TWO_KEY: "K41",
@@ -168,7 +184,7 @@ export const ReportsRanges = {
                     END_TIME: "M47",
                     STATUS: "I49",
                     PARAM_ONE: "I48",
-                    PARA_TWO: "M48",
+                    PARAM_TWO: "M48",
                     INFO: "M49",
                     PARAM_ONE_KEY: "G48",
                     PARAM_TWO_KEY: "K48",
@@ -185,7 +201,7 @@ export const ReportsRanges = {
                     END_TIME: "M54",
                     STATUS: "I56",
                     PARAM_ONE: "I55",
-                    PARA_TWO: "M55",
+                    PARAM_TWO: "M55",
                     INFO: "M56",
                     PARAM_ONE_KEY: "G55",
                     PARAM_TWO_KEY: "K55",
@@ -202,7 +218,7 @@ export const ReportsRanges = {
                     END_TIME: "M61",
                     STATUS: "I63",
                     PARAM_ONE: "I62",
-                    PARA_TWO: "M62",
+                    PARAM_TWO: "M62",
                     INFO: "M63",
                     PARAM_ONE_KEY: "G62",
                     PARAM_TWO_KEY: "K62",
@@ -219,7 +235,7 @@ export const ReportsRanges = {
                     END_TIME: "M68",
                     STATUS: "I70",
                     PARAM_ONE: "I69",
-                    PARA_TWO: "M49",
+                    PARAM_TWO: "M49",
                     INFO: "M70",
                     PARAM_ONE_KEY: "G69",
                     PARAM_TWO_KEY: "K69",
@@ -257,7 +273,7 @@ export const ReportsRanges = {
     }
 }
 
-export const FormFields = {
+const FormFields = {
     HEADER: {
         DATE: "Data do relatório",
         MISSION: "Missão",
@@ -267,7 +283,7 @@ export const FormFields = {
         DAY_SHIFT_EMPLOYEES_NUM: "Quantidade de colaboradores (apenas turno diurno)",
         NIGHT_SHIFT: "Houve turno noturno?",
         NIGHT_SHIFT_START_TIME: "Horário de inicio do turno noturno",
-        NIGHT_SHIFT_END_TIME: "Horário de saída do turno noturno",
+        NIGHT_SHIFT_EXIT_TIME: "Horário de saída do turno noturno",
         TOTAL_DINNER_TIME: "Tempo total de intervalo de janta",
         NIGHT_SHIFT_EMPLOYEES_NUM: "Quantidade de colaboradores no turno noturno",
         STAND_BY_FLAG: "Teve período ocioso (stand-by)",
@@ -335,22 +351,24 @@ export const FormFields = {
     }
 } as const;
 
-export type FormFieldsKeys = keyof typeof FormFields['HEADER'];
-export type ServiceFieldsKeys = keyof typeof FormFields['SERVICES'];
-export type RliFieldsKeys = keyof typeof FormFields['RLI'];
+type fieldResponse = string[][] | string[] | string;
 
-export type ServiceFieldResponses = {
+type FormFieldsKeys = keyof typeof FormFields['HEADER'];
+type ServiceFieldsKeys = keyof typeof FormFields['SERVICES'];
+type RliFieldsKeys = keyof typeof FormFields['RLI'];
+
+type ServiceFieldResponses = {
 	[key in FormFieldsKeys | ServiceFieldsKeys | RliFieldsKeys]?: fieldResponse;
 	
 };
 
-export type FormResponseDict = {
+type FormResponseDict = {
 	[pageNumber: number]: {
 		[field: string]: fieldResponse;
 	};
 }
 
-export const ServiceApi = {
+const ServiceApi = {
     URL_REQUEST_STRING: "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
 /export?format=pdf\
 &size=A4\
@@ -364,6 +382,8 @@ export const ServiceApi = {
     API_URL: "https://script.google.com/macros/s/AKfycbwtkYaL13TlGTMoHwSsyW5LaBzNtGgBeZwCKxvdUy0EHcMwBycbzU36dBc4hS-IeMugIA/exec"
 }
 
-export const ValidationRules = {
+const FormId = "15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk";
+
+const ValidationRules = {
     CHECKBOX: SpreadsheetApp.newDataValidation().requireCheckbox().build(),
 };

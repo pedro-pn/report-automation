@@ -35,6 +35,8 @@ function getDiffHour(startHourString: string, endHourString: string): number {
 	return (hourDifference);
 }
 
+const padNumber = (num) => ('00' + num).slice(-2);
+
 function sumTimeString(time1: string, time2: string): string {
   // Split the time strings by ":"
   let [hours1, minutes1] = time1.split(":").map(Number);
@@ -49,7 +51,7 @@ function sumTimeString(time1: string, time2: string): string {
   totalMinutes = totalMinutes % 60;  // Get remaining minutes
 
   // Return the result in "HH:MM" format
-  return `${String(totalHours).padStart(2, '0')}:${String(totalMinutes).padStart(2, '0')}`;
+  return `${padNumber(totalHours)}:${padNumber(totalMinutes)}`;
 }
 
 /**
@@ -70,10 +72,16 @@ function hoursToHourString(hours: number): string {
 	return (hourString);
 }
 
+function parseDateString(dateString: string): string {
+    const [year, month, day] = dateString.split("-");
+    const formattedYear = year.startsWith("00") ? `20${year.slice(2)}` : year;
+    return `${day}-${month}-${formattedYear}`;
+}
+
 function getShiftTime(reportData: ReportData): string {
 	const weekday = reportData.getWeekDayNum();
-	const saturdayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSaturday;
-	const sundayFlag = reportData.reportInfo.getMissionInfo(reportData.missionName).IncludeSunday;
+	const saturdayFlag = reportData.getMissionInfos().IncludeSaturday;
+	const sundayFlag = reportData.getMissionInfos().IncludeSunday;
 	if (weekday > 0 && weekday < 5)
 		return (reportData.shiftTime.weekdays);
 	if (weekday == 5)
@@ -90,9 +98,22 @@ function fillTemplate(template: string, variables: Object): string {
 }
 
 function getExportUrlRequest(spreadSheetId: string, sheetId: number): string {
-	return (fillTemplate(urlRequestString, {
+	return (fillTemplate(ServiceApi.URL_REQUEST_STRING, {
 		reportSpreadsheetId: spreadSheetId,
 		reportSheetId: sheetId}));
+}
+
+function getWeekDayNum(date: string): number {
+	var dateStrings = date.split('-');
+	var dateType = new Date(Number(dateStrings[2]), Number(dateStrings[1]) - 1, Number(dateStrings[0]));
+	var weekDay = dateType.getDay();
+	
+	return (weekDay);
+}
+
+function getWeekDay(date: string): string {
+	let weekDay = getWeekDayNum(date);
+	return (WeekDays[weekDay]);
 }
 
 function sendPostRequest(formResponseId: string, reportNumber: number, reportType: number, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
@@ -101,7 +122,7 @@ function sendPostRequest(formResponseId: string, reportNumber: number, reportTyp
 		reportNumber: reportNumber,
 		reportType: reportType,
 		item: item,
-		isEdit: isEdit,
+		isEdit: ReportState.isEdit,
     	serviceObject: serviceObject
 	};
 
@@ -114,7 +135,7 @@ function sendPostRequest(formResponseId: string, reportNumber: number, reportTyp
 		}
 	};
 
-	var response = UrlFetchApp.fetch(serviceReportApi, options);
+	var response = UrlFetchApp.fetch(ServiceApi.URL_REQUEST_STRING, options);
 	if (response.getResponseCode() !== 200) {
 	  Logger.log('Error: Failed to fetch the data from the API');
 	  return null;  // If not successful, return null
@@ -122,8 +143,8 @@ function sendPostRequest(formResponseId: string, reportNumber: number, reportTyp
 
 	var responseObject = JSON.parse(response.getContentText())
 	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
-	reportBlobs.push(serviceReportBlob)
-	reportIds += `,${responseObject.reportId}`;
+	ReportState.reportBlobs.push(serviceReportBlob)
+	ReportState.reportIds += `,${responseObject.reportId}`;
   	return (responseObject.newService);
 }
 
@@ -136,7 +157,7 @@ function cellStringToNumber(cellString: string): number[] {
 }
 
 function showAllRespondsLink() {
-	var form = FormApp.openById(formId);
+	var form = FormApp.openById(FormId);
 	var formResponds = form.getResponses();
 	var index = 0;
 	formResponds.forEach(function(formResponse) {

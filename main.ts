@@ -1,66 +1,65 @@
-function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit) {
+function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): void {
 	var formResponse = formEvent.response;
-	let reportDb = new ReportDb.ReportDb(formResponse);
-	let reportData = new ReportData.ReportData(formResponse);
+	let reportDb = new ReportDb(formResponse);
+	let reportInfo = new ReportInfo();
+	let reportData =  new ReportData(formResponse, reportInfo);
 	reportDb.setEditFlag();
   	if (reportDb.checkReportStatus(reportData) === false)
     	return ;
-	reportData.makeReportSpreadsheetFile(reportDb);
-	fillReport(reportData);
+	let spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
+	fillReport(reportData, spreadsheetManager);
 	SpreadsheetApp.flush();
-
-	reportData.exportSheetToPDF();
-  reportBlobs.push(reportData.reportBlob);
+	spreadsheetManager.exportSheetToPDF();
 	sendReportViaEmail(reportData);
-	reportDb.logResponse(reportData);
-  if (isEdit === false)
-    reportDb.removePendingService()
-	if (isEdit === true)
+	reportDb.logResponse(reportData, spreadsheetManager);
+  	if (ReportState.isEdit === false)
+   	 	reportDb.removePendingService()
+	if (ReportState.isEdit === true)
 		return ;
-	reportData.reportInfo.updateRDO(reportData.missionName);
-	reportData.reportInfo.updateReportInfo();
+	reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RDO);
+	reportInfo.updateReportInfo();
 }
 
-function  fillReport(reportData: ReportData) {
-	var reportCellsRange = reportData.reportFirstSheet.getRange("A1:P82");
-	reportBuffer = reportCellsRange.getValues();
+function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetManager): void {
+	var reportCellsRange = spreadsheetManager.getFirstSheet().getRange("A1:P82");
+	ReportState.reportBuffer = reportCellsRange.getValues();
 	var formulas = reportCellsRange.getFormulas();
 	
 	fillReportHeader(reportData);
 	fillReportSubHeader(reportData);
 	fillReportNightShift(reportData);
-	fillReportFooter(reportData);
+	fillReportFooter(reportData, spreadsheetManager);
 	fillActivities(reportData);
 	fillServicesFields(reportData);
-	var reportValuesResult = mergeValuesAndFormulas(formulas, reportBuffer);
+	fillSignField(reportData, spreadsheetManager, ReportsRanges.RDO.CELLS.FOOTER.SIGNATURE, 100);
+	var reportValuesResult = mergeValuesAndFormulas(formulas, ReportState.reportBuffer);
 	reportCellsRange.setValues(reportValuesResult)
-	reportCellsFit(reportData.reportFirstSheet)
-	deleteEmptyServiceRows(reportData.reportFirstSheet, reportData.numOfServices);
-	setDotLineBorder(reportData);
+	reportCellsFit(spreadsheetManager.getFirstSheet())
+	deleteEmptyServiceRows(spreadsheetManager.getFirstSheet(), reportData.numOfServices);
+	setDotLineBorder(reportData, spreadsheetManager);
 }
 
 //#region TEST AND DEBUG
 
-function onFormSubmitDEBUG(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit) {
-	var formResponse = formEvent.response;
-	let reportDb = new ReportDb.ReportDb(formResponse);
-	let reportData = new ReportData.ReportData(formResponse);
-	reportDb.setEditFlag();
-  // if (reportDb.checkReportStatus(reportData) === false)
-  //   return ;
-	reportData.makeReportSpreadsheetFile(reportDb);
-	fillReport(reportData);
-	SpreadsheetApp.flush();
+// function onFormSubmitDEBUG(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit) {
+// 	var formResponse = formEvent.response;
+// 	let reportDb = new ReportDb.ReportDb(formResponse);
+// 	let reportData = new ReportData.ReportData(formResponse);
+// 	reportDb.setEditFlag();
+//   // if (reportDb.checkReportStatus(reportData) === false)
+//   //   return ;
+// 	reportData.makeReportSpreadsheetFile(reportDb);
+// 	fillReport(reportData);
+// 	SpreadsheetApp.flush();
 
-	reportData.exportSheetToPDF();
-  reportBlobs.push(reportData.reportBlob);
-	// sendReportViaEmail(reportData);
-	reportDb.logResponse(reportData);
-  // reportDb.removePendingService()
-	// if (isEdit === true)
-	// 	return ;
-	// reportData.reportInfo.updateRDO(reportData.missionName);
-	// reportData.reportInfo.updateReportInfo();
-}
+// 	reportData.exportSheetToPDF();
+//   reportBlobs.push(reportData.reportBlob);
+// 	// sendReportViaEmail(reportData);
+// 	reportDb.logResponse(reportData);
+//   // reportDb.removePendingService()
+// 	// if (isEdit === true)
+// 	// 	return ;
+// 	// reportData.reportInfo.updateRDO(reportData.missionName);
+// 	// reportData.reportInfo.updateReportInfo();
+// }
 
-//#endregion

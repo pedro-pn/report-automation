@@ -1,7 +1,7 @@
 //#region Test
 
 function showAllResponses() {
-	var form = FormApp.openById(formId);
+	var form = FormApp.openById(FormId);
 	var responses = form.getResponses();
 	
 	responses.forEach(function(response) {
@@ -13,11 +13,11 @@ function showAllResponses() {
   }
 
 function remakeReports() {
-	var form = FormApp.openById(formId); // Replace with your form ID
+	var form = FormApp.openById(FormId); // Replace with your form ID
 	// var responses = form.getResponses();
 	var responsesNumber = [137, 139]
   var responsesIds = [
-"Could not read API credentials. Are you logged in locally?"
+"2_ABaOnuc5QhhEvDcp5nUz1Lw2xZZBYHJIvnZzbMf2eRav-6XKhpzOgX7OKNafwTQOV8ypTWk"
   ]
 	if (responsesIds.length > 0) {
 		for (var i = 0; i < responsesIds.length; i++) {
@@ -30,14 +30,14 @@ function remakeReports() {
 			}
 			// Call form submission handler with the fake event
 			onFormSubmit(fakeEvent as GoogleAppsScript.Events.FormsOnFormSubmit);
-			reportBuffer = null;
-      reportIds = "";
-			isEdit = false;
-      reportBlobs = [];
-      reportType = 0;
-      serviceDb = {}
-      newService = false;
-      debug = false;
+			ReportState.reportBuffer = null;
+			ReportState.reportIds = "";
+			ReportState.isEdit = false;
+			ReportState.reportBlobs = [];
+			ReportState.reportType = 0;
+			ReportState.serviceDb = {}
+			ReportState.newService = false;
+			ReportState.debug = false;
 		}
 	} else {
 		Logger.log('No responses found.');
@@ -45,7 +45,7 @@ function remakeReports() {
 }
 
 function testWithPreviousResponse() {
-var form = FormApp.openById(formId); // Replace with your form ID
+var form = FormApp.openById(FormId); // Replace with your form ID
 var responses = form.getResponses();
 	if (responses.length > 0) {
 		var testResponse = responses[137];
@@ -63,8 +63,8 @@ var responses = form.getResponses();
 }
 
 function testWithPreviousResponseDEBBUG() {
-  debug = true;
-	var form = FormApp.openById(formId); // Replace with your form ID
+  ReportState.debug = true;
+	var form = FormApp.openById(FormId); // Replace with your form ID
 	var responses = form.getResponses();
 		if (responses.length > 0) {
 			var testResponse = form.getResponse("2_ABaOnudd728UG0s4KXxUVibnLeiJXd0QXBAYyfUgU2DkCmFxEK869pZ6i4k1kLZ4uVtZxr0");
@@ -81,34 +81,21 @@ function testWithPreviousResponseDEBBUG() {
 		}
 	}
 
-function testReportData() {
-	var form = FormApp.openById(formId); // Replace with your form ID
-	var responses = form.getResponses();
-	var testResponse = responses[42];
-	var fakeEvent = {
-		response: testResponse,
-		source: form
-	}
-	var reportData = new ReportData.ReportData(testResponse);
-}
+// function testReportData() {
+// 	var form = FormApp.openById(FormId); // Replace with your form ID
+// 	var testResponse = form.getResponse("2_ABaOnucGwar2bzniLD6REM7NVxCHc3u-QJM97sEftF0XBp0kAK_vjZTYASZSborYRWHSl98");
 
-function testSearchResponse() {
-	var form = FormApp.openById(formId); // Replace with your form ID
-	var responses = form.getResponses();
-	var testResponse = responses[91];
-	let reportData = new ReportData.ReportData(testResponse);
+	
+// 	var reportData = new ReportData(testResponse);
+// 	console.log(`RDO number: ${reportData.reportNum}`);
+// 	ReportState.reportType = ReportTypes.RLQ;
+// 	console.log(`RLQ should be 2: ${reportData.getReportNumber(ReportTypes.RLQ)}`)
+// }
 
-	console.log(reportData.searchFieldResponse(FormServicesFields.Type, 3));
-	console.log(reportData.searchFieldResponse(FormServicesFields.Type, 4));
-	// console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 0));
-	// console.log(reportData.searchFieldResponse(FormServicesFields.FinalPartCount, 1));
-
-	// sendPostRequest(testResponse.getId());
-}
 
 function assCellTest() {
 	let assImage = DriveApp.getFileById("1PJYmqohN7Jr1JHZXKvid_lUTkM2lw8En").getBlob();
-	let reportSpreadSheet = SpreadsheetApp.openById(ReportModelIds[2]);
+	let reportSpreadSheet = SpreadsheetApp.openById(SpreadsheetIds.MODEL_IDS[ReportTypes[2]]);
 	let reportSheet = reportSpreadSheet.getSheets()[0];
 	let range = reportSheet.getRange("B57");
   

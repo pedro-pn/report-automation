@@ -1,17 +1,17 @@
 function sendReportViaEmail(reportData: ReportData) {
-    var recipient = reportData.reportParams.Recipient;
+    var recipient = reportData.getParameterInfos().Recipient;
     var subject = generateEmailSubject(reportData);
     var cc = reportData.getLeaderInfos().Email;
-    var bcc = reportData.reportParams.Bcc;
+    var bcc = reportData.getParameterInfos().Bcc;
     var body = generateEmailBody(reportData);
 
     try {
-      if (debug) {
+      if (ReportState.debug) {
         MailApp.sendEmail( {
           to: bcc,
           subject: subject,
           htmlBody: body,
-          attachments: reportBlobs,
+          attachments: ReportState.reportBlobs,
         })
         return ;
       }
@@ -21,27 +21,27 @@ function sendReportViaEmail(reportData: ReportData) {
           bcc: bcc,
           subject: subject,
           htmlBody: body,
-          attachments: reportBlobs,
+          attachments: ReportState.reportBlobs,
       })
     } catch {
       console.log("Cannot send more e-mails today.")
     }
 }
 
-function generateEmailSubject(reportData) {
-    var subjectTemplate = reportData.reportParams.EmailSubject;
+function generateEmailSubject(reportData: ReportData) {
+    var subjectTemplate = reportData.getParameterInfos().EmailSubject;
     var subject = fillTemplate(subjectTemplate, {
-        type: ReportTypes[reportType],
+        type: ReportTypes[ReportState.reportType],
         number: reportData.reportNum,
         reportName: reportData.missionName
     });
     return (subject);
 }
 
-function generateEmailBody(reportData) {
-    var bodyTemplate = reportData.reportParams.EmailBody;
+function generateEmailBody(reportData: ReportData) {
+    var bodyTemplate = reportData.getParameterInfos().EmailBody;
     var body = fillTemplate(bodyTemplate, {
-        reportEditLink: reportData.formResponse.getEditResponseUrl()
+        reportEditLink: reportData.getResponseEditLink()
     });
 
     return (body);

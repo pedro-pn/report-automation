@@ -1,305 +1,148 @@
-interface ReportData {
-	formResponse: GoogleAppsScript.Forms.FormResponse,
-	formResponsesDict: FormResponseDict;
-	reportInfo: ReportInfo;
-	missionName: string;
-	date: string;
-	reportNum: number;
-	shiftTime: ShiftTime;
-	numOfServices: number;
-	reportSpreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
-	reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet;
-	reportSpreadSheetFile: GoogleAppsScript.Drive.File;
-	reportParams: ReportInfoParameters;
-	reportBlob: GoogleAppsScript.Base.Blob;
-	getReportNumber(reportType: ReportTypes): number;
-	getClient(): string;
-	getMissionInfos(): ReportInfoMission;
-	getLeaderInfos(): ReportInfoLeaders;
-	getManometer(name: string): ManometerEntry;
-	getShiftTime(): ShiftTime;
-	getCNPJ(): string;
-	getProposal(): string;
-	getParameters(): ReportInfoParameters;
-	getWeekDayNum(): number;
-	getWeekDay(): string;
-	searchFieldResponse(fieldName: string, item?: number): fieldResponse
-	getReportDate(): string;
-	getMissionName(): string;
-	openReportSpreadSheet(): void;
-	getReportFolder(): GoogleAppsScript.Drive.Folder;
-	getFormResponsesAsDictionary(): FormResponseDict;
-	exportSheetToPDF(): void;
-	makeReportSpreadsheetFile(reportDb, item?: number): void;
-	createReportSpreadSheetFile(item: number);
-	setReportName(item: number): void;
-	getOldReportNum(reportSheet: GoogleAppsScript.Spreadsheet.Sheet): number;
-	openExistingReportSpreadsheet(reportDb, item): boolean;
-	updateReportSpreadsheetFile(reportDb, item: number): void;
-}
+const reportTypeNameHandlers = {
+    RDO: (data: ReportData) => `${data.missionName} - RDO ${data.reportNum} - ${data.date} - ${data.getWeekDay()}`,
+	SERVICES: (data: ReportData, item: number) =>
+        `${data.missionName} - ${ReportTypes[data.reportType]} ${data.reportNum} - ${data.searchFieldResponse(FormFields.SERVICES.EQUIPAMENT, item)} - ${data.searchFieldResponse(FormFields.SERVICES.SYSTEM, item)}`
+};
 
-interface ShiftTime {
+type ShiftTime = {
 	weekdays: string,
 	weekend: string
 }
 
-type fieldResponse = string[][] | string[] | string;
+class ReportData {
+	public formResponsesDict: FormResponseDict;
+	public missionName: string;
+	public date: string;
+	public reportNum: number;
+	public shiftTime: ShiftTime;
+	public numOfServices: number;
+	public reportSpreadSheetFile: GoogleAppsScript.Drive.File
+	public reportBlob: GoogleAppsScript.Base.Blob;
+	public reportType: ReportTypes;
 
-var ReportData = (function() {
-	class ReportData {
-		formResponse: GoogleAppsScript.Forms.FormResponse;
-		formResponsesDict: FormResponseDict;
-		reportInfo: ReportInfo;
-		missionName: string;
-		date: string;
-		reportNum: number;
-		shiftTime: ShiftTime;
-		numOfServices: number;
-		reportSpreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
-		reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet;
-		reportSpreadSheetFile: GoogleAppsScript.Drive.File;
-		reportParams: ReportInfoParameters;
-		reportBlob: GoogleAppsScript.Base.Blob;
-		constructor(formResponse: GoogleAppsScript.Forms.FormResponse) {
-			this.formResponse = formResponse;
-			this.formResponsesDict = this.getFormResponsesAsDictionary()
-			this.reportInfo = new ReportLib.ReportInfo();
-			this.missionName = this.getMissionName();
-			this.date = this.getReportDate();
-			this.reportNum = this.getReportNumber(reportType);
-			this.shiftTime = this.getShiftTime();
-			this.numOfServices = 0;
-			this.reportSpreadSheet;
-			this.reportFirstSheet;
-			this.reportSpreadSheetFile;
-			this.reportParams = this.reportInfo.getParameters();
-			this.reportBlob;
-		}
+	constructor(
+		private formResponse: GoogleAppsScript.Forms.FormResponse,
+		private reportInfo: ReportInfo,
+	) {
 
-		getReportNumber(reportType: ReportTypes): number {
-			return (this.reportInfo.getMissionInfo(this.missionName)[ReportTypes[reportType]])
-		}
-		
-		getClient(): string {
-			return (this.reportInfo.getMissionInfo(this.missionName).Client);
-		}
-
-		getMissionInfos(): ReportInfoMission {
-			return (this.reportInfo.getMissionInfo(this.missionName));
-		}
-
-		getLeaderInfos(): ReportInfoLeaders {
-			var leaderId = this.reportInfo.getMissionInfo(this.missionName).Leader;
-			return (this.reportInfo.getLeaderInfo(leaderId));
-		}
-
-		getManometer(name: string): ManometerEntry {
-			return (this.reportInfo.getManometers()[name])
-		}
-
-		getShiftTime(): ShiftTime {
-			var shiftTime = {
-				weekdays: this.reportInfo.getMissionInfo(this.missionName).ShiftTime,
-				weekend: this.reportInfo.getMissionInfo(this.missionName).WeekendShiftTime
-			};
-
-			return (shiftTime);
-		}
-
-		getCNPJ(): string {
-			return (this.reportInfo.getMissionInfo(this.missionName).CNPJ);
-		}
-
-		getProposal(): string {
-			return (this.reportInfo.getMissionInfo(this.missionName).Proposal);
-		}
-
-		getParameters(): ReportInfoParameters {
-			return (this.reportInfo.getParameters())
-		}
-
-		getWeekDayNum(): number {
-			var dateStrings = this.date.split('-');
-			var dateType = new Date(Number(dateStrings[2]), Number(dateStrings[1]) - 1, Number(dateStrings[0]));
-			var weekDay = dateType.getDay();
-			
-			return (weekDay);
-		}
-
-		getWeekDay(): string {
-			let weekDay = this.getWeekDayNum();
-			return (weekDays[weekDay]);
-		}
-		
-    searchFieldResponse(fieldName: string, item: number = 0): fieldResponse {
-      let responseField = this.formResponsesDict[item];
-      if (responseField !== undefined)
-        return (this.formResponsesDict[item][fieldName]);
-      return (null)
-    }
-
-		getReportDate(): string {
-				var date = this.searchFieldResponse(HeaderFields.Date);
-				if (typeof date !== "string")
-					return ("Invalid date");
-				var dateComponents = date.split("-");
-				var day = dateComponents[2];
-				var month = dateComponents[1];
-				var year = dateComponents[0];
-				if (year.substring(0, 2) === "00")
-					year = `20${year.substring(2)}`;
-			
-				return (`${day}-${month}-${year}`);
-		}
-			
-		getMissionName(): string {
-			return (this.searchFieldResponse(HeaderFields.Mission) as string);
-		}
-
-		openReportSpreadSheet(): void {
-			this.reportSpreadSheet = SpreadsheetApp.open(this.reportSpreadSheetFile);
-			this.reportFirstSheet = this.reportSpreadSheet.getSheets()[0];
-		}
-
-		getReportFolder(): GoogleAppsScript.Drive.Folder {
-			let reportsFolder = DriveApp.getFolderById(reportFolderID);
-			let folderName = Object.keys(ReportTypes)[reportType];
-			try {
-				let currentReportFolder = reportsFolder.getFoldersByName(this.searchFieldResponse(HeaderFields.Mission) as string).next();
-				var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
-			}
-			catch {
-				recipientFolder = DriveApp.getFolderById(reportStandardFolderID);
-			}
-		
-			return (recipientFolder);
-		}
-
-		getFormResponsesAsDictionary(): FormResponseDict {
-      	var index = 0;
-		var allResponses = {};
-
-		this.formResponse.getItemResponses().forEach( response => {
-        let title = response.getItem().getTitle().trim();
-        if (title === "Selecione o tipo de serviço que deseja adicionar informações")
-          index++;
-        else if (title === "Em caso de hora extra, indicar o responsável a mesma")
-          index = 0;
-        else if (title === "Atividades/Observações")
-          index = 0;
-        if (!(index in allResponses))
-          allResponses[index] = {};
-				allResponses[index][title] = response.getResponse();
-
-			})
-      // console.log(allResponses)
-			return (allResponses);
-		}
-
-		exportSheetToPDF(): void {
-			var token = ScriptApp.getOAuthToken();
-			var reportSpreadsheetId = this.reportSpreadSheet.getId();
-			var reportSheetId = this.reportFirstSheet.getSheetId();
-			var urlRequest = getExportUrlRequest(reportSpreadsheetId, reportSheetId);
-			try {
-				var response = UrlFetchApp.fetch(urlRequest, {
-				headers: {
-					'Authorization': 'Bearer ' + token
-				},
-				muteHttpExceptions: true
-				});
-		
-			} catch (error) {
-				Logger.log('Error: ' + error.toString());
-			}
-			var blob = response.getBlob().setName(`${this.reportSpreadSheet.getName()}.pdf`);
-			this.reportBlob = blob;
-			this.getReportFolder().createFile(blob)
-		}
-
-		makeReportSpreadsheetFile(reportDb, item: number = 0): void {
-			if (isEdit)
-				this.updateReportSpreadsheetFile(reportDb, item);
-			else
-				this.createReportSpreadSheetFile(item);
-		}
-
-		createReportSpreadSheetFile(item: number = 0): void {
-			var modelSpreadSheetFile = SpreadsheetApp.openById(ReportModelIds[reportType]);
-			var spreadSheetFileCopy = DriveApp.getFileById(modelSpreadSheetFile.getId()).makeCopy(this.getReportFolder());
-			this.reportSpreadSheetFile = spreadSheetFileCopy;
-			this.setReportName(item);
-      this.openReportSpreadSheet()
-      if (reportType)
-        newService = true;
-		}
-
-		setReportName(item: number = 0): void {
-			switch (reportType) {
-				case ReportTypes.RDO:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RDO ${this.reportNum} - ${this.date} - ${this.getWeekDay()}`);
-					break ;
-				case ReportTypes.RTP:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RTP ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
-					break ;
-				case ReportTypes.RLQ:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RLQ ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
-					break ;
-				case ReportTypes.RCP:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RCP ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
-					break ;
-				case ReportTypes.RLR:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RLR ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
-					break ;
-				case ReportTypes.RLI:
-					this.reportSpreadSheetFile.setName(`${this.missionName} - RLI ${this.reportNum} - ${this.searchFieldResponse(FormServicesFields.Equipament, item)} - ${this.searchFieldResponse(FormServicesFields.System, item)}`);
-					break ;
-			}
-		}
-
-		getOldReportNum(reportSheet: GoogleAppsScript.Spreadsheet.Sheet): number {
-			switch (reportType) {
-				case ReportTypes.RDO:
-					return (reportSheet.getRange(ReportHeaderCells.RdoNumber).getValue());
-				default:
-					return (reportSheet.getRange(ReportHeaderCells.ServiceNumber).getValue());
-			}
-		}
-
-    	openExistingReportSpreadsheet(reportDb, item = 0): boolean {
-			try {
-				this.reportSpreadSheetFile = DriveApp.getFileById(reportDb.getReportSpreadsheetId(item));
-			} catch {
-				this.createReportSpreadSheetFile()
-				return (false);
-			}
-			if (this.reportSpreadSheetFile.isTrashed()) {
-				this.createReportSpreadSheetFile();
-				return (false);
-			}
-			else
-				this.openReportSpreadSheet();
-			return (true);
-		}
-
-		updateReportSpreadsheetFile(reportDb, item: number = 0): void { // generalize this function
-			let openStatus = this.openExistingReportSpreadsheet(reportDb, item);
-      if (openStatus === false)
-        return ;
-			var oldReportFirstSheet = this.reportSpreadSheet.getSheets()[0];
-			this.reportNum = this.getOldReportNum(oldReportFirstSheet);
-			var modelSheet = SpreadsheetApp.openById(ReportModelIds[reportType]).getSheets()[0];
-
-			this.reportFirstSheet = modelSheet.copyTo(this.reportSpreadSheet);
-			this.reportSpreadSheet.deleteSheet(oldReportFirstSheet);
-			this.reportFirstSheet.setName(ReportTypes[reportType])
-			
-			if (reportType !== ReportTypes.RDO)
-				return ;
-			var reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
-			var newReportName = this.reportSpreadSheet.getName().replace(reportNameModel, `${this.date} - ${this.getWeekDay()}`);
-			this.reportSpreadSheet.rename(newReportName);
-		}
+		this.formResponse = formResponse;
+		this.formResponsesDict = new FormResponseProcessor(this.formResponse).getResponsesAsDictionary();
+		this.missionName = this.getMissionName();
+		this.date = this.getReportDate();
+		this.reportNum = this.getReportNumber(ReportState.reportType);
+		this.shiftTime = this.getShiftTime();
+		this.numOfServices = 0;
+		this.reportSpreadSheetFile;
 	}
-	return ({ReportData: ReportData});
-})();
+
+	getReportNumber(reportType: ReportTypes): number {
+		return (this.reportInfo.getMissionInfo(this.missionName)[ReportTypes[reportType]])
+	}
+	
+	getClient(): string {
+		return (this.reportInfo.getMissionInfo(this.missionName).Client);
+	}
+
+	getMissionInfos(): ReportInfoMission {
+		return (this.reportInfo.getMissionInfo(this.missionName));
+	}
+
+	getLeaderInfos(): ReportInfoLeaders {
+		var leaderId = this.reportInfo.getMissionInfo(this.missionName).Leader;
+		return (this.reportInfo.getLeaderInfo(leaderId));
+	}
+
+	getParameterInfos(): ReportInfoParameters {
+		return (this.reportInfo.getParameters())
+	}
+
+	getManometer(name: string): ManometerEntry {
+		return (this.reportInfo.getManometers()[name])
+	}
+
+	getShiftTime(): ShiftTime {
+		var shiftTime = {
+			weekdays: this.reportInfo.getMissionInfo(this.missionName).ShiftTime,
+			weekend: this.reportInfo.getMissionInfo(this.missionName).WeekendShiftTime
+		};
+
+		return (shiftTime);
+	}
+
+	getCNPJ(): string {
+		return (this.reportInfo.getMissionInfo(this.missionName).CNPJ);
+	}
+
+	getProposal(): string {
+		return (this.reportInfo.getMissionInfo(this.missionName).Proposal);
+	}
+
+	getWeekDayNum(): number {
+		var dateStrings = this.date.split('-');
+		var dateType = new Date(Number(dateStrings[2]), Number(dateStrings[1]) - 1, Number(dateStrings[0]));
+		var weekDay = dateType.getDay();
+		
+		return (weekDay);
+	}
+	
+	getWeekDay(): string {
+		let weekDay = this.getWeekDayNum();
+		return (WeekDays[weekDay]);
+	}
+
+	getReportFolder(): GoogleAppsScript.Drive.Folder {
+		let reportsFolder = DriveApp.getFolderById(ReportSpreadSheetFolderIds.REPORT_FOLDER_ID);
+		let folderName = ReportTypes[ReportState.reportType];
+		try {
+			let currentReportFolder = reportsFolder.getFoldersByName(this.missionName).next();
+			var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
+		}
+		catch {
+			recipientFolder = DriveApp.getFolderById(ReportSpreadSheetFolderIds.REPORT_STANDARD_FOLDER_ID);
+		}
+		return (recipientFolder);
+	}
+	
+	createSpreadSheetManager(reportDb: ReportDb, item: number = 0): SpreadsheetManager {
+		let modelId = SpreadsheetIds.MODEL_IDS[ReportState.reportType];
+		let name = ReportState.reportType === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
+		let folder = this.getReportFolder();
+		let spreadsheetManager = new SpreadsheetManager(modelId, folder, name)
+		if (ReportState.isEdit === true) {
+			let oldSpreadsheetId = reportDb.getReportSpreadsheetId(0);
+			reportDb.reportDbData.reportNumber;
+			name =  ReportState.reportType === ReportTypes.RDO ? reportTypeNameHandlers.RDO.name : reportTypeNameHandlers.SERVICES.name;
+			spreadsheetManager.updateReportSpreadsheetFile(oldSpreadsheetId, this.date);
+		}
+		
+		return (spreadsheetManager);
+	}
+
+	searchFieldResponse(fieldName: string, item: number = 0): fieldResponse {
+		let responseField = this.formResponsesDict[item];
+		if (responseField !== undefined)
+		return (this.formResponsesDict[item][fieldName]);
+		return (null)
+	}
+
+	getReportDate(): string {
+		const date = this.searchFieldResponse(FormFields.HEADER.DATE) as string;
+		return (parseDateString(date));
+	}
+
+	getResponseEditLink(): string {
+		return (this.formResponse.getEditResponseUrl());
+	}
+		
+	getMissionName(): string {
+		return (this.searchFieldResponse(FormFields.HEADER.MISSION) as string);
+	}
+
+	setReportName(item: number = 0): void {
+		const handler = reportTypeNameHandlers[ReportTypes[ReportState.reportType]];
+    	if (handler) {
+        	const name = handler(this, item);
+        	this.reportSpreadSheetFile.setName(name);
+    	}
+	}
+}

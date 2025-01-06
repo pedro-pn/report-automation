@@ -52,58 +52,53 @@ interface ReportInfoManometers {
 	[key: string]: ManometerEntry;
 }
 
-interface ReportInfo {
+// interface ReportInfo {
+// 	reportInfoFile: GoogleAppsScript.Drive.File;
+// 	reportInfoString: string;
+// 	reportInfoData: ReportInfoJSON;
+// 	getMissionInfo(missionName: string): ReportInfoMission;
+// 	getLeaderInfo(leaderId: number): ReportInfoLeaders;
+// 	getParameters(): ReportInfoParameters;
+// 	getManometers(): ReportInfoManometers;
+// 	updateReportInfo(): void;
+// 	updateReportNumber(missionName: string, reportType: ReportTypes): void;
+// }
+
+class ReportInfo {
 	reportInfoFile: GoogleAppsScript.Drive.File;
 	reportInfoString: string;
 	reportInfoData: ReportInfoJSON;
-	getMissionInfo(missionName: string): ReportInfoMission;
-	getLeaderInfo(leaderId: number): ReportInfoLeaders;
-	getParameters(): ReportInfoParameters;
-	getManometers(): ReportInfoManometers;
-	updateReportInfo(): void;
-	updateReportNumber(missionName: string, reportType: ReportTypes): void;
+	constructor() {
+		this.reportInfoFile = DriveApp.getFileById(ReportJSONIds.REPORT_INFO);
+		this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
+		this.reportInfoData = JSON.parse(this.reportInfoString);
+	}
+
+	// This function MUST be called after using reportInfo.json. 
+	updateReportInfo() {
+		const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
+		this.reportInfoFile.setContent(updatedInfoData);
+	}
+
+	getMissionInfo(missionName: string): ReportInfoMission {
+		return (this.reportInfoData.Missions.find(mission => mission.Name === missionName));
+	}
+
+	getLeaderInfo(leaderId: number): ReportInfoLeaders {
+		return (this.reportInfoData.Leaders.find(leader => leader.Id === leaderId));
+	}
+
+	getParameters(): ReportInfoParameters {
+		return (this.reportInfoData.Parameters);
+	}
+
+	getManometers(): ReportInfoManometers {
+		return (this.reportInfoData.Manometers);
+	}
+
+	updateReportNumber(missionName: string, reportType: ReportTypes): void {
+		this.getMissionInfo(missionName)[ReportTypes[reportType]] += 1;
+	}
+
 }
 
-var ReportLib = (function() {
-	class ReportInfo {
-		reportInfoFile: GoogleAppsScript.Drive.File;
-		reportInfoString: string;
-		reportInfoData: ReportInfoJSON;
-		constructor() {
-			this.reportInfoFile = DriveApp.getFileById(reportInfoID);
-			this.reportInfoString = this.reportInfoFile.getBlob().getDataAsString();
-			this.reportInfoData = JSON.parse(this.reportInfoString);
-		}
-
-		// This function MUST be called after using reportInfo.json. 
-		updateReportInfo() {
-			const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
-			this.reportInfoFile.setContent(updatedInfoData);
-		}
-
-		getMissionInfo(missionName: string): ReportInfoMission {
-			return (this.reportInfoData.Missions.find(mission => mission.Name === missionName));
-		}
-
-		getLeaderInfo(leaderId: number): ReportInfoLeaders {
-			return (this.reportInfoData.Leaders.find(leader => leader.Id === leaderId));
-		}
-
-		getParameters(): ReportInfoParameters {
-			return (this.reportInfoData.Parameters);
-		}
-
-		getManometers(): ReportInfoManometers {
-			return (this.reportInfoData.Manometers);
-		}
-
-		updateReportNumber(missionName: string, reportType: ReportTypes): void {
-			this.getMissionInfo(missionName)[ReportTypes[reportType]] += 1;
-		}
-
-	}
-	return ({
-		ReportInfo: ReportInfo
-	});
-
-})();
