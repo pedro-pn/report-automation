@@ -52,18 +52,6 @@ interface ReportInfoManometers {
 	[key: string]: ManometerEntry;
 }
 
-// interface ReportInfo {
-// 	reportInfoFile: GoogleAppsScript.Drive.File;
-// 	reportInfoString: string;
-// 	reportInfoData: ReportInfoJSON;
-// 	getMissionInfo(missionName: string): ReportInfoMission;
-// 	getLeaderInfo(leaderId: number): ReportInfoLeaders;
-// 	getParameters(): ReportInfoParameters;
-// 	getManometers(): ReportInfoManometers;
-// 	updateReportInfo(): void;
-// 	updateReportNumber(missionName: string, reportType: ReportTypes): void;
-// }
-
 class ReportInfo {
 	reportInfoFile: GoogleAppsScript.Drive.File;
 	reportInfoString: string;

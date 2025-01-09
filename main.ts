@@ -1,20 +1,21 @@
 function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): void {
-	var formResponse = formEvent.response;
-	let reportDb = new ReportDb(formResponse);
-	let reportInfo = new ReportInfo();
-	let reportData =  new ReportData(formResponse, reportInfo);
+	const formResponse = formEvent.response;
+	const reportState = ReportState.getInstance();
+	const reportDb = new ReportDb(formResponse, reportState);
+	const reportInfo = new ReportInfo();
+	const reportData =  new ReportData(formResponse, reportInfo, reportState);
 	reportDb.setEditFlag();
   	if (reportDb.checkReportStatus(reportData) === false)
     	return ;
-	let spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
+	const spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
 	fillReport(reportData, spreadsheetManager);
 	SpreadsheetApp.flush();
 	spreadsheetManager.exportSheetToPDF();
-	sendReportViaEmail(reportData);
+	sendReportViaEmail(reportData, reportState);
 	reportDb.logResponse(reportData, spreadsheetManager);
-  	if (ReportState.isEdit === false)
+  	if (reportState.getIsEdit() === false)
    	 	reportDb.removePendingService()
-	if (ReportState.isEdit === true)
+	else if (reportState.getIsEdit() === true)
 		return ;
 	reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RDO);
 	reportInfo.updateReportInfo();
@@ -22,7 +23,8 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
 
 function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetManager): void {
 	var reportCellsRange = spreadsheetManager.getFirstSheet().getRange("A1:P82");
-	ReportState.reportBuffer = reportCellsRange.getValues();
+	const reportState = ReportState.getInstance();
+	reportState.setReportBuffer(reportCellsRange.getValues());
 	var formulas = reportCellsRange.getFormulas();
 	
 	fillReportHeader(reportData);
@@ -32,7 +34,7 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	fillActivities(reportData);
 	fillServicesFields(reportData);
 	fillSignField(reportData, spreadsheetManager, ReportsRanges.RDO.CELLS.FOOTER.SIGNATURE, 100);
-	var reportValuesResult = mergeValuesAndFormulas(formulas, ReportState.reportBuffer);
+	var reportValuesResult = mergeValuesAndFormulas(formulas, reportState.getReportBuffer());
 	reportCellsRange.setValues(reportValuesResult)
 	reportCellsFit(spreadsheetManager.getFirstSheet())
 	deleteEmptyServiceRows(spreadsheetManager.getFirstSheet(), reportData.numOfServices);

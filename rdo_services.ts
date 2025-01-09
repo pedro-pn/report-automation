@@ -2,28 +2,28 @@
 
 function fillServicesFields(reportData: ReportData): void {
 	var serviceDbFile = DriveApp.getFileById(ReportJSONIds.SERVICE_DB_ID);
-	ReportState.serviceDb = JSON.parse(serviceDbFile.getBlob().getDataAsString());
+	let serviceFieldResponseDb: ServiceFieldResponses = JSON.parse(serviceDbFile.getBlob().getDataAsString());
     for (var item = 1; item <= 9; item++) {
-        reportData.numOfServices += fillItem(reportData, item);
+        reportData.numOfServices += fillItem(reportData, item, serviceFieldResponseDb);
     }
-	serviceDbFile.setContent(JSON.stringify(ReportState.serviceDb, null, 2));
+	serviceDbFile.setContent(JSON.stringify(serviceFieldResponseDb, null, 2));
   // console.log(serviceDb)
 }
 
-function fillItem(reportData: ReportData, item: number): number {
+function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): number {
     var service = reportData.searchFieldResponse(FormFields.SERVICES.SERVICE, item)
 	if (service === "Teste de pressão")
-		fillPressureTest(reportData, item);
+		fillPressureTest(reportData, item, serviceFieldResponseDb);
 	else if (service === "Limpeza química")
-		fillDescaling(reportData, item)
+		fillDescaling(reportData, item, serviceFieldResponseDb)
 	else if (service === "Flushing")
-		fillFlushing(reportData, item);
+		fillFlushing(reportData, item, serviceFieldResponseDb)
 	else if (service === "Filtragem absoluta")
-		fillFiltration(reportData, item)
+		fillFiltration(reportData, item, serviceFieldResponseDb)
 	else if (service === "Limpeza de reservatório")
-		fillTankCleaning(reportData, item)
+		fillTankCleaning(reportData, item, serviceFieldResponseDb)
 	else if (service === "Limpeza e inibição")
-		fillInibition(reportData, item)
+		fillInibition(reportData, item, serviceFieldResponseDb)
 	else
 		return (0)
 	return (1);
@@ -45,10 +45,10 @@ function fillItem(reportData: ReportData, item: number): number {
 //#endregion
 
 //#region PRESSURE TEST
-function	fillPressureTestStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.WORK_PRESSURE);
-	ReportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TEST_PRESSURE);
-	ReportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FLUID_TYPE);
+function	fillPressureTestStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.WORK_PRESSURE);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TEST_PRESSURE);
+	reportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FLUID_TYPE);
 }
 
 interface PressureTestSpecs {
@@ -86,26 +86,28 @@ function getPressureTestSpecs(reportData: ReportData, item: number): PressureTes
 	return (pressureTestSpecs);
 }
 
-function	fillPressureTest(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var pressureTestSpecs = getPressureTestSpecs(reportData, item);
-	fillPressureTestStatements(cells);
-	ReportState.setValueToBuffer(cells.START_TIME, pressureTestSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, pressureTestSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, pressureTestSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, pressureTestSpecs.System);
-	ReportState.setValueToBuffer(cells.SERVICE, pressureTestSpecs.Service);
-	ReportState.setValueToBuffer(cells.STATUS, pressureTestSpecs.Status);
-	ReportState.setValueToBuffer(cells.PARAM_ONE, pressureTestSpecs.WorkPressure);
-	ReportState.setValueToBuffer(cells.PARAM_TWO, pressureTestSpecs.TestPressure);
-	ReportState.setValueToBuffer(cells.INFO, pressureTestSpecs.Fluid);
-	ReportState.setValueToBuffer(cells.STEPS, pressureTestSpecs.Steps.join(", "));
-	ReportState.setValueToBuffer(cells.OBS, pressureTestSpecs.Obs);
+function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let pressureTestSpecs = getPressureTestSpecs(reportData, item);
+	const reportState = ReportState.getInstance()
+
+	fillPressureTestStatements(cells, reportState);
+	reportState.setValueToBuffer(cells.START_TIME, pressureTestSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, pressureTestSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, pressureTestSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, pressureTestSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, pressureTestSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, pressureTestSpecs.Status);
+	reportState.setValueToBuffer(cells.PARAM_ONE, pressureTestSpecs.WorkPressure);
+	reportState.setValueToBuffer(cells.PARAM_TWO, pressureTestSpecs.TestPressure);
+	reportState.setValueToBuffer(cells.INFO, pressureTestSpecs.Fluid);
+	reportState.setValueToBuffer(cells.STEPS, pressureTestSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, pressureTestSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = pressureTestSpecs.TotalTime;
 
-  if (ReportState.isEdit)
+  if (reportState.getIsEdit())
     return ;
-	checkServiceProgress(reportData, item, RtpServiceDbFields)
+	checkServiceProgress(reportData, item, RtpServiceDbFields, serviceFieldResponseDb)
 	// if (pressureTestSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RTP), ReportTypes.RTP, item)
 	// 	if (status)
@@ -129,8 +131,8 @@ interface DescalingSpecs {
 	Status: string;
 }
 
-function fillDescalingStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
+function fillDescalingStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
 }
 
 function getDescalingSpecs(reportData: ReportData, item: number): DescalingSpecs {
@@ -150,23 +152,25 @@ function getDescalingSpecs(reportData: ReportData, item: number): DescalingSpecs
 	return (descalingSpecs);
 }
 
-function fillDescaling(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var descalingSpecs = getDescalingSpecs(reportData, item);
-	fillDescalingStatements(cells)
-	ReportState.setValueToBuffer(cells.START_TIME, descalingSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, descalingSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, descalingSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, descalingSpecs.System);
-	ReportState.setValueToBuffer(cells.SERVICE, descalingSpecs.Service);
-	ReportState.setValueToBuffer(cells.STATUS, descalingSpecs.Status);
-	ReportState.setValueToBuffer(cells.PARAM_ONE, descalingSpecs.PipeMaterial);
-	ReportState.setValueToBuffer(cells.STEPS, descalingSpecs.Steps.join(", "));
-	ReportState.setValueToBuffer(cells.OBS, descalingSpecs.Obs + (descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"" + descalingSpecs.Size);
+function fillDescaling(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let descalingSpecs = getDescalingSpecs(reportData, item);
+	const reportState = ReportState.getInstance();
 
-  if (ReportState.isEdit)
+	fillDescalingStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, descalingSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, descalingSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, descalingSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, descalingSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, descalingSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, descalingSpecs.Status);
+	reportState.setValueToBuffer(cells.PARAM_ONE, descalingSpecs.PipeMaterial);
+	reportState.setValueToBuffer(cells.STEPS, descalingSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, descalingSpecs.Obs + (descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"" + descalingSpecs.Size);
+
+  if (reportState.getIsEdit())
     return ;
-	checkServiceProgress(reportData, item, RlqServiceDbFields)
+	checkServiceProgress(reportData, item, RlqServiceDbFields, serviceFieldResponseDb)
 	// if (descalingSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLQ), ReportTypes.RLQ, item)
 	// 	if (status)
@@ -194,10 +198,10 @@ interface FlushingSpecs {
 	TotalTime: string;
 }
 
-function fillFlushingStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
-	ReportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
-	ReportState.setValueToBuffer(cells.INFO_KEY,ReportsRanges.RDO.SERVICES.STATEMENTS.OIL);
+function fillFlushingStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.INFO_KEY,ReportsRanges.RDO.SERVICES.STATEMENTS.OIL);
 }
 
 function getFlushingSpecs(reportData: ReportData, item: number): FlushingSpecs {
@@ -221,25 +225,27 @@ function getFlushingSpecs(reportData: ReportData, item: number): FlushingSpecs {
 	return (flushingSpecs);
 }
 
-function fillFlushing(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var flushingSpecs = getFlushingSpecs(reportData, item);
-	fillFlushingStatements(cells)
-	ReportState.setValueToBuffer(cells.START_TIME, flushingSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, flushingSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, flushingSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, flushingSpecs.System);
-	ReportState.setValueToBuffer(cells.STATUS, flushingSpecs.Status);
-	ReportState.setValueToBuffer(cells.PARAM_ONE, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.InicialPartCount}`);
-	ReportState.setValueToBuffer(cells.PARAM_TWO, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.FinalPartCount}`);
-	ReportState.setValueToBuffer(cells.INFO, flushingSpecs.Oil);
-	ReportState.setValueToBuffer(cells.STEPS, flushingSpecs.Steps.join(", "));
-	ReportState.setValueToBuffer(cells.OBS, flushingSpecs.Obs);
+function fillFlushing(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let flushingSpecs = getFlushingSpecs(reportData, item);
+	const reportState = ReportState.getInstance();
+
+	fillFlushingStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, flushingSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, flushingSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, flushingSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, flushingSpecs.System);
+	reportState.setValueToBuffer(cells.STATUS, flushingSpecs.Status);
+	reportState.setValueToBuffer(cells.PARAM_ONE, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.InicialPartCount}`);
+	reportState.setValueToBuffer(cells.PARAM_TWO, `\'${(flushingSpecs.OilNorm == null ? "" : flushingSpecs.OilNorm)} ${flushingSpecs.FinalPartCount}`);
+	reportState.setValueToBuffer(cells.INFO, flushingSpecs.Oil);
+	reportState.setValueToBuffer(cells.STEPS, flushingSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, flushingSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = flushingSpecs.TotalTime;
 
-  	if (ReportState.isEdit)
+  	if (reportState.getIsEdit())
    		return ;
-	checkServiceProgress(reportData, item, RcpServiceDbFields)
+	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	// if (flushingSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
 	// 	if (status)
@@ -267,10 +273,10 @@ interface FiltrationSpecs {
 
 }
 
-function fillFiltrationStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
-	ReportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
-	ReportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.VOLUME);
+function fillFiltrationStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.VOLUME);
 }
 
 function getFiltrationSpecs(reportData: ReportData, item: number): FiltrationSpecs {
@@ -293,26 +299,28 @@ function getFiltrationSpecs(reportData: ReportData, item: number): FiltrationSpe
 	return (filtrationSpecs);
 }
 
-function fillFiltration(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var filtrationSpecs = getFiltrationSpecs(reportData, item);
-	fillFiltrationStatements(cells)
-	ReportState.setValueToBuffer(cells.START_TIME, filtrationSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, filtrationSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, filtrationSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, filtrationSpecs.System);
-	ReportState.setValueToBuffer(cells.SERVICE, filtrationSpecs.Service);
-	ReportState.setValueToBuffer(cells.STATUS, filtrationSpecs.Status);
-	ReportState.setValueToBuffer(cells.PARAM_ONE, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.InicialPartCount}`);
-	ReportState.setValueToBuffer(cells.PARAM_TWO, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.FinalPartCount}`);
-	ReportState.setValueToBuffer(cells.INFO, filtrationSpecs.Volume);
-	ReportState.setValueToBuffer(cells.STEPS, filtrationSpecs.Steps.join(", "));
-	ReportState.setValueToBuffer(cells.OBS, filtrationSpecs.Obs);
+function fillFiltration(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let filtrationSpecs = getFiltrationSpecs(reportData, item);
+	const reportState = ReportState.getInstance();
+
+	fillFiltrationStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, filtrationSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, filtrationSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, filtrationSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, filtrationSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, filtrationSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, filtrationSpecs.Status);
+	reportState.setValueToBuffer(cells.PARAM_ONE, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.InicialPartCount}`);
+	reportState.setValueToBuffer(cells.PARAM_TWO, `\'${(filtrationSpecs.OilNorm == null ? "" : filtrationSpecs.OilNorm)} ${filtrationSpecs.FinalPartCount}`);
+	reportState.setValueToBuffer(cells.INFO, filtrationSpecs.Volume);
+	reportState.setValueToBuffer(cells.STEPS, filtrationSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, filtrationSpecs.Obs);
 	reportData.formResponsesDict[item]["TotalTime"] = filtrationSpecs.TotalTime;
 
-  if (ReportState.isEdit)
+  if (reportState.getIsEdit())
       return ;
-	checkServiceProgress(reportData, item, RcpServiceDbFields)
+	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	// if (filtrationSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
 	// 	if (status)
@@ -335,8 +343,8 @@ interface TankCleaningSpecs {
 	Status: string;
 }
 
-function fillTankCleaningStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TANK_MATERIAL);
+function fillTankCleaningStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TANK_MATERIAL);
 }
 
 function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleaningSpecs {
@@ -355,22 +363,24 @@ function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleanin
 	return (descalingSpecs);
 }
 
-function fillTankCleaning(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
-	fillTankCleaningStatements(cells)
-	ReportState.setValueToBuffer(cells.START_TIME, tankCleaningSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, tankCleaningSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, tankCleaningSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, tankCleaningSpecs.System);
-	ReportState.setValueToBuffer(cells.SERVICE, tankCleaningSpecs.Service);
-	ReportState.setValueToBuffer(cells.STATUS, tankCleaningSpecs.Status);
-	ReportState.setValueToBuffer(cells.STEPS, tankCleaningSpecs.Steps.join(", "));
-	ReportState.setValueToBuffer(cells.OBS, tankCleaningSpecs.Obs);
+function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
+	const reportState = ReportState.getInstance();
 
-	if (ReportState.isEdit)
+	fillTankCleaningStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, tankCleaningSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, tankCleaningSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, tankCleaningSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, tankCleaningSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, tankCleaningSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, tankCleaningSpecs.Status);
+	reportState.setValueToBuffer(cells.STEPS, tankCleaningSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, tankCleaningSpecs.Obs);
+
+	if (reportState.getIsEdit())
 		return ;
-	  checkServiceProgress(reportData, item, RlrServiceDbFields)
+	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
 	//   if (tankCleaningSpecs.Status === "Finalizado") {
 	// 	  var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLR), ReportTypes.RLR, item)
 	// 	  if (status)
@@ -398,8 +408,8 @@ interface InibitionSpecs {
 	InibitionInterval: string;
 }
 
-function fillInibitionStatements(cells: ReportServiceCells): void {
-	ReportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
+function fillInibitionStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
 }
 
 function getInibitionSpecs(reportData: ReportData, item: number): InibitionSpecs {
@@ -439,26 +449,28 @@ function getInibitionSteps(reportData: ReportData, item: number): string {
 	return (steps.join(", "));
 }
 
-function fillInibition(reportData: ReportData, item: number): void {
-	var cells = ReportsRanges.RDO.CELLS.SERVICES[item];
-	var inibitionSpecs = getInibitionSpecs(reportData, item);
-	fillInibitionStatements(cells)
-	ReportState.setValueToBuffer(cells.START_TIME, inibitionSpecs.StartTime);
-	ReportState.setValueToBuffer(cells.END_TIME, inibitionSpecs.EndTime);
-	ReportState.setValueToBuffer(cells.EQUIPAMENT, inibitionSpecs.Equipament);
-	ReportState.setValueToBuffer(cells.SYSTEM, inibitionSpecs.System);
-	ReportState.setValueToBuffer(cells.SERVICE, inibitionSpecs.Service);
-	ReportState.setValueToBuffer(cells.STATUS, inibitionSpecs.Status);
-	ReportState.setValueToBuffer(cells.PARAM_ONE, inibitionSpecs.PipeMaterial);
-	ReportState.setValueToBuffer(cells.STEPS, inibitionSpecs.Steps);
-	ReportState.setValueToBuffer(cells.OBS, inibitionSpecs.Obs + ((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size); //((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size)
+function fillInibition(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let inibitionSpecs = getInibitionSpecs(reportData, item);
+	const reportState = ReportState.getInstance();
+
+	fillInibitionStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, inibitionSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, inibitionSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, inibitionSpecs.Equipament);
+	reportState.setValueToBuffer(cells.SYSTEM, inibitionSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, inibitionSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, inibitionSpecs.Status);
+	reportState.setValueToBuffer(cells.PARAM_ONE, inibitionSpecs.PipeMaterial);
+	reportState.setValueToBuffer(cells.STEPS, inibitionSpecs.Steps);
+	reportState.setValueToBuffer(cells.OBS, inibitionSpecs.Obs + ((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size); //((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size)
 	reportData.formResponsesDict[item]["DegreaseInterval"] = inibitionSpecs.DegreaseInterval;
 	reportData.formResponsesDict[item]["FlushingInterval"] = inibitionSpecs.FlushingInterval;
 	reportData.formResponsesDict[item]["InibitionInterval"] = inibitionSpecs.InibitionInterval;
 
-  if (ReportState.isEdit)
+  if (reportState.getIsEdit())
     return ;
-	checkServiceProgress(reportData, item, RliServiceDbFields)
+	checkServiceProgress(reportData, item, RliServiceDbFields, serviceFieldResponseDb)
 	// if (inibitionSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLI), ReportTypes.RLI, item)
 	// 	if (status)

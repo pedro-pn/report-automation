@@ -13,7 +13,10 @@ class ReportDb {
   private pendingIndex: number;
   reportDbData: ReportDbData | null;
   
-  constructor(private formResponse: GoogleAppsScript.Forms.FormResponse) {
+  constructor(
+    private formResponse: GoogleAppsScript.Forms.FormResponse,
+    private reportState: ReportState
+  ) {
     this.spreadsheet = SpreadsheetApp.openById(SpreadsheetIds.DATABASE);
     this.finishedSheet = this.spreadsheet.getSheets()[0];
     this.pendingSheet = this.spreadsheet.getSheetByName("Pendentes")
@@ -28,7 +31,7 @@ class ReportDb {
     if (DriveApp.getFileById(reportId).isTrashed() === true)
       return ;
     this.getReportDbData();
-    ReportState.isEdit = true;
+    this.reportState.setIsEdit(true);
   }
 
   getReportDbData(): void {
@@ -61,11 +64,11 @@ class ReportDb {
 
     for (var i = 1; i < cellValues.length; i++) {
       if (cellValues[i][0] === this.formResponseId) {
-        this.finishedSheet.getRange(i + 1, 1, 1, 5).setValues([[this.formResponseId, `${spreadsheetManager.getSpreadsheetId()}${ReportState.reportIds}`, reportData.missionName, reportData.reportNum, reportData.date]]) // setValue(reportData.reportSpreadSheet.getId() + reportIds);
+        this.finishedSheet.getRange(i + 1, 1, 1, 5).setValues([[this.formResponseId, `${spreadsheetManager.getSpreadsheetId()}${this.reportState.getReportIds()}`, reportData.missionName, reportData.reportNum, reportData.date]]) // setValue(reportData.reportSpreadSheet.getId() + reportIds);
         return ;
       }
     }
-    this.finishedSheet.appendRow([this.formResponseId, `${spreadsheetManager.getSpreadsheetId()}${ReportState.reportIds}`, reportData.missionName, reportData.reportNum, reportData.date]);
+    this.finishedSheet.appendRow([this.formResponseId, `${spreadsheetManager.getSpreadsheetId()}${this.reportState.getReportIds()}`, reportData.missionName, reportData.reportNum, reportData.date]);
     let lastRow = this.finishedSheet.getLastRow();
     this.finishedSheet.getRange(lastRow, 6).setFormula('=HYPERLINK("' + this.formResponse.getEditResponseUrl() + '"; "' + "Edit" + '")');
   }
@@ -83,7 +86,7 @@ class ReportDb {
   }
 
   checkReportStatus(reportData: ReportData): boolean {
-    if (ReportState.isEdit)
+    if (this.reportState.getIsEdit())
       return (true);
     if (this.isReportPending() === false) {
       this.addPendingService(reportData);

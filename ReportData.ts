@@ -23,13 +23,14 @@ class ReportData {
 	constructor(
 		private formResponse: GoogleAppsScript.Forms.FormResponse,
 		private reportInfo: ReportInfo,
+		private reportState: ReportState
 	) {
 
 		this.formResponse = formResponse;
 		this.formResponsesDict = new FormResponseProcessor(this.formResponse).getResponsesAsDictionary();
 		this.missionName = this.getMissionName();
 		this.date = this.getReportDate();
-		this.reportNum = this.getReportNumber(ReportState.reportType);
+		this.reportNum = this.getReportNumber(this.reportState.getReportType()) + 1;
 		this.shiftTime = this.getShiftTime();
 		this.numOfServices = 0;
 		this.reportSpreadSheetFile;
@@ -92,7 +93,7 @@ class ReportData {
 
 	getReportFolder(): GoogleAppsScript.Drive.Folder {
 		let reportsFolder = DriveApp.getFolderById(ReportSpreadSheetFolderIds.REPORT_FOLDER_ID);
-		let folderName = ReportTypes[ReportState.reportType];
+		let folderName = ReportTypes[this.reportState.getReportType()];
 		try {
 			let currentReportFolder = reportsFolder.getFoldersByName(this.missionName).next();
 			var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
@@ -104,14 +105,14 @@ class ReportData {
 	}
 	
 	createSpreadSheetManager(reportDb: ReportDb, item: number = 0): SpreadsheetManager {
-		let modelId = SpreadsheetIds.MODEL_IDS[ReportState.reportType];
-		let name = ReportState.reportType === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
+		let modelId = SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()];
+		let name = this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
 		let folder = this.getReportFolder();
-		let spreadsheetManager = new SpreadsheetManager(modelId, folder, name)
-		if (ReportState.isEdit === true) {
+		let spreadsheetManager = new SpreadsheetManager(modelId, folder, name, this.reportState);
+		if (this.reportState.getIsEdit() === true) {
 			let oldSpreadsheetId = reportDb.getReportSpreadsheetId(0);
 			reportDb.reportDbData.reportNumber;
-			name =  ReportState.reportType === ReportTypes.RDO ? reportTypeNameHandlers.RDO.name : reportTypeNameHandlers.SERVICES.name;
+			name =  this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO.name : reportTypeNameHandlers.SERVICES.name;
 			spreadsheetManager.updateReportSpreadsheetFile(oldSpreadsheetId, this.date);
 		}
 		
@@ -139,7 +140,7 @@ class ReportData {
 	}
 
 	setReportName(item: number = 0): void {
-		const handler = reportTypeNameHandlers[ReportTypes[ReportState.reportType]];
+		const handler = reportTypeNameHandlers[ReportTypes[this.reportState.getReportType()]];
     	if (handler) {
         	const name = handler(this, item);
         	this.reportSpreadSheetFile.setName(name);

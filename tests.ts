@@ -30,14 +30,14 @@ function remakeReports() {
 			}
 			// Call form submission handler with the fake event
 			onFormSubmit(fakeEvent as GoogleAppsScript.Events.FormsOnFormSubmit);
-			ReportState.reportBuffer = null;
-			ReportState.reportIds = "";
-			ReportState.isEdit = false;
-			ReportState.reportBlobs = [];
-			ReportState.reportType = 0;
-			ReportState.serviceDb = {}
-			ReportState.newService = false;
-			ReportState.debug = false;
+			// ReportState.reportBuffer = null;
+			// ReportState.reportIds = "";
+			// ReportState.isEdit = false;
+			// ReportState.reportBlobs = [];
+			// ReportState.reportType = 0;
+			// ReportState.serviceDb = {}
+			// ReportState.newService = false;
+			// ReportState.debug = false;
 		}
 	} else {
 		Logger.log('No responses found.');
@@ -63,7 +63,7 @@ var responses = form.getResponses();
 }
 
 function testWithPreviousResponseDEBBUG() {
-  ReportState.debug = true;
+//   ReportState.debug = true;
 	var form = FormApp.openById(FormId); // Replace with your form ID
 	var responses = form.getResponses();
 		if (responses.length > 0) {

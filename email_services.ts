@@ -1,17 +1,17 @@
-function sendReportViaEmail(reportData: ReportData) {
+function sendReportViaEmail(reportData: ReportData, reportState: ReportState) {
     var recipient = reportData.getParameterInfos().Recipient;
-    var subject = generateEmailSubject(reportData);
+    var subject = generateEmailSubject(reportData, reportState);
     var cc = reportData.getLeaderInfos().Email;
     var bcc = reportData.getParameterInfos().Bcc;
     var body = generateEmailBody(reportData);
 
     try {
-      if (ReportState.debug) {
+      if (reportState.getDebug()) {
         MailApp.sendEmail( {
           to: bcc,
           subject: subject,
           htmlBody: body,
-          attachments: ReportState.reportBlobs,
+          attachments: reportState.getReportBlobs(),
         })
         return ;
       }
@@ -21,17 +21,17 @@ function sendReportViaEmail(reportData: ReportData) {
           bcc: bcc,
           subject: subject,
           htmlBody: body,
-          attachments: ReportState.reportBlobs,
+          attachments: reportState.getReportBlobs(),
       })
     } catch {
       console.log("Cannot send more e-mails today.")
     }
 }
 
-function generateEmailSubject(reportData: ReportData) {
+function generateEmailSubject(reportData: ReportData, reportState: ReportState) {
     var subjectTemplate = reportData.getParameterInfos().EmailSubject;
     var subject = fillTemplate(subjectTemplate, {
-        type: ReportTypes[ReportState.reportType],
+        type: ReportTypes[reportState.getReportType()],
         number: reportData.reportNum,
         reportName: reportData.missionName
     });

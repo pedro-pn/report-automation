@@ -349,7 +349,7 @@ const FormFields = {
         PIPE_CODE: "Código do desenho da tubulação",
         OBS: "Observações"
     }
-} as const;
+};
 
 type fieldResponse = string[][] | string[] | string;
 

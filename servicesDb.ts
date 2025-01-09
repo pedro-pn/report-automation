@@ -1,4 +1,4 @@
-interface ServiceDbFields {
+interface ServiceDbTypeFields {
   CompareFields: string[];
   ConcatenationFields: string[];
   SubstituitionFields?: string[];
@@ -6,8 +6,7 @@ interface ServiceDbFields {
   TotalTimeField?: string[];
 }
 
-
-const RlqServiceDbFields: ServiceDbFields = {
+const RlqServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
       FormFields.SERVICES.SERVICE,
       FormFields.SERVICES.EQUIPAMENT,
@@ -24,7 +23,7 @@ const RlqServiceDbFields: ServiceDbFields = {
     ]
 }
 
-const RliServiceDbFields: ServiceDbFields = {
+const RliServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
 
       FormFields.RLI.SERVICE,
@@ -53,7 +52,7 @@ const RliServiceDbFields: ServiceDbFields = {
     ]
 }
 
-const RtpServiceDbFields: ServiceDbFields = {
+const RtpServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
       FormFields.SERVICES.SERVICE,
       FormFields.SERVICES.EQUIPAMENT,
@@ -71,7 +70,7 @@ const RtpServiceDbFields: ServiceDbFields = {
      ]
 }
 
-const RcpServiceDbFields: ServiceDbFields = {
+const RcpServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
       FormFields.SERVICES.SERVICE,
       FormFields.SERVICES.EQUIPAMENT,
@@ -92,7 +91,7 @@ const RcpServiceDbFields: ServiceDbFields = {
     ]
 }
 
-const RlrServiceDbFields: ServiceDbFields = {
+const RlrServiceDbFields: ServiceDbTypeFields = {
   CompareFields: [
     FormFields.SERVICES.SERVICE,
     FormFields.SERVICES.EQUIPAMENT,
@@ -106,19 +105,19 @@ const RlrServiceDbFields: ServiceDbFields = {
   ]
 }
 
-function checkServiceProgress(reportData: ReportData, item: number, fields: ServiceDbFields): void {
+function checkServiceProgress(reportData: ReportData, item: number, fields: ServiceDbTypeFields, serviceFieldResponseDb: ServiceFieldResponses): void {
     var isServiceNew = getServiceFieldResponse(reportData, FormFields.SERVICES.PROGRESS, item) === "Não (começou hoje)" ? true: false;
     var isServiceFinished = getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) === "Sim" ? true: false;
 
     if (isServiceNew && isServiceFinished === false) {
-      storeServiceData(reportData, item);
+      storeServiceData(reportData, item, serviceFieldResponseDb);
       return ;
     }
     else if (isServiceNew === true)
       return ;
 
     var currentServiceObject = reportData.formResponsesDict[item];
-    var dbStoredService = ReportState.serviceDb[reportData.missionName];
+    var dbStoredService = serviceFieldResponseDb[reportData.missionName];
     var compareUnits = getCompareUnits(currentServiceObject, fields.CompareFields)
     var bestScore = Infinity
     var dbCompareUnits = []
@@ -140,7 +139,7 @@ function checkServiceProgress(reportData: ReportData, item: number, fields: Serv
       dbStoredService.splice(bestIndex, 1)
 }
 
-function mergeServiceResponses(currentServiceObject, storedService, fields: ServiceDbFields) {
+function mergeServiceResponses(currentServiceObject, storedService, fields: ServiceDbTypeFields) {
   if (fields.hasOwnProperty("SubstituitionFields"))
     substituteServiceResponses(currentServiceObject, storedService, fields.SubstituitionFields)
   if (fields.hasOwnProperty("TotalTimeField"))
@@ -199,13 +198,13 @@ function concatenateServiceResponses(currentServiceObject, storedService, field:
   }
 }
 
-function storeServiceData(reportData: ReportData, item: number) {
+function storeServiceData(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses) {
     var serviceObject = reportData.formResponsesDict[item];
     
-    if (ReportState.serviceDb.hasOwnProperty(reportData.missionName))
-      ReportState.serviceDb[reportData.missionName].push(serviceObject);
+    if (serviceFieldResponseDb.hasOwnProperty(reportData.missionName))
+      serviceFieldResponseDb[reportData.missionName].push(serviceObject);
     else 
-      ReportState.serviceDb[reportData.missionName] = [serviceObject];
+    serviceFieldResponseDb[reportData.missionName] = [serviceObject];
 }
 
 
@@ -236,13 +235,13 @@ function getCompareUnits(currentServiceObject, field: string[]) {
   return (compareUnits);
 }
 
-function Levenshtein(string: string, stringEntries: string) {
+function Levenshtein(string: string, stringEntries: string): number {
   var tmp;
   if (string.length === 0) { return stringEntries.length; }
   if (stringEntries.length === 0) { return string.length; }
   if (string.length > stringEntries.length) { tmp = string; string = stringEntries; stringEntries = tmp; }
 
-  var i, j, score, alen = string.length, blen = stringEntries.length, row = Array(alen);
+  var i: number, j: number, score: number, alen: number = string.length, blen = stringEntries.length, row = Array(alen);
   for (i = 0; i <= alen; i++) { row[i] = i; }
 
   for (i = 1; i <= blen; i++) {

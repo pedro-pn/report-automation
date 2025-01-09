@@ -8,7 +8,8 @@ class SpreadsheetManager {
     constructor(
         private modelId: string,
         private folder: GoogleAppsScript.Drive.Folder,
-        private name: string
+        private name: string,
+        private reportState: ReportState
     ) {
         this.createSpreadsheetFromModel(this.modelId, this.folder, this.name);
     }
@@ -158,11 +159,11 @@ class SpreadsheetManager {
         let reportNum = this.getOldReportNum();
         let reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
         let newSpreadsheetName = this.spreadsheet.getName().replace(reportNameModel, `${date} - ${getWeekDay(date)}`);
-        let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[ReportTypes[ReportState.reportType]]).getSheets()[0];
+        let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[ReportTypes[this.reportState.getReportType()]]).getSheets()[0];
         let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
         this.deleteSheet(this.firstSheet);
         this.firstSheet = newFirstSheet;
-        this.firstSheet.setName(ReportTypes[ReportState.reportType])
+        this.firstSheet.setName(ReportTypes[this.reportState.getReportType()])
         this.updateSpreadsheetName(newSpreadsheetName)
     }
 
@@ -184,7 +185,7 @@ class SpreadsheetManager {
         }
         var blob = response.getBlob().setName(`${this.spreadsheet.getName()}.pdf`);
         this.blob = blob;
-        ReportState.reportBlobs.push(blob);
+        this.reportState.getReportBlobs().push(blob);
         this.folder.createFile(blob)
     }
 }

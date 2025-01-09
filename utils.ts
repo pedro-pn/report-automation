@@ -117,12 +117,13 @@ function getWeekDay(date: string): string {
 }
 
 function sendPostRequest(formResponseId: string, reportNumber: number, reportType: number, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
+	const reportState = ReportState.getInstance();
 	var payload = {
 		formResponseId: formResponseId,
 		reportNumber: reportNumber,
 		reportType: reportType,
 		item: item,
-		isEdit: ReportState.isEdit,
+		isEdit: reportState.getIsEdit(),
     	serviceObject: serviceObject
 	};
 
@@ -143,8 +144,8 @@ function sendPostRequest(formResponseId: string, reportNumber: number, reportTyp
 
 	var responseObject = JSON.parse(response.getContentText())
 	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
-	ReportState.reportBlobs.push(serviceReportBlob)
-	ReportState.reportIds += `,${responseObject.reportId}`;
+	reportState.getReportBlobs().push(serviceReportBlob)
+	reportState.addReportId(`,${responseObject.reportId}`);
   	return (responseObject.newService);
 }
 

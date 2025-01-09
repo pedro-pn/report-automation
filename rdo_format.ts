@@ -1,11 +1,12 @@
 function setDotLineBorder(reportData: ReportData, spreadsheetManager: SpreadsheetManager):void {
 	var reportCells = [];
 	for (var service = 1; service <= reportData.numOfServices; service++) {
-		var respCells = ReportsRanges.RDO.CELLS.SERVICES[service];
+		const respCells = ReportsRanges.RDO.CELLS.SERVICES[service];
+		const reportState = ReportState.getInstance();
 
-		ReportState.getValueFromBuffer(respCells.PARAM_ONE) ? reportCells.push(respCells.PARAM_ONE): false;
-		ReportState.getValueFromBuffer(respCells.PARAM_TWO) ? reportCells.push(respCells.PARAM_TWO): false;
-		ReportState.getValueFromBuffer(respCells.INFO) ? reportCells.push(respCells.INFO): false;
+		reportState.getValueFromBuffer(respCells.PARAM_ONE) ? reportCells.push(respCells.PARAM_ONE): false;
+		reportState.getValueFromBuffer(respCells.PARAM_TWO) ? reportCells.push(respCells.PARAM_TWO): false;
+		reportState.getValueFromBuffer(respCells.INFO) ? reportCells.push(respCells.INFO): false;
 	}
 	if (reportCells.length) {
 		console.log(reportCells)
