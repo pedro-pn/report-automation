@@ -1,7 +1,7 @@
 const reportTypeNameHandlers = {
     RDO: (data: ReportData) => `${data.missionName} - RDO ${data.reportNum} - ${data.date} - ${data.getWeekDay()}`,
 	SERVICES: (data: ReportData, item: number) =>
-        `${data.missionName} - ${ReportTypes[data.reportType]} ${data.reportNum} - ${data.searchFieldResponse(FormFields.SERVICES.EQUIPAMENT, item)} - ${data.searchFieldResponse(FormFields.SERVICES.SYSTEM, item)}`
+        `${data.missionName} - ${ReportTypes[data.reportType]} ${data.reportNum} - ${data.searchFieldResponse(FormFields.SERVICES.COMMON.EQUIPAMENT, item)} - ${data.searchFieldResponse(FormFields.SERVICES.COMMON.SYSTEM, item)}`
 };
 
 type ShiftTime = {
@@ -88,18 +88,18 @@ class ReportData {
 	
 	getWeekDay(): string {
 		let weekDay = this.getWeekDayNum();
-		return (WeekDays[weekDay]);
+		return (Weekdays[weekDay]);
 	}
 
 	getReportFolder(): GoogleAppsScript.Drive.Folder {
-		let reportsFolder = DriveApp.getFolderById(ReportSpreadSheetFolderIds.REPORT_FOLDER_ID);
+		let reportsFolder = DriveApp.getFolderById(ReportFolderIds.REPORT_FOLDER_ID);
 		let folderName = ReportTypes[this.reportState.getReportType()];
 		try {
 			let currentReportFolder = reportsFolder.getFoldersByName(this.missionName).next();
 			var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
 		}
 		catch {
-			recipientFolder = DriveApp.getFolderById(ReportSpreadSheetFolderIds.REPORT_STANDARD_FOLDER_ID);
+			recipientFolder = DriveApp.getFolderById(ReportFolderIds.REPORT_STANDARD_FOLDER_ID);
 		}
 		return (recipientFolder);
 	}

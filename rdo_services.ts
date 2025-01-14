@@ -11,7 +11,7 @@ function fillServicesFields(reportData: ReportData): void {
 }
 
 function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): number {
-    var service = reportData.searchFieldResponse(FormFields.SERVICES.SERVICE, item)
+    var service = reportData.searchFieldResponse(FormFields.HEADER.ADD_SERVICE, item)
 	if (service === "Teste de pressão")
 		fillPressureTest(reportData, item, serviceFieldResponseDb);
 	else if (service === "Limpeza química")
@@ -46,9 +46,9 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 
 //#region PRESSURE TEST
 function	fillPressureTestStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.WORK_PRESSURE);
-	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TEST_PRESSURE);
-	reportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FLUID_TYPE);
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.WORK_PRESSURE);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportStatements.RDO.TEST_PRESSURE);
+	reportState.setValueToBuffer(cells.INFO_KEY, ReportStatements.RDO.FLUID_TYPE);
 }
 
 interface PressureTestSpecs {
@@ -69,25 +69,25 @@ interface PressureTestSpecs {
 
 function getPressureTestSpecs(reportData: ReportData, item: number): PressureTestSpecs {
 	var pressureTestSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string,
-		EndTime: getServiceFieldResponse(reportData,FormFields.SERVICES.END_TIME, item) as string,
-		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.SERVICES.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.SERVICE, item) as string,
-		Fluid: getServiceFieldResponse(reportData, FormFields.SERVICES.FLUID_TYPE, item) as string,
-		Obs: getServiceFieldResponse(reportData,FormFields.SERVICES.OBS, item) as string,
-		Steps:getServiceFieldResponse(reportData,FormFields.SERVICES.STEPS, item) as string[],
-		WorkPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.WORK_PRESSURE, item) as string,
-		TestPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.TEST_PRESSURE, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) as string) as string,
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string))
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
+		EndTime: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.END_TIME, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Fluid: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.FLUID_TYPE, item) as string,
+		Obs: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.OBS, item) as string,
+		Steps:getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		WorkPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.WORK_PRESSURE, item) as string,
+		TestPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.TEST_PRESSURE, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string) as string,
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string))
 	}
 	
 	return (pressureTestSpecs);
 }
 
 function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let pressureTestSpecs = getPressureTestSpecs(reportData, item);
 	const reportState = ReportState.getInstance()
 
@@ -132,28 +132,28 @@ interface DescalingSpecs {
 }
 
 function fillDescalingStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
+	reportState.setValueToBuffer(cells.PARAM_ONE, ReportStatements.RDO.PIPE_MATERIAL);
 }
 
 function getDescalingSpecs(reportData: ReportData, item: number): DescalingSpecs {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string,
-		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string,
-		Equipament: getServiceFieldResponse(reportData,FormFields.SERVICES.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.SERVICES.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.SERVICE, item) as string,
-		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.OBS, item) as string,
-   		Size: getServiceFieldResponse(reportData, FormFields.SERVICES.SIZE, item) as string,
-		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.STEPS, item) as string[],
-		PipeMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.PIPE_MATERIAL, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) as string)
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
+		Equipament: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
+   		Size: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SIZE, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		PipeMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.PIPE_MATERIAL, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string)
 	}
 	
 	return (descalingSpecs);
 }
 
 function fillDescaling(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let descalingSpecs = getDescalingSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 
@@ -199,34 +199,34 @@ interface FlushingSpecs {
 }
 
 function fillFlushingStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
-	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
-	reportState.setValueToBuffer(cells.INFO_KEY,ReportsRanges.RDO.SERVICES.STATEMENTS.OIL);
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.INICIAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportStatements.RDO.FINAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.INFO_KEY, ReportStatements.RDO.OIL);
 }
 
 function getFlushingSpecs(reportData: ReportData, item: number): FlushingSpecs {
 	var flushingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string,
-		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string,
-		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.SERVICES.SYSTEM, item) as string,
-		Type: getServiceFieldResponse(reportData, FormFields.SERVICES.FLUSHING_TYPE, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.SERVICE, item) as string,
-		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.OBS, item) as string,
-		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.STEPS, item) as string[],
-		InicialPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.INICIAL_PART_COUNT, item) as string,
-		OilNorm: getServiceFieldResponse(reportData, FormFields.SERVICES.OIL_NORM, item) as string,
-		FinalPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.FINAL_PART_COUNT, item) as string,
-		Oil: getServiceFieldResponse(reportData, FormFields.SERVICES.OIL, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) as string),
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string))
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
+		Type: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.FLUSHING_TYPE, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		InicialPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.INICIAL_PART_COUNT, item) as string,
+		OilNorm: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.OIL_NORM, item) as string,
+		FinalPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.FINAL_PART_COUNT, item) as string,
+		Oil: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OIL, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string))
 	}
 	
 	return (flushingSpecs);
 }
 
 function fillFlushing(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let flushingSpecs = getFlushingSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 
@@ -274,33 +274,33 @@ interface FiltrationSpecs {
 }
 
 function fillFiltrationStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE, ReportsRanges.RDO.SERVICES.STATEMENTS.INICIAL_ANALYSIS);
-	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.FINAL_ANALYSIS);
-	reportState.setValueToBuffer(cells.INFO_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.VOLUME);
+	reportState.setValueToBuffer(cells.PARAM_ONE, ReportStatements.RDO.INICIAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.PARAM_TWO_KEY, ReportStatements.RDO.FINAL_ANALYSIS);
+	reportState.setValueToBuffer(cells.INFO_KEY, ReportStatements.RDO.VOLUME);
 }
 
 function getFiltrationSpecs(reportData: ReportData, item: number): FiltrationSpecs {
 	var filtrationSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string,
-		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string,
-		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.SERVICES.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.SERVICE, item) as string,
-		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.OBS, item) as string,
-		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.STEPS, item) as string[],
-		OilNorm: getServiceFieldResponse(reportData, FormFields.SERVICES.OIL_NORM, item) as string,
-		InicialPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.INICIAL_PART_COUNT, item) as string,
-		FinalPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.FINAL_PART_COUNT, item) as string,
-		Volume: getServiceFieldResponse(reportData, FormFields.SERVICES.VOLUME, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) as string),
-		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string))
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		OilNorm: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.OIL_NORM, item) as string,
+		InicialPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.INICIAL_PART_COUNT, item) as string,
+		FinalPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.FINAL_PART_COUNT, item) as string,
+		Volume: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.VOLUME, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string),
+		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string))
 	}
 	
 	return (filtrationSpecs);
 }
 
 function fillFiltration(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let filtrationSpecs = getFiltrationSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 
@@ -344,27 +344,27 @@ interface TankCleaningSpecs {
 }
 
 function fillTankCleaningStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.TANK_MATERIAL);
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.TANK_MATERIAL);
 }
 
 function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleaningSpecs {
 	var descalingSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.START_TIME, item) as string,
-		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.END_TIME, item) as string,
-		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.SERVICES.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.SERVICE, item) as string,
-		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.OBS, item) as string,
-		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.STEPS, item) as string[],
-		tankMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.TANK_MATERIAL, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) as string)
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
+		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
+		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		tankMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.RLR.TANK_MATERIAL, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string)
 	}
 	
 	return (descalingSpecs);
 }
 
 function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 
@@ -409,7 +409,7 @@ interface InibitionSpecs {
 }
 
 function fillInibitionStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportsRanges.RDO.SERVICES.STATEMENTS.PIPE_MATERIAL);
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.PIPE_MATERIAL);
 }
 
 function getInibitionSpecs(reportData: ReportData, item: number): InibitionSpecs {
@@ -450,7 +450,7 @@ function getInibitionSteps(reportData: ReportData, item: number): string {
 }
 
 function fillInibition(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
-	let cells = ReportsRanges.RDO.CELLS.SERVICES[item];
+	let cells = ReportCells.RDO.SERVICES[item];
 	let inibitionSpecs = getInibitionSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 

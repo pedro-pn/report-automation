@@ -8,16 +8,16 @@ interface ServiceDbTypeFields {
 
 const RlqServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
-      FormFields.SERVICES.SERVICE,
-      FormFields.SERVICES.EQUIPAMENT,
-      FormFields.SERVICES.SYSTEM,
-      FormFields.SERVICES.PIPE_MATERIAL,
-      FormFields.SERVICES.SIZE,
+      FormFields.SERVICES.COMMON.SERVICE,
+      FormFields.SERVICES.COMMON.EQUIPAMENT,
+      FormFields.SERVICES.COMMON.SYSTEM,
+      FormFields.SERVICES.COMMON.PIPE_MATERIAL,
+      FormFields.SERVICES.COMMON.SIZE,
     ],
     ConcatenationFields: [
       "Tipo de inspeção",
       "Método de limpeza",
-      FormFields.SERVICES.STEPS,
+      FormFields.SERVICES.COMMON.STEPS,
       "Imagens de corpo de prova",
       "Imagens da tubulação"
     ]
@@ -54,13 +54,13 @@ const RliServiceDbFields: ServiceDbTypeFields = {
 
 const RtpServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
-      FormFields.SERVICES.SERVICE,
-      FormFields.SERVICES.EQUIPAMENT,
-      FormFields.SERVICES.SYSTEM,
-      FormFields.SERVICES.WORK_PRESSURE
+      FormFields.SERVICES.COMMON.SERVICE,
+      FormFields.SERVICES.COMMON.EQUIPAMENT,
+      FormFields.SERVICES.COMMON.SYSTEM,
+      FormFields.SERVICES.RTH.WORK_PRESSURE
     ],
     ConcatenationFields: [
-      FormFields.SERVICES.STEPS,
+      FormFields.SERVICES.COMMON.STEPS,
       "Selecione os manômetros utilizados",
       "Fotos dos manômetros (tag e escala)",
       "Foto do sistema"
@@ -72,18 +72,18 @@ const RtpServiceDbFields: ServiceDbTypeFields = {
 
 const RcpServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
-      FormFields.SERVICES.SERVICE,
-      FormFields.SERVICES.EQUIPAMENT,
-      FormFields.SERVICES.SYSTEM,
-      FormFields.SERVICES.OIL,
-      FormFields.SERVICES.FLUSHING_TYPE,
+      FormFields.SERVICES.COMMON.SERVICE,
+      FormFields.SERVICES.COMMON.EQUIPAMENT,
+      FormFields.SERVICES.COMMON.SYSTEM,
+      FormFields.SERVICES.COMMON.OIL,
+      FormFields.SERVICES.RCP.FLUSHING_TYPE,
     ],
     ConcatenationFields: [
       "Contagem de partículas",
-      FormFields.SERVICES.DEHYDRATION_IMG
+      FormFields.SERVICES.RCP.DEHYDRATION_IMG
     ],
     SubstituitionFields: [
-      FormFields.SERVICES.INICIAL_PART_COUNT,
+      FormFields.SERVICES.RCP.INICIAL_PART_COUNT,
       "Umidade inicial",
     ],
     TotalTimeField: [
@@ -93,21 +93,21 @@ const RcpServiceDbFields: ServiceDbTypeFields = {
 
 const RlrServiceDbFields: ServiceDbTypeFields = {
   CompareFields: [
-    FormFields.SERVICES.SERVICE,
-    FormFields.SERVICES.EQUIPAMENT,
-    FormFields.SERVICES.SYSTEM,
-    FormFields.SERVICES.TANK_MATERIAL
+    FormFields.SERVICES.COMMON.SERVICE,
+    FormFields.SERVICES.COMMON.EQUIPAMENT,
+    FormFields.SERVICES.COMMON.SYSTEM,
+    FormFields.SERVICES.RLR.TANK_MATERIAL
   ],
   ConcatenationFields: [
-    FormFields.SERVICES.STEPS,
+    FormFields.SERVICES.COMMON.STEPS,
     "Imagens do reservatório",
     "Imagens da boroscopia"
   ]
 }
 
 function checkServiceProgress(reportData: ReportData, item: number, fields: ServiceDbTypeFields, serviceFieldResponseDb: ServiceFieldResponses): void {
-    var isServiceNew = getServiceFieldResponse(reportData, FormFields.SERVICES.PROGRESS, item) === "Não (começou hoje)" ? true: false;
-    var isServiceFinished = getServiceFieldResponse(reportData, FormFields.SERVICES.STATUS, item) === "Sim" ? true: false;
+    var isServiceNew = getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.PROGRESS, item) === "Não (começou hoje)" ? true: false;
+    var isServiceFinished = getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) === "Sim" ? true: false;
 
     if (isServiceNew && isServiceFinished === false) {
       storeServiceData(reportData, item, serviceFieldResponseDb);

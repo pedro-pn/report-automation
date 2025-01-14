@@ -113,7 +113,7 @@ function getWeekDayNum(date: string): number {
 
 function getWeekDay(date: string): string {
 	let weekDay = getWeekDayNum(date);
-	return (WeekDays[weekDay]);
+	return (Weekdays[weekDay]);
 }
 
 function sendPostRequest(formResponseId: string, reportNumber: number, reportType: number, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {

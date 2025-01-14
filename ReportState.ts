@@ -7,6 +7,7 @@ class ReportState {
 	private reportIds: string;
     private debug: boolean;
     private newServiceFlag: boolean;
+    private serviceItem: number;
 
     private constructor() {
         this.reportBuffer = [];
@@ -16,6 +17,7 @@ class ReportState {
         this.reportIds = "";
         this.debug = false;
         this.newServiceFlag = false;
+        this.serviceItem = 0;
     }
 
     public static getInstance(): ReportState {

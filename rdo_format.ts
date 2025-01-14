@@ -1,7 +1,7 @@
 function setDotLineBorder(reportData: ReportData, spreadsheetManager: SpreadsheetManager):void {
 	var reportCells = [];
 	for (var service = 1; service <= reportData.numOfServices; service++) {
-		const respCells = ReportsRanges.RDO.CELLS.SERVICES[service];
+		const respCells = ReportCells.RDO.SERVICES[service];
 		const reportState = ReportState.getInstance();
 
 		reportState.getValueFromBuffer(respCells.PARAM_ONE) ? reportCells.push(respCells.PARAM_ONE): false;
@@ -19,8 +19,8 @@ function setDotLineBorder(reportData: ReportData, spreadsheetManager: Spreadshee
 function deleteEmptyServiceRows(reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet, servicesCount: number): void {
 	if (servicesCount > 8)
 		return ;
-	var startRow = ReportsRanges.RDO.SERVICES.FIRST_ROWS[servicesCount + 1]
-	var endRow = ReportsRanges.RDO.SERVICES.FIRST_ROWS.LAST_ROW - startRow + 1;
+	var startRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[servicesCount + 1]
+	var endRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS.LAST_ROW - startRow + 1;
 	reportFirstSheet.deleteRows(startRow, endRow);
 }
 

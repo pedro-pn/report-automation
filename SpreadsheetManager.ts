@@ -148,7 +148,7 @@ class SpreadsheetManager {
     }
 
     getOldReportNum() {
-        return (this.firstSheet.getRange(ReportsRanges.RDO.CELLS.HEADER.RDO_NUMBER).getValue());
+        return (this.firstSheet.getRange(ReportCells.RDO.HEADER.RDO_NUMBER).getValue());
     }
 
     updateReportSpreadsheetFile(oldSpreadsheetId: string, date: string): void { // generalize this function

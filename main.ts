@@ -33,7 +33,7 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	fillReportFooter(reportData, spreadsheetManager);
 	fillActivities(reportData);
 	fillServicesFields(reportData);
-	fillSignField(reportData, spreadsheetManager, ReportsRanges.RDO.CELLS.FOOTER.SIGNATURE, 100);
+	fillSignField(reportData, spreadsheetManager, ReportCells.RDO.FOOTER.SIGNATURE, 100);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportState.getReportBuffer());
 	reportCellsRange.setValues(reportValuesResult)
 	reportCellsFit(spreadsheetManager.getFirstSheet())
