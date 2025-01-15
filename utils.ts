@@ -157,6 +157,30 @@ function cellStringToNumber(cellString: string): number[] {
     return ([rowNumber, columnNumber]);
 }
 
+function	mergeValuesAndFormulas(formulas: string[][], values: string[][]): string[][] {
+	let result = formulas
+	for (var i = 0; i < formulas.length; i++) {
+		for (var j = 0; j < formulas[i].length; j++) {
+			if (formulas[i][j] === '')
+				result[i][j] = values[i][j];
+		}
+	}
+	return (result);
+}
+
+//#region SERVICE_UTILS
+function getServiceFieldResponse(reportData: ReportData, field: string, item: number): fieldResponse {
+    return (reportData.searchFieldResponse(field, item));
+}
+
+function getStatus(status: string): string {
+	if (status === "Sim")
+		return ("Finalizado");
+	return ("Em andamento");
+}
+
+//#endregion
+
 function showAllRespondsLink() {
 	var form = FormApp.openById(FormId);
 	var formResponds = form.getResponses();

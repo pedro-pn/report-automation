@@ -29,18 +29,18 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 	return (1);
 }
 
-// function makeServiceReport(reportData: ReportData, reportNumber: number, type: number, item: number) {
-// 	var reportId = reportData.formResponse.getId();
-//   var serviceObject = reportData.formResponsesDict[item];
-// 	// try {
-// 	let status = sendPostRequest(reportId, reportNumber, type, item, serviceObject);
-// 	return (status);
+function makeServiceReport(reportData: ReportData, reportNumber: number, type: number, item: number) {
+	var reportId = reportData.getFormResponse().getId();
+  var serviceObject = reportData.formResponsesDict[item];
+	try {
+	let status = sendPostRequest(reportId, reportNumber, type, item, serviceObject);
+	return (status);
   
-// 	// } catch (error) {
-// 	 // Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
-// 	// }
+	} catch (error) {
+	 Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
+	}
 
-// }
+}
 
 //#endregion
 
@@ -108,11 +108,11 @@ function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResp
   if (reportState.getIsEdit())
     return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields, serviceFieldResponseDb)
-	// if (pressureTestSpecs.Status === "Finalizado") {
-	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RTP), ReportTypes.RTP, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RTP);
-	// }
+	if (pressureTestSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RTP), ReportTypes.RTP, item)
+		if (status)
+			reportData.updateReportNumber(ReportTypes.RTP);
+	}
 }
 //#endregion
 
@@ -171,11 +171,11 @@ function fillDescaling(reportData: ReportData, item: number, serviceFieldRespons
   if (reportState.getIsEdit())
     return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields, serviceFieldResponseDb)
-	// if (descalingSpecs.Status === "Finalizado") {
-	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLQ), ReportTypes.RLQ, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLQ);
-	// }
+	if (descalingSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLQ), ReportTypes.RLQ, item)
+		if (status)
+			reportData.updateReportNumber(ReportTypes.RLQ);
+	}
 }
 //#endregion
 
@@ -246,11 +246,11 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
   	if (reportState.getIsEdit())
    		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
-	// if (flushingSpecs.Status === "Finalizado") {
-	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RCP);
-	// }
+	if (flushingSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
+		if (status)
+			reportData.updateReportNumber(ReportTypes.RCP);
+	}
 }
 //#endregion
 
@@ -321,11 +321,11 @@ function fillFiltration(reportData: ReportData, item: number, serviceFieldRespon
   if (reportState.getIsEdit())
       return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
-	// if (filtrationSpecs.Status === "Finalizado") {
-	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RCP);
-	// }
+	if (filtrationSpecs.Status === "Finalizado") {
+		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
+		if (status)
+			reportData.updateReportNumber(ReportTypes.RCP);
+	}
 }
 //#endregion
 
@@ -381,11 +381,11 @@ function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResp
 	if (reportState.getIsEdit())
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
-	//   if (tankCleaningSpecs.Status === "Finalizado") {
-	// 	  var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLR), ReportTypes.RLR, item)
-	// 	  if (status)
-	// 		  reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLR);
-	//   }
+	  if (tankCleaningSpecs.Status === "Finalizado") {
+		  var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLR), ReportTypes.RLR, item)
+		  if (status)
+			  reportData.updateReportNumber(ReportTypes.RLR);
+	  }
 }
 //#endregion
 
@@ -476,28 +476,5 @@ function fillInibition(reportData: ReportData, item: number, serviceFieldRespons
 	// 	if (status)
 	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLI);
 	// }
-}
-//#endregion
-
-//#region SERVICE_UTILS
-function getServiceFieldResponse(reportData: ReportData, field: string, item: number): fieldResponse {
-    return (reportData.searchFieldResponse(field, item));
-}
-
-function getStatus(status: string): string {
-	if (status === "Sim")
-		return ("Finalizado");
-	return ("Em andamento");
-}
-
-function	mergeValuesAndFormulas(formulas: string[][], values: string[][]): string[][] {
-	let result = formulas
-	for (var i = 0; i < formulas.length; i++) {
-		for (var j = 0; j < formulas[i].length; j++) {
-			if (formulas[i][j] === '')
-				result[i][j] = values[i][j];
-		}
-	}
-	return (result);
 }
 //#endregion

@@ -36,12 +36,20 @@ class ReportData {
 		this.reportSpreadSheetFile;
 	}
 
+	getFormResponse(): GoogleAppsScript.Forms.FormResponse {
+		return (this.formResponse);
+	}
+
 	getReportNumber(reportType: ReportTypes): number {
 		return (this.reportInfo.getMissionInfo(this.missionName)[ReportTypes[reportType]])
 	}
 	
 	getClient(): string {
 		return (this.reportInfo.getMissionInfo(this.missionName).Client);
+	}
+
+	updateReportNumber(reportType: ReportTypes): void {
+		this.reportInfo.updateReportNumber(this.missionName, reportType);
 	}
 
 	getMissionInfos(): ReportInfoMission {
