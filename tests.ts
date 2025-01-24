@@ -12,36 +12,36 @@ function showAllResponses() {
 	return responses;
   }
 
-function remakeReports() {
-	var form = FormApp.openById(FormId); // Replace with your form ID
-	// var responses = form.getResponses();
-	var responsesNumber = [137, 139]
-  var responsesIds = [
-"2_ABaOnuc5QhhEvDcp5nUz1Lw2xZZBYHJIvnZzbMf2eRav-6XKhpzOgX7OKNafwTQOV8ypTWk"
-  ]
-	if (responsesIds.length > 0) {
-		for (var i = 0; i < responsesIds.length; i++) {
-			var testResponse = form.getResponse(responsesIds[i]);
-
-			// Create a fake event object
-			var fakeEvent = {
-			response: testResponse,
-			source: form
-			}
-			// Call form submission handler with the fake event
-			onFormSubmit(fakeEvent as GoogleAppsScript.Events.FormsOnFormSubmit);
-			// ReportState.reportBuffer = null;
-			// ReportState.reportIds = "";
-			// ReportState.isEdit = false;
-			// ReportState.reportBlobs = [];
-			// ReportState.reportType = 0;
-			// ReportState.serviceDb = {}
-			// ReportState.newService = false;
-			// ReportState.debug = false;
-		}
-	} else {
-		Logger.log('No responses found.');
-	}
+  function remakeReports() {
+    var form = FormApp.openById(FormId); // Replace with your form ID
+    // var responses = form.getResponses();
+    var responsesNumber = [137, 139];
+    var responsesIds = [
+        "2_ABaOnucpHPbSAAXOcpdALWZGINlxntrFzaSOfReSeyyFjOTnA-8bo--bmbsnvnsUeHRXE9U"
+    ];
+    if (responsesIds.length > 0) {
+        for (var i = 0; i < responsesIds.length; i++) {
+            var testResponse = form.getResponse(responsesIds[i]);
+            // Create a fake event object
+            var fakeEvent = {
+                response: testResponse,
+                source: form
+            };
+            // Call form submission handler with the fake event
+            onFormSubmit(fakeEvent);
+            // ReportState.reportBuffer = null;
+            // ReportState.reportIds = "";
+            // ReportState.isEdit = false;
+            // ReportState.reportBlobs = [];
+            // ReportState.reportType = 0;
+            // ReportState.serviceDb = {}
+            // ReportState.newService = false;
+            // ReportState.debug = false;
+        }
+    }
+    else {
+        Logger.log('No responses found.');
+    }
 }
 
 function testWithPreviousResponse() {
