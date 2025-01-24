@@ -690,7 +690,7 @@ type FormResponseDict = {
 }
 
 const ServiceApi = {
-    URL_REQUEST_STRING: "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
+    URL_PDF_REQUEST: "https://docs.google.com/spreadsheets/d/${reportSpreadsheetId}\
 /export?format=pdf\
 &size=A4\
 &portrait=true\
@@ -700,7 +700,7 @@ const ServiceApi = {
 &fzr=false\
 &scale=4\
 &gid=${reportSheetId}",
-    API_URL: "https://script.google.com/macros/s/AKfycbwtkYaL13TlGTMoHwSsyW5LaBzNtGgBeZwCKxvdUy0EHcMwBycbzU36dBc4hS-IeMugIA/exec"
+    SERVICE_API_URL: "https://script.google.com/macros/s/AKfycbwtkYaL13TlGTMoHwSsyW5LaBzNtGgBeZwCKxvdUy0EHcMwBycbzU36dBc4hS-IeMugIA/exec"
 }
 
 const FormId = "15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk";

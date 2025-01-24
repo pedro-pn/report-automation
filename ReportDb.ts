@@ -11,7 +11,7 @@ class ReportDb {
   private pendingSheet: GoogleAppsScript.Spreadsheet.Sheet;
   private formResponseId: string;
   private pendingIndex: number;
-  reportDbData: ReportDbData | null;
+  public  reportDbData: ReportDbData | null;
   
   constructor(
     private formResponse: GoogleAppsScript.Forms.FormResponse,
@@ -22,6 +22,7 @@ class ReportDb {
     this.pendingSheet = this.spreadsheet.getSheetByName("Pendentes")
     this.formResponseId = formResponse.getId();
     this.pendingIndex;
+    this.reportDbData = {spreadsheetIds: [], missionName: "", reportNumber: 0, date: "" };
   }
 
   setEditFlag(): void {

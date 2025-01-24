@@ -8,6 +8,8 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
   	if (reportDb.checkReportStatus(reportData) === false)
     	return ;
 	const spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
+	if (reportState.getIsEdit() === true) // get report number of editing report
+		reportData.reportNum = spreadsheetManager.getOldReportNumber();
 	fillReport(reportData, spreadsheetManager);
 	SpreadsheetApp.flush();
 	spreadsheetManager.exportSheetToPDF();

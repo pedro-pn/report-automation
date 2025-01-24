@@ -116,15 +116,11 @@ class ReportData {
 		let modelId = SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()];
 		let name = this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
 		let folder = this.getReportFolder();
-		let spreadsheetManager = new SpreadsheetManager(modelId, folder, name, this.reportState);
-		if (this.reportState.getIsEdit() === true) {
-			let oldSpreadsheetId = reportDb.getReportSpreadsheetId(0);
-			reportDb.reportDbData.reportNumber;
-			name =  this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO.name : reportTypeNameHandlers.SERVICES.name;
-			spreadsheetManager.updateReportSpreadsheetFile(oldSpreadsheetId, this.date);
-		}
+		if (this.reportState.getIsEdit() === false)
+			return (new SpreadsheetManager(this.reportState, modelId, folder, name));
+		let oldSpreadsheetId = reportDb.getReportSpreadsheetId(0);
+		return (new SpreadsheetManager(this.reportState, oldSpreadsheetId, folder, null, this.date));
 		
-		return (spreadsheetManager);
 	}
 
 	searchFieldResponse(fieldName: string, item: number = 0): fieldResponse {
@@ -153,5 +149,9 @@ class ReportData {
         	const name = handler(this, item);
         	this.reportSpreadSheetFile.setName(name);
     	}
+	}
+
+	getReportInfoJsonString(): string {
+		return (JSON.stringify(this.reportInfo.reportInfoData));
 	}
 }

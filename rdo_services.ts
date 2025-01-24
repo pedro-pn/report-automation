@@ -29,11 +29,11 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 	return (1);
 }
 
-function makeServiceReport(reportData: ReportData, reportNumber: number, type: number, item: number) {
+function makeServiceReport(reportData: ReportData, type: ReportTypes, item: number) {
 	var reportId = reportData.getFormResponse().getId();
   var serviceObject = reportData.formResponsesDict[item];
 	try {
-	let status = sendPostRequest(reportId, reportNumber, type, item, serviceObject);
+	let status = sendPostRequest(reportId, reportData.getReportInfoJsonString(), type, item, serviceObject);
 	return (status);
   
 	} catch (error) {
@@ -109,7 +109,7 @@ function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResp
     return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields, serviceFieldResponseDb)
 	if (pressureTestSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RTP), ReportTypes.RTP, item)
+		var status = makeServiceReport(reportData, ReportTypes.RTP, item)
 		if (status)
 			reportData.updateReportNumber(ReportTypes.RTP);
 	}
@@ -172,7 +172,7 @@ function fillDescaling(reportData: ReportData, item: number, serviceFieldRespons
     return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields, serviceFieldResponseDb)
 	if (descalingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLQ), ReportTypes.RLQ, item)
+		var status = makeServiceReport(reportData, ReportTypes.RLQ, item)
 		if (status)
 			reportData.updateReportNumber(ReportTypes.RLQ);
 	}
@@ -233,6 +233,7 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
 	fillFlushingStatements(cells, reportState)
 	reportState.setValueToBuffer(cells.START_TIME, flushingSpecs.StartTime);
 	reportState.setValueToBuffer(cells.END_TIME, flushingSpecs.EndTime);
+	reportState.setValueToBuffer(cells.SERVICE, flushingSpecs.Service);
 	reportState.setValueToBuffer(cells.EQUIPAMENT, flushingSpecs.Equipament);
 	reportState.setValueToBuffer(cells.SYSTEM, flushingSpecs.System);
 	reportState.setValueToBuffer(cells.STATUS, flushingSpecs.Status);
@@ -247,7 +248,7 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
    		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	if (flushingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
+		var status = makeServiceReport(reportData, ReportTypes.RCP, item)
 		if (status)
 			reportData.updateReportNumber(ReportTypes.RCP);
 	}
@@ -322,7 +323,7 @@ function fillFiltration(reportData: ReportData, item: number, serviceFieldRespon
       return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	if (filtrationSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RCP), ReportTypes.RCP, item)
+		var status = makeServiceReport(reportData, ReportTypes.RCP, item)
 		if (status)
 			reportData.updateReportNumber(ReportTypes.RCP);
 	}
@@ -382,7 +383,7 @@ function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResp
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
 	  if (tankCleaningSpecs.Status === "Finalizado") {
-		  var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLR), ReportTypes.RLR, item)
+		  var status = makeServiceReport(reportData, ReportTypes.RLR, item)
 		  if (status)
 			  reportData.updateReportNumber(ReportTypes.RLR);
 	  }

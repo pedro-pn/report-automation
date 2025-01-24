@@ -98,7 +98,7 @@ function fillTemplate(template: string, variables: Object): string {
 }
 
 function getExportUrlRequest(spreadSheetId: string, sheetId: number): string {
-	return (fillTemplate(ServiceApi.URL_REQUEST_STRING, {
+	return (fillTemplate(ServiceApi.URL_PDF_REQUEST, {
 		reportSpreadsheetId: spreadSheetId,
 		reportSheetId: sheetId}));
 }
@@ -116,11 +116,11 @@ function getWeekDay(date: string): string {
 	return (Weekdays[weekDay]);
 }
 
-function sendPostRequest(formResponseId: string, reportNumber: number, reportType: number, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
+function sendPostRequest(formResponseId: string, reportInfoJSONString: string, reportType: ReportTypes, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
 	const reportState = ReportState.getInstance();
 	var payload = {
 		formResponseId: formResponseId,
-		reportNumber: reportNumber,
+		reportInfoJSONString: reportInfoJSONString,
 		reportType: reportType,
 		item: item,
 		isEdit: reportState.getIsEdit(),
@@ -136,7 +136,7 @@ function sendPostRequest(formResponseId: string, reportNumber: number, reportTyp
 		}
 	};
 
-	var response = UrlFetchApp.fetch(ServiceApi.URL_REQUEST_STRING, options);
+	var response = UrlFetchApp.fetch(ServiceApi.SERVICE_API_URL, options);
 	if (response.getResponseCode() !== 200) {
 	  Logger.log('Error: Failed to fetch the data from the API');
 	  return null;  // If not successful, return null

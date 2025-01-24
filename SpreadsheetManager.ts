@@ -5,13 +5,19 @@ class SpreadsheetManager {
     private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet | null = null;
     private firstSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
     private blob: GoogleAppsScript.Base.Blob;
+    private oldReportNum: number
     constructor(
-        private modelId: string,
-        private folder: GoogleAppsScript.Drive.Folder,
-        private name: string,
-        private reportState: ReportState
+        private reportState: ReportState,
+        private modelId?: string,
+        private folder?: GoogleAppsScript.Drive.Folder,
+        private name?: string,
+        private date?: string,
     ) {
-        this.createSpreadsheetFromModel(this.modelId, this.folder, this.name);
+        if (this.reportState.getIsEdit() === false)
+            this.createSpreadsheetFromModel(this.modelId, this.folder, this.name);
+        else
+            this.updateReportSpreadsheetFile(this.modelId, this.date)
+        this.oldReportNum;
     }
     /**
      * Opens an existing spreadsheet by file ID.
@@ -41,6 +47,10 @@ class SpreadsheetManager {
         this.spreadsheet = SpreadsheetApp.openById(copiedFile.getId());
         this.firstSheet = this.spreadsheet.getSheets()[0];
         return (this.spreadsheet);
+    }
+
+    getOldReportNumber(): number {
+        return (this.oldReportNum)
     }
 
     /**
@@ -156,10 +166,10 @@ class SpreadsheetManager {
         if (this.spreadsheet === null)
           throw Error("Could not open report Spreadsheet - edit mode");
         this.firstSheet = this.spreadsheet.getSheets()[0]
-        let reportNum = this.getOldReportNum();
+        this.oldReportNum = this.getOldReportNum();
         let reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
         let newSpreadsheetName = this.spreadsheet.getName().replace(reportNameModel, `${date} - ${getWeekDay(date)}`);
-        let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[ReportTypes[this.reportState.getReportType()]]).getSheets()[0];
+        let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
         let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
         this.deleteSheet(this.firstSheet);
         this.firstSheet = newFirstSheet;
