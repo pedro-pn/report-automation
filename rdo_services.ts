@@ -233,7 +233,7 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
 	fillFlushingStatements(cells, reportState)
 	reportState.setValueToBuffer(cells.START_TIME, flushingSpecs.StartTime);
 	reportState.setValueToBuffer(cells.END_TIME, flushingSpecs.EndTime);
-	reportState.setValueToBuffer(cells.SERVICE, flushingSpecs.Service);
+	reportState.setValueToBuffer(cells.SERVICE, `${flushingSpecs.Service} ${flushingSpecs.Type}`);
 	reportState.setValueToBuffer(cells.EQUIPAMENT, flushingSpecs.Equipament);
 	reportState.setValueToBuffer(cells.SYSTEM, flushingSpecs.System);
 	reportState.setValueToBuffer(cells.STATUS, flushingSpecs.Status);
