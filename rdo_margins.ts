@@ -12,7 +12,7 @@ function	fillReportNightShift(reportData: ReportData): void {
 	var	nightShiftEmployeesNum = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT_EMPLOYEES_NUM);
     
 	reportState.setValueToBuffer(ReportCells.RDO.HEADER.NIGHT_SHIFT_START_TIME, nightShiftStartTime);
-	reportState.setValueToBuffer(ReportCells.RDO.HEADER.DAY_SHIFT_EXIT_TIME, nightShiftExitTime);
+	reportState.setValueToBuffer(ReportCells.RDO.HEADER.NIGHT_SHIFT_EXIT_TIME, nightShiftExitTime);
 	reportState.setValueToBuffer(ReportCells.RDO.HEADER.NIGHT_SHIFT_DINNER_TIME, dinnerTime);
 	reportState.setValueToBuffer(ReportCells.RDO.HEADER.NIGHT_SHIFT_EMPLOYEES_NUM, nightShiftEmployeesNum);
 }
