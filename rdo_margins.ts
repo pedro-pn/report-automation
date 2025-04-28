@@ -153,7 +153,10 @@ function fillActivities(reportData: ReportData): void {
 }
 
 function fillSignField(reportData: ReportData, spreadsheetManager: SpreadsheetManager, cell: string, width: number): void {
-	let imageBlob = DriveApp.getFileById(reportData.getLeaderInfos().Ass).getBlob();
+	let leaderAssId = reportData.getLeaderInfos().Ass
+	if (leaderAssId == "")
+		return ;
+	let imageBlob = DriveApp.getFileById(leaderAssId).getBlob();
   	let cellNum = cellStringToNumber(cell);
  
 	let image = spreadsheetManager.getFirstSheet().insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
