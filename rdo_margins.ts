@@ -45,6 +45,8 @@ function fillNightShiftOvertimeField(reportData: ReportData): boolean {
 function calculateDayShiftTime(reportData: ReportData): number {
     const dayShiftStartTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_START_TIME) as string;
     const dayShiftExitTime = reportData.searchFieldResponse(FormFields.HEADER.DAY_SHIFT_EXIT_TIME) as string;
+	if (dayShiftExitTime == "" ||dayShiftStartTime == "")
+      return (0)
     const lunchtime = reportData.searchFieldResponse(FormFields.HEADER.TOTAL_LUNCHTIME) as string;
     const totalShiftTime = getDiffHour(dayShiftStartTime, dayShiftExitTime);
     const shiftTime = getDiffHourAbs(hoursToHourString(totalShiftTime), lunchtime);
@@ -76,9 +78,9 @@ function fillOvertimeCommentField(reportData: ReportData): void {
 
 function fillOvertimeField(reportData: ReportData): void {
     const dayOvertime = fillDayShiftOvertimeField(reportData);
-    const NightShift = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT);
+    const nightShift = reportData.searchFieldResponse(FormFields.HEADER.NIGHT_SHIFT);
     var	nightOvertime = false;
-    if (NightShift === "Sim")
+    if (nightShift === "Sim")
         nightOvertime = fillNightShiftOvertimeField(reportData);
     if (dayOvertime || nightOvertime)
         fillOvertimeCommentField(reportData);

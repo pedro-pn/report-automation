@@ -563,7 +563,7 @@ const FormFields = {
         TOTAL_LUNCHTIME: "Tempo total de intervalo de almoço",
         DAY_SHIFT_EMPLOYEES_NUM: "Quantidade de colaboradores (apenas turno diurno)",
         NIGHT_SHIFT: "Houve turno noturno?",
-        NIGHT_SHIFT_START_TIME: "Horário de inicio do turno noturno",
+        NIGHT_SHIFT_START_TIME: "Horário de início do turno noturno",
         NIGHT_SHIFT_EXIT_TIME: "Horário de saída do turno noturno",
         TOTAL_DINNER_TIME: "Tempo total de intervalo de janta",
         NIGHT_SHIFT_EMPLOYEES_NUM: "Quantidade de colaboradores no turno noturno",

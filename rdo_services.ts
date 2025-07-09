@@ -166,7 +166,9 @@ function fillDescaling(reportData: ReportData, item: number, serviceFieldRespons
 	reportState.setValueToBuffer(cells.STATUS, descalingSpecs.Status);
 	reportState.setValueToBuffer(cells.PARAM_ONE, descalingSpecs.PipeMaterial);
 	reportState.setValueToBuffer(cells.STEPS, descalingSpecs.Steps.join(", "));
-	reportState.setValueToBuffer(cells.OBS, descalingSpecs.Obs + (descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"" + descalingSpecs.Size);
+	reportState.setValueToBuffer(cells.OBS, descalingSpecs.Obs + ((descalingSpecs.Obs && descalingSpecs.Size) ? `\n`:"") + descalingSpecs.Size);
+	// reportState.setValueToBuffer(cells.OBS, "teste " + descalingSpecs.Obs + (((descalingSpecs.Obs && descalingSpecs.Size) ?  `\n` : "") + descalingSpecs.Size));
+	/* Altera;áo feita pelo Victor, comentei a linha e fiz miha versáo em baixo */
 
   if (reportState.getIsEdit())
     return ;
