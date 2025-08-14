@@ -19,13 +19,21 @@ function showAllResponses() {
     var responsesIds = [
         "2_ABaOnucpHPbSAAXOcpdALWZGINlxntrFzaSOfReSeyyFjOTnA-8bo--bmbsnvnsUeHRXE9U"
     ];
+	const fakeUser = {
+		getEmail: () => "",
+		getUserLoginId: () => "",
+		getName: () => "",
+	};
     if (responsesIds.length > 0) {
         for (var i = 0; i < responsesIds.length; i++) {
             var testResponse = form.getResponse(responsesIds[i]);
             // Create a fake event object
             var fakeEvent = {
                 response: testResponse,
-                source: form
+                source: form,
+				authMode: null,
+				triggerUid: "",
+				user: fakeUser,
             };
             // Call form submission handler with the fake event
             onFormSubmit(fakeEvent);

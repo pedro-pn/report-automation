@@ -9,7 +9,7 @@ function addItemToSpecificSectionAndPlace() {
     var targetSectionIndex = -1;
     
     // Loop through items to find the target section
-    for (var service = 0; service < 6; service++) {
+    for (var service = 0; service < 9; service++) {
       var items = form.getItems();
       var serviceCount = 0;
           for (var i = 0; i < items.length; i++) {
@@ -32,6 +32,7 @@ function addItemToSpecificSectionAndPlace() {
             .setChoices([
               newItem.createChoice('PI-04'),
               newItem.createChoice('PI-05'),
+              newItem.createChoice('PI-16'),
               newItem.createChoice('PI-19'),
               newItem.createChoice('PI-22'),
               newItem.createChoice('PI-26'),
@@ -63,7 +64,15 @@ function addItemToSpecificSectionAndPlace() {
               newItem.createChoice('PI-59'),
               newItem.createChoice('PI-60'),
               newItem.createChoice('PI-61'),
-            ]).setRequired(true);
+              newItem.createChoice('PI-62'),
+              newItem.createChoice('PI-65'),
+              newItem.createChoice('PI-67'),
+              newItem.createChoice('PI-68'),
+              newItem.createChoice('PI-69'),
+              newItem.createChoice('PI-70'),
+              newItem.createChoice('PI-71'),
+              newItem.createChoice('PI-72'),
+            ]).setRequired(false);
     
       // Get the items again, including the newly created one
       items = form.getItems();
@@ -73,38 +82,37 @@ function addItemToSpecificSectionAndPlace() {
       var newItemIndex = targetSectionIndex + 1;
     
       // Reorder the items
-      form.moveItem(items.length - 1, newItemIndex + 12);
+      form.moveItem(items.length - 1, newItemIndex + 13);
       }
     
   }
 
 function editItemOfSpecificSections() {
-  var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
-  var sectionTitle = "Limpeza química";
-  var questionTitle = "Etapas realizadas no dia"
-  var sectionPosition = false;
-  var items = form.getItems();
-
-  for (var i = 0; i < items.length; i++) {
-      if (items[i].getTitle() === sectionTitle && items[i].getType() === FormApp.ItemType.PAGE_BREAK)
-        sectionPosition = true
-      if (sectionPosition && items[i].getTitle() == questionTitle) {
-        console.log("Ihu")
-        var choices = [
-          "Montagem do Sistema",
-          "Teste de estanqueidade",
-          "Desengraxe",
-          "Fase ácida",
-          "Fase sequestrante",
-          "Fase neutralizante",
-          "Fase passivante",
-          "Secagem",
-          "Desmontagem do sistema",
-          "Inspeção por boroscopia"
-        ]
-        items[i].asCheckboxItem().setChoiceValues(choices);
-
-        sectionPosition = false;
-      }
-  }
+    var form = FormApp.openById('15AIFLqOUbhvio4D1_eAG16XB8mzExiXd8-4tSW-PLNk');
+    var sectionTitle = "Teste de pressão";
+    var questionTitle = "Selecione os manômetros utilizados";
+    var sectionPosition = false;
+    var items = form.getItems();
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].getTitle() === sectionTitle && items[i].getType() === FormApp.ItemType.PAGE_BREAK)
+            sectionPosition = true;
+        if (sectionPosition && items[i].getTitle() == questionTitle) {
+            console.log("Ihu");
+            form.deleteItem(items[i])
+            // var choices = [
+            //     "Montagem do Sistema",
+            //     "Teste de estanqueidade",
+            //     "Desengraxe",
+            //     "Fase ácida",
+            //     "Fase sequestrante",
+            //     "Fase neutralizante",
+            //     "Fase passivante",
+            //     "Secagem",
+            //     "Desmontagem do sistema",
+            //     "Inspeção por boroscopia"
+            // ];
+            // items[i].asCheckboxItem().setChoiceValues(choices);
+            // sectionPosition = false;
+        }
+    }
 }

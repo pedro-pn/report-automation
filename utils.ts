@@ -189,6 +189,6 @@ function showAllRespondsLink() {
 		Logger.log(formResponse.getItemResponses().map(function(itemResponse) {
 			return (itemResponse.getResponse());}));
 		console.log(formResponse.getEditResponseUrl());
-		console.log(index++)
+		console.log(String(index++))
 	})
 }
