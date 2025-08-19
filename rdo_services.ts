@@ -74,11 +74,11 @@ function getPressureTestSpecs(reportData: ReportData, item: number): PressureTes
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
 		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
-		Fluid: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.FLUID_TYPE, item) as string,
+		Fluid: getServiceFieldResponse(reportData, FormFields.SERVICES.RTP.FLUID_TYPE, item) as string,
 		Obs: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.STEPS, item) as string[],
-		WorkPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.WORK_PRESSURE, item) as string,
-		TestPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTH.TEST_PRESSURE, item) as string,
+		WorkPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTP.WORK_PRESSURE, item) as string,
+		TestPressure: getServiceFieldResponse(reportData, FormFields.SERVICES.RTP.TEST_PRESSURE, item) as string,
 		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string) as string,
 		TotalTime: hoursToHourString(getDiffHour(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string, getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string))
 	}

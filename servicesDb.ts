@@ -57,13 +57,12 @@ const RtpServiceDbFields: ServiceDbTypeFields = {
       FormFields.SERVICES.COMMON.SERVICE,
       FormFields.SERVICES.COMMON.EQUIPAMENT,
       FormFields.SERVICES.COMMON.SYSTEM,
-      FormFields.SERVICES.RTH.WORK_PRESSURE
+      FormFields.SERVICES.RTP.WORK_PRESSURE
     ],
     ConcatenationFields: [
       FormFields.SERVICES.COMMON.STEPS,
       "Selecione os manômetros utilizados",
-      "Fotos dos manômetros (tag e escala)",
-      "Foto do sistema"
+      "Fotos dos manômetros (tag e escala) e sistema",
     ],
     TotalTimeField: [
       "TotalTime"

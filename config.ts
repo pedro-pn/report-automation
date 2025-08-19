@@ -591,14 +591,12 @@ const FormFields = {
             APPROVATION: "Serviço aprovado pelo cliente?",
             STEPS: "Etapas realizadas no dia",
         },
-        RTH: {
+        RTP: {
             WORK_PRESSURE: "Pressão de trabalho",
             TEST_PRESSURE: "Pressão de teste",
             FLUID_TYPE: "Fluido do teste?",
             MANOMETERS: "Selecione os manômetros utilizados",
-            MANOMETER_IMG: "Fotos dos manômetros (tag e escala)",
-	        SYSTEM_IMG: "Foto do sistema",
-
+            MANOMETER_IMG: "Fotos dos manômetros (tag e escala) e sistema",
         },
         RLQ: {
             PIPE_DRAW: "Código do desenho da tubulação",
