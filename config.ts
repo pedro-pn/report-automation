@@ -21,6 +21,11 @@ const SpreadsheetIds = {
     },
 }
 
+/**@deprecated Specific case for 5663. Might be removed in the future */
+const SpreadsheetIds5663 = {
+    [ReportTypes.RDO]: "17e0EbLOVua6fWXacg9YZb0UfNHBo8H28aQ1M63WpcuA"
+}
+
 const ReportFolderIds = {
     REPORT_FOLDER_ID: "1Fal8CBjtATle0l7MnhmP1LSJqUk7cB-9",
     REPORT_STANDARD_FOLDER_ID: "10Yoluq2U6o5sQS-YGSMNs83a6GnwRru5"

@@ -113,6 +113,7 @@ class ReportData {
 	}
 	
 	createSpreadSheetManager(reportDb: ReportDb, item: number = 0): SpreadsheetManager {
+		this.check5663();
 		let modelId = SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()];
 		let name = this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
 		let folder = this.getReportFolder();
@@ -133,6 +134,11 @@ class ReportData {
 	getReportDate(): string {
 		const date = this.searchFieldResponse(FormFields.HEADER.DATE) as string;
 		return (parseDateString(date));
+	}
+
+	check5663() {
+		if (this.missionName === "Missão 5663 - ArcelorMittal - Barra Mansa")
+			SpreadsheetIds.MODEL_IDS[ReportTypes.RDO] = SpreadsheetIds5663[ReportTypes.RDO]
 	}
 
 	getResponseEditLink(): string {
