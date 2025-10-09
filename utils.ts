@@ -97,10 +97,10 @@ function fillTemplate(template: string, variables: Object): string {
 	return template.replace(/\${(.*?)}/g, (match, p1) => variables[p1] || '');
 }
 
-function getExportUrlRequest(spreadSheetId: string, sheetId: number): string {
+function getExportUrlRequest(spreadSheetId: string): string {
 	return (fillTemplate(ServiceApi.URL_PDF_REQUEST, {
-		reportSpreadsheetId: spreadSheetId,
-		reportSheetId: sheetId}));
+		reportSpreadsheetId: spreadSheetId
+	}));
 }
 
 function getWeekDayNum(date: string): number {

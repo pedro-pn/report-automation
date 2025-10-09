@@ -262,6 +262,14 @@ const ReportCells = {
                 9: 67,
                 LAST_ROW: 73
             },
+        },
+        FIRST_PAGE_INFO_ROWS: {
+            START_ROW: 55,
+            TOTAL: 3
+        },
+        SECOND_PAGE_HEADER_ROWS: {
+            START_ROW: 7,
+            TOTAL: 2
         }
     },
     SERVICES: {
@@ -702,8 +710,7 @@ const ServiceApi = {
 &sheetnames=false&printtitle=false\
 &pagenumbers=false&gridlines=false\
 &fzr=false\
-&scale=4\
-&gid=${reportSheetId}",
+&scale=4",
     SERVICE_API_URL: "https://script.google.com/macros/s/AKfycbwtkYaL13TlGTMoHwSsyW5LaBzNtGgBeZwCKxvdUy0EHcMwBycbzU36dBc4hS-IeMugIA/exec"
 }
 

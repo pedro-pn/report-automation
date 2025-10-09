@@ -41,6 +41,7 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	reportCellsFit(spreadsheetManager.getFirstSheet())
 	deleteEmptyServiceRows(spreadsheetManager.getFirstSheet(), reportData.numOfServices);
 	setDotLineBorder(reportData, spreadsheetManager);
+	spreadsheetManager.spreadServices(reportData.numOfServices);
 }
 
 //#region TEST AND DEBUG

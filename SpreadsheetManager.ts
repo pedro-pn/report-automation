@@ -181,7 +181,7 @@ class SpreadsheetManager {
         var token = ScriptApp.getOAuthToken();
         var reportSpreadsheetId = this.getSpreadsheetId();
         var reportSheetId = this.firstSheet.getSheetId();
-        var urlRequest = getExportUrlRequest(reportSpreadsheetId, reportSheetId);
+        var urlRequest = getExportUrlRequest(reportSpreadsheetId);
         try {
             var response = UrlFetchApp.fetch(urlRequest, {
             headers: {
@@ -197,5 +197,19 @@ class SpreadsheetManager {
         this.blob = blob;
         this.reportState.getReportBlobs().push(blob);
         this.folder.createFile(blob)
+    }
+
+    spreadServices(numberOfServices: number): void {
+        if (numberOfServices <= 6)
+            return;
+        let secondSheet = this.firstSheet.copyTo(this.spreadsheet);
+        let startRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[7];
+        let endRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS.LAST_ROW - startRow + 1 - (7 * (9 - numberOfServices));
+        this.firstSheet.deleteRows(startRow, endRow);
+        SpreadsheetApp.flush();
+        startRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[1];
+        secondSheet.deleteRows(startRow, 42);
+        this.firstSheet.deleteRows(ReportCells.RDO.FIRST_PAGE_INFO_ROWS.START_ROW, ReportCells.RDO.FIRST_PAGE_INFO_ROWS.TOTAL);
+        secondSheet.deleteRows(ReportCells.RDO.SECOND_PAGE_HEADER_ROWS.START_ROW, ReportCells.RDO.SECOND_PAGE_HEADER_ROWS.TOTAL);
     }
 }
