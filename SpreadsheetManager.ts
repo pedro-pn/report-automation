@@ -232,7 +232,7 @@ class SpreadsheetManager {
         var blob = response.getBlob().setName(`${this.spreadsheet.getName()}.pdf`);
         this.blob = blob;
         this.reportState.getReportBlobs().push(blob);
-        if (this.reportState.getIsAppending() === true)
+        if (this.reportState.getIsAppending() === true || this.reportState.getIsEdit() === true)
             this.deleteOldPdf();
         this.folder.createFile(blob)
     }
