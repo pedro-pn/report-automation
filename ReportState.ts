@@ -9,6 +9,7 @@ class ReportState {
     private debug: boolean;
     private newServiceFlag: boolean;
     private serviceItem: number;
+    private requestsObject: GoogleAppsScript.URL_Fetch.URLFetchRequest[];
 
     private constructor() {
         this.reportBuffer = [];
@@ -20,6 +21,7 @@ class ReportState {
         this.debug = false;
         this.newServiceFlag = false;
         this.serviceItem = 0;
+        this.requestsObject = [];
     }
 
     public static getInstance(): ReportState {
@@ -109,5 +111,39 @@ class ReportState {
 
     public setNewServiceFlag(value: boolean): void {
         this.newServiceFlag = value;
+    }
+
+    public makePostRequestObject(formResponseId: string, reportInfoJSONString: string, reportType: ReportTypes, item: number, serviceObject: ServiceFieldResponses): void {
+        var payload = {
+            formResponseId: formResponseId,
+            reportInfoJSONString: reportInfoJSONString,
+            reportType: reportType,
+            item: item,
+            isEdit: this.isEdit,
+            // reportNumber: reportNumber,
+            serviceObject: serviceObject
+        };
+
+        var options: GoogleAppsScript.URL_Fetch.URLFetchRequest = {
+            'url': ServiceApi.SERVICE_API_URL,
+            'method': 'post',
+            'contentType': 'application/json',
+            'payload': JSON.stringify(payload),
+            'headers': {
+            'Authorization': 'Bearer ' + ScriptApp.getOAuthToken()
+            }
+        };
+        this.requestsObject.push(options);
+    }
+
+    public makeUrlRequests(): void {
+        let reportState = ReportState.getInstance();
+        let urlRequestReponses = UrlFetchApp.fetchAll(this.requestsObject);
+        urlRequestReponses.forEach(response => {
+            var responseObject = JSON.parse(response.getContentText())
+            var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
+            this.reportBlobs.push(serviceReportBlob)
+            this.addReportId(`,${responseObject.reportId}`);
+        });
     }
 }

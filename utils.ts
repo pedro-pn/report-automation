@@ -123,39 +123,6 @@ function getWeekDay(date: string): string {
 	return (Weekdays[weekDay]);
 }
 
-function sendPostRequest(formResponseId: string, reportInfoJSONString: string, reportType: ReportTypes, item: number, serviceObject: ServiceFieldResponses): ServiceFieldResponses {
-	const reportState = ReportState.getInstance();
-	var payload = {
-		formResponseId: formResponseId,
-		reportInfoJSONString: reportInfoJSONString,
-		reportType: reportType,
-		item: item,
-		isEdit: reportState.getIsEdit(),
-    	serviceObject: serviceObject
-	};
-
-	var options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-		'method': 'post',
-		'contentType': 'application/json',
-		'payload': JSON.stringify(payload),
-		'headers': {
-		'Authorization': 'Bearer ' + ScriptApp.getOAuthToken()
-		}
-	};
-
-	var response = UrlFetchApp.fetch(ServiceApi.SERVICE_API_URL, options);
-	if (response.getResponseCode() !== 200) {
-	  Logger.log('Error: Failed to fetch the data from the API');
-	  return null;  // If not successful, return null
-	}
-
-	var responseObject = JSON.parse(response.getContentText())
-	var serviceReportBlob = Utilities.newBlob(Utilities.base64Decode(responseObject.blob, Utilities.Charset.UTF_8), "application/pdf", responseObject.blobName);
-	reportState.getReportBlobs().push(serviceReportBlob)
-	reportState.addReportId(`,${responseObject.reportId}`);
-  	return (responseObject.newService);
-}
-
 function cellStringToNumber(cellString: string): number[] {
     var columnLetter = cellString.charAt(0);
 	  var columnNumber = columnLetter.charCodeAt(0) - 65;

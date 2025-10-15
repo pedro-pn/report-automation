@@ -1,13 +1,14 @@
 //#region SERVICE HANDLER
 
 function fillServicesFields(reportData: ReportData): void {
+	let reportState = ReportState.getInstance();
 	var serviceDbFile = DriveApp.getFileById(ReportJSONIds.SERVICE_DB_ID);
 	let serviceFieldResponseDb: ServiceFieldResponses = JSON.parse(serviceDbFile.getBlob().getDataAsString());
     for (var item = 1; item <= 9; item++) {
         reportData.numOfServices += fillItem(reportData, item, serviceFieldResponseDb);
     }
+	reportState.makeUrlRequests();
 	serviceDbFile.setContent(JSON.stringify(serviceFieldResponseDb, null, 2));
-  // console.log(serviceDb)
 }
 
 function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): number {
@@ -29,17 +30,12 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 	return (1);
 }
 
-function makeServiceReport(reportData: ReportData, type: ReportTypes, item: number) {
-	var reportId = reportData.getFormResponse().getId();
-  var serviceObject = reportData.formResponsesDict[item];
-	try {
-	let status = sendPostRequest(reportId, reportData.getReportInfoJsonString(), type, item, serviceObject);
-	return (status);
-  
-	} catch (error) {
-	 Logger.log(`Could not make ${Object.keys(ReportTypes)[type]} ${error}`)
-	}
-
+function makeServiceReport(reportData: ReportData, type: ReportTypes, item: number): void {
+	let reportState = ReportState.getInstance();
+	let reportId = reportData.getFormResponse().getId();
+  	let serviceObject = reportData.formResponsesDict[item];
+	// let reportNumber = reportData.getReportNumber(type) + 1;
+	reportState.makePostRequestObject(reportId, reportData.getReportInfoJsonString(), type, item, serviceObject);
 }
 
 //#endregion
@@ -109,9 +105,8 @@ function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResp
     return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields, serviceFieldResponseDb)
 	if (pressureTestSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, ReportTypes.RTP, item)
-		if (status)
-			reportData.updateReportNumber(ReportTypes.RTP);
+		makeServiceReport(reportData, ReportTypes.RTP, item)
+		reportData.updateReportNumber(ReportTypes.RTP);
 	}
 }
 //#endregion
@@ -174,9 +169,8 @@ function fillDescaling(reportData: ReportData, item: number, serviceFieldRespons
     return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields, serviceFieldResponseDb)
 	if (descalingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, ReportTypes.RLQ, item)
-		if (status)
-			reportData.updateReportNumber(ReportTypes.RLQ);
+		makeServiceReport(reportData, ReportTypes.RLQ, item)
+		reportData.updateReportNumber(ReportTypes.RLQ);
 	}
 }
 //#endregion
@@ -250,9 +244,8 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
    		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	if (flushingSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, ReportTypes.RCP, item)
-		if (status)
-			reportData.updateReportNumber(ReportTypes.RCP);
+		makeServiceReport(reportData, ReportTypes.RCP, item)
+		reportData.updateReportNumber(ReportTypes.RCP);
 	}
 }
 //#endregion
@@ -325,9 +318,8 @@ function fillFiltration(reportData: ReportData, item: number, serviceFieldRespon
       return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
 	if (filtrationSpecs.Status === "Finalizado") {
-		var status = makeServiceReport(reportData, ReportTypes.RCP, item)
-		if (status)
-			reportData.updateReportNumber(ReportTypes.RCP);
+		makeServiceReport(reportData, ReportTypes.RCP, item)
+		reportData.updateReportNumber(ReportTypes.RCP);
 	}
 }
 //#endregion
@@ -385,9 +377,8 @@ function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResp
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
 	  if (tankCleaningSpecs.Status === "Finalizado") {
-		  var status = makeServiceReport(reportData, ReportTypes.RLR, item)
-		  if (status)
-			  reportData.updateReportNumber(ReportTypes.RLR);
+		  makeServiceReport(reportData, ReportTypes.RLR, item)
+		reportData.updateReportNumber(ReportTypes.RLR);
 	  }
 }
 //#endregion
