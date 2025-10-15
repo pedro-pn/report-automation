@@ -92,7 +92,9 @@ const ReportCells = {
             STAND_BY_TIME: "J76",
             STAND_BY_MOTIVE: "J78",
             LEADER: "B79",
-            POSITION: "B80"
+            POSITION: "B80",
+            PAGE_NUMBER: "A83",
+            SECOND_SHEET_OVERTIME_VALUES: "A53:P55"
         },
         SERVICES: {
             1: {
@@ -267,7 +269,7 @@ const ReportCells = {
             START_ROW: 55,
             TOTAL: 3
         },
-        SECOND_PAGE_HEADER_ROWS: {
+        HEADER_ROWS: {
             START_ROW: 7,
             TOTAL: 2
         }

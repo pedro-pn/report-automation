@@ -117,9 +117,9 @@ class ReportData {
 		let modelId = SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()];
 		let name = this.reportState.getReportType() === ReportTypes.RDO ? reportTypeNameHandlers.RDO(this) : reportTypeNameHandlers.SERVICES(this, item);
 		let folder = this.getReportFolder();
-		if (this.reportState.getIsEdit() === false)
+		if (this.reportState.getIsEdit() === false && this.reportState.getIsAppending() === false)
 			return (new SpreadsheetManager(this.reportState, modelId, folder, name));
-		let oldSpreadsheetId = reportDb.getReportSpreadsheetId(0);
+		let oldSpreadsheetId = reportDb.reportDbData.spreadsheetIds[0];
 		return (new SpreadsheetManager(this.reportState, oldSpreadsheetId, folder, null, this.date));
 		
 	}

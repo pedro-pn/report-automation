@@ -25,6 +25,10 @@ class ReportDb {
     this.reportDbData = {spreadsheetIds: [], missionName: "", reportNumber: 0, date: "" };
   }
 
+  /**
+   * Check if report is an edit, which means the responseId is already stored in REPORT_DB_SHEET.
+   * @returns 
+   */
   setEditFlag(): void {
     var reportId = this.getReportSpreadsheetId(0);
     if (reportId == null)
@@ -35,6 +39,9 @@ class ReportDb {
     this.reportState.setIsEdit(true);
   }
 
+  /**
+   *  If report is on edit mode, sets reportNumber according to original RDO, copy date and spreadSheetId.
+   */
   getReportDbData(): void {
     let  cellValues = this.finishedSheet.getDataRange().getValues();
     for (var i = 1; i < cellValues.length; i++) {
@@ -46,6 +53,11 @@ class ReportDb {
     }
   }
 
+  /**
+   * 
+   * @param item the index of spreadSheet: always use 0 for RDO.
+   * @returns If the report already exists, it returns the spreadsheet Id. If not, it returns null.
+   */
   getReportSpreadsheetId(item: number): string | null {
     var cellValues= this.finishedSheet.getDataRange().getValues();
 
@@ -85,8 +97,25 @@ class ReportDb {
     
     return (false);
   }
+  
+  setAppendingFlag(reportData: ReportData): boolean {
+    let cellValues = this.finishedSheet.getDataRange().getValues();
+    for (var i = 1; i < cellValues.length; i++) {
+      if (cellValues[i][4] == "" || cellValues[i][2] == "")
+        continue ;
+        if (formatDateToDDMMYYYY(cellValues[i][4]) === reportData.date && cellValues[i][2] === reportData.missionName && this.formResponseId !== cellValues[i][0]) {
+            this.reportDbData.spreadsheetIds = cellValues[i][1].split(",");
+            this.reportDbData.date = cellValues[i][4];
+            this.reportDbData.reportNumber = cellValues[i][3];
+            return (true);
+        }
+    }
+    return (false);
+  }
 
   checkReportStatus(reportData: ReportData): boolean {
+    if (this.setAppendingFlag(reportData))
+      this.reportState.setIsAppending(true);
     if (this.reportState.getIsEdit())
       return (true);
     if (this.isReportPending() === false) {

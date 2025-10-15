@@ -2,6 +2,7 @@ class ReportState {
     private static instance: ReportState;
     private reportBuffer: string[][];
 	private isEdit: boolean;
+	private isAppending: boolean;
 	private reportBlobs: GoogleAppsScript.Base.Blob[];
 	private reportType: ReportTypes;
 	private reportIds: string;
@@ -12,6 +13,7 @@ class ReportState {
     private constructor() {
         this.reportBuffer = [];
         this.isEdit = false;
+        this.isAppending = false;
         this.reportBlobs = [];
         this.reportType = ReportTypes.RDO;
         this.reportIds = "";
@@ -55,6 +57,14 @@ class ReportState {
 
     public setIsEdit(value: boolean): void {
         this.isEdit = value;
+    }
+
+    public getIsAppending(): boolean {
+        return (this.isAppending);
+    }
+
+    public setIsAppending(value: boolean): void {
+        this.isAppending = value;
     }
     
     public getReportBlobs(): GoogleAppsScript.Base.Blob[] {

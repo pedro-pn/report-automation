@@ -161,7 +161,7 @@ function fillSignField(reportData: ReportData, spreadsheetManager: SpreadsheetMa
 	let imageBlob = DriveApp.getFileById(leaderAssId).getBlob();
   	let cellNum = cellStringToNumber(cell);
  
-	let image = spreadsheetManager.getFirstSheet().insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
+	let image = spreadsheetManager.getWorkingSheet().insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
 	let ratio = image.getHeight() / image.getWidth();
 	image.setWidth(width);
 	image.setHeight(width * ratio);

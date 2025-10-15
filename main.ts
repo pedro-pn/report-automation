@@ -8,7 +8,7 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
   	if (reportDb.checkReportStatus(reportData) === false)
     	return ;
 	const spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
-	if (reportState.getIsEdit() === true) // get report number of editing report
+	if (reportState.getIsEdit() === true || reportState.getIsAppending() === true) // get report number of editing report
 		reportData.reportNum = spreadsheetManager.getOldReportNumber();
 	fillReport(reportData, spreadsheetManager);
 	SpreadsheetApp.flush();
@@ -19,12 +19,13 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
    	 	reportDb.removePendingService()
 	else if (reportState.getIsEdit() === true)
 		return ;
-	reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RDO);
+	if (reportState.getIsAppending() === false)
+		reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RDO);
 	reportInfo.updateReportInfo();
 }
 
 function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetManager): void {
-	var reportCellsRange = spreadsheetManager.getFirstSheet().getRange("A1:P82");
+	var reportCellsRange = spreadsheetManager.getWorkingSheet().getRange("A1:P82");
 	const reportState = ReportState.getInstance();
 	reportState.setReportBuffer(reportCellsRange.getValues());
 	var formulas = reportCellsRange.getFormulas();
@@ -38,10 +39,13 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	fillSignField(reportData, spreadsheetManager, ReportCells.RDO.FOOTER.SIGNATURE, 100);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportState.getReportBuffer());
 	reportCellsRange.setValues(reportValuesResult)
-	reportCellsFit(spreadsheetManager.getFirstSheet())
-	deleteEmptyServiceRows(spreadsheetManager.getFirstSheet(), reportData.numOfServices);
+	reportCellsFit(spreadsheetManager.getWorkingSheet())
+	deleteEmptyServiceRows(spreadsheetManager.getWorkingSheet(), reportData.numOfServices);
 	setDotLineBorder(reportData, spreadsheetManager);
-	spreadsheetManager.spreadServices(reportData.numOfServices);
+	if (reportState.getIsAppending() === false)
+		spreadsheetManager.spreadServices(reportData.numOfServices);
+	else
+		spreadsheetManager.appendServices(reportData.numOfServices);
 }
 
 //#region TEST AND DEBUG

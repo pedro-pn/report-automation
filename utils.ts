@@ -103,6 +103,13 @@ function getExportUrlRequest(spreadSheetId: string): string {
 	}));
 }
 
+function formatDateToDDMMYYYY(date: Date): string {
+  const day   = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year  = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
 function getWeekDayNum(date: string): number {
 	var dateStrings = date.split('-');
 	var dateType = new Date(Number(dateStrings[2]), Number(dateStrings[1]) - 1, Number(dateStrings[0]));
