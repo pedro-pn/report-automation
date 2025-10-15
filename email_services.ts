@@ -5,6 +5,7 @@ function sendReportViaEmail(reportData: ReportData, reportState: ReportState) {
     var bcc = reportData.getParameterInfos().Bcc;
     var body = generateEmailBody(reportData);
 
+    if (reportData.missionName === "Missão 9999 - Filtrovali - Testes") reportState.setDebug(true);
     try {
       if (reportState.getDebug()) {
         MailApp.sendEmail( {
