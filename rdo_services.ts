@@ -23,7 +23,7 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 		fillFiltration(reportData, item, serviceFieldResponseDb)
 	else if (service === "Limpeza de reservatório")
 		fillTankCleaning(reportData, item, serviceFieldResponseDb)
-	else if (service === "Limpeza e inibição")
+	else if (service === "Inibição")
 		fillInibition(reportData, item, serviceFieldResponseDb)
 	else
 		return (0)
@@ -388,18 +388,15 @@ function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResp
 interface InibitionSpecs {
 	StartTime: string;
 	EndTime: string;
-	Equipament: string;
+	Id: string;
 	System: string;
 	Service: string;
+	ServiceStep: string;
 	Obs: string;
-	Size: string;
-	Steps: string;
 	PipeMaterial: string;
 	Status: string;
-	Code: string;
-	DegreaseInterval: string;
-	FlushingInterval: string;
-	InibitionInterval: string;
+	Steps: string[];
+	Reports: string[];
 }
 
 function fillInibitionStatements(cells: ReportServiceCells, reportState: ReportState): void {
@@ -408,39 +405,21 @@ function fillInibitionStatements(cells: ReportServiceCells, reportState: ReportS
 
 function getInibitionSpecs(reportData: ReportData, item: number): InibitionSpecs {
 	var inibitionSpecs = {
-		StartTime: getServiceFieldResponse(reportData, FormFields.RLI.START, item) as string,
-		EndTime: getServiceFieldResponse(reportData, FormFields.RLI.END, item) as string,
-		Equipament: getServiceFieldResponse(reportData, FormFields.RLI.EQUIPAMENT, item) as string,
-		System: getServiceFieldResponse(reportData, FormFields.RLI.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.RLI.SERVICE, item) as string,
-		Obs: getInibitionObs(reportData, item) as string,
- 	    Size: getServiceFieldResponse(reportData, FormFields.RLI.SIZE, item) as string,
-		Steps: getInibitionSteps(reportData, item) as string,
-		PipeMaterial: getServiceFieldResponse(reportData,FormFields.RLI.MATERIAL, item) as string,
-		Status: getStatus(getServiceFieldResponse(reportData, FormFields.RLI.STATUS, item) as string),
-		Code: getServiceFieldResponse(reportData, FormFields.RLI.PIPE_CODE, item) as string,
-		DegreaseInterval: getServiceFieldResponse(reportData, FormFields.RLI.DEGREASING_DURATION, item).slice(0, -3) as string,
-		FlushingInterval: getServiceFieldResponse(reportData, FormFields.RLI.FLUSHING_DURATION, item).slice(0, -3) as string,
-		InibitionInterval: getServiceFieldResponse(reportData, FormFields.RLI.INIBITION_DURATION, item).slice(0, -3) as string
+		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.START, item) as string,
+		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.END, item) as string,
+		Id: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.ID, item) as string,
+		Lines: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.LINES, item) as string,
+		System: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.SYSTEM, item) as string,
+		ServiceStep: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.SERVICE_STEP, item) as string,
+		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.SERVICE, item) as string,
+		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.OBS, item) as string,
+		PipeMaterial: getServiceFieldResponse(reportData,FormFields.SERVICES.RLI.MATERIAL, item) as string,
+		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.STATUS, item) as string),
+		Steps: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
+		Reports: getServiceFieldResponse(reportData, FormFields.SERVICES.RLI.REPORTS, item) as string[],
 	}
 	
 	return (inibitionSpecs);
-}
-
-function getInibitionObs(reportData: ReportData, item: number): string {
-	let code = getServiceFieldResponse(reportData, FormFields.RLI.PIPE_CODE, item);
-	
-	return (`${code != "" ? `${code}\n`:""}${getServiceFieldResponse(reportData, FormFields.RLI.OBS, item)}`)
-}
-
-function getInibitionSteps(reportData: ReportData, item: number): string {
-	let steps = [];
-
-	steps.push((getServiceFieldResponse(reportData, FormFields.RLI.DEGREASING, item) === "Sim") ? "Desengraxe":"")
-	steps.push((getServiceFieldResponse(reportData, FormFields.RLI.FLUSHING, item) === "Sim") ? "Flushing":"")
-	steps.push((getServiceFieldResponse(reportData, FormFields.RLI.INIBITION, item) === "Sim") ? "Aplicação do inibidor":"")
-
-	return (steps.join(", "));
 }
 
 function fillInibition(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
@@ -449,22 +428,26 @@ function fillInibition(reportData: ReportData, item: number, serviceFieldRespons
 	const reportState = ReportState.getInstance();
 
 	fillInibitionStatements(cells, reportState)
+	let systemDescription = inibitionSpecs.System.split(';');
 	reportState.setValueToBuffer(cells.START_TIME, inibitionSpecs.StartTime);
 	reportState.setValueToBuffer(cells.END_TIME, inibitionSpecs.EndTime);
-	reportState.setValueToBuffer(cells.EQUIPAMENT, inibitionSpecs.Equipament);
-	reportState.setValueToBuffer(cells.SYSTEM, inibitionSpecs.System);
-	reportState.setValueToBuffer(cells.SERVICE, inibitionSpecs.Service);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, inibitionSpecs.Id);
+	reportState.setValueToBuffer(cells.PARAM_ONE, inibitionSpecs. PipeMaterial);
+	reportState.setValueToBuffer(cells.SYSTEM, systemDescription[0] + " - " + inibitionSpecs.ServiceStep + " - " + systemDescription[1]);
+	reportState.setValueToBuffer(cells.SERVICE, "Flushing/Inibição");
 	reportState.setValueToBuffer(cells.STATUS, inibitionSpecs.Status);
-	reportState.setValueToBuffer(cells.PARAM_ONE, inibitionSpecs.PipeMaterial);
-	reportState.setValueToBuffer(cells.STEPS, inibitionSpecs.Steps);
-	reportState.setValueToBuffer(cells.OBS, inibitionSpecs.Obs + ((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size); //((inibitionSpecs.Obs && inibitionSpecs.Size) ? `\n`:"") + inibitionSpecs.Size)
-	reportData.formResponsesDict[item]["DegreaseInterval"] = inibitionSpecs.DegreaseInterval;
-	reportData.formResponsesDict[item]["FlushingInterval"] = inibitionSpecs.FlushingInterval;
-	reportData.formResponsesDict[item]["InibitionInterval"] = inibitionSpecs.InibitionInterval;
+	reportState.setValueToBuffer(cells.STEPS, inibitionSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, inibitionSpecs.Obs);
 
-  if (reportState.getIsEdit())
-    return ;
+  	if (reportState.getIsEdit())
+    	return ;
 	checkServiceProgress(reportData, item, RliServiceDbFields, serviceFieldResponseDb)
+	inibitionSpecs.Reports.forEach(reportType => {
+		if (reportType == "RLI")
+			console.log("Generates RLI");
+		else if (reportType == "RLF")
+			console.log("Generates RLF");
+	});
 	// if (inibitionSpecs.Status === "Finalizado") {
 	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLI), ReportTypes.RLI, item)
 	// 	if (status)

@@ -650,39 +650,23 @@ const FormFields = {
             TANK_MATERIAL: "Material do reservatório",
             BOROSCOPY_IMG: "Imagens da boroscopia",
             OBS: "Observações"
+        },
+        RLI: {
+            SERVICE: "Selecione o tipo de serviço que deseja adicionar informações",
+            ID: "ID da embarcação",
+            SYSTEM: "Sistema",
+            MATERIAL: "Material das tubulações",
+            LINES: "Linhas",
+            SERVICE_STEP: "Step",
+            STATUS: "Serviço finalizado?",
+            PROGRESS: "Este serviço começou em dias anteriores?",
+            START: "Horário de início/continuação",
+            END: "Horário de término/pausa",
+            REPORTS: "Relatórios para gerar",
+            FILTER_IMGS: "Imagens de filtro",
+            PLATE_IMGS: "Imagens das plaquetas",
+            OBS: "Observações"
         }
-
-    },
-    RLI: {
-        SERVICE: "Selecione o tipo de serviço que deseja adicionar informações",
-        EQUIPAMENT: "Nome do equipamento",
-        SYSTEM: "Nome do sistema",
-        DESCRIPTION: "Descrição",
-        PIPE_DRAW: "Código do desenho da tubulação",
-        MATERIAL: "Material das tubulações",
-        SIZE: "Diâmetro e comprimento das tubulações",
-        STATUS: "Serviço finalizado?",
-        PROGRESS: "Este serviço começou em dias anteriores?",
-        START: "Horário de início/continuação",
-        END: "Horário de término/pausa",
-        DEGREASING: "Houve desengraxe do sistema neste dia?",
-        DEGREASING_DURATION: "Duração do desengraxe",
-        DEGREASING_METHOD: "Método de desengraxe",
-        DEGREASING_TEMPERATURE: "Temperatura durante o desengraxe",
-        FLUSHING: "Houve flushing do sistema neste dia?",
-        FLUSHING_DURATION: "Duração do flushing",
-        FLUSHING_METHOD: "Método de flushing",
-        FLUSHING_TEMPERATURE: "Temperatura durante o flushing",
-        INIBITION: "Houve inibição do sistema neste dia?",
-        INIBITION_DURATION: "Duração da inibição",
-        INIBITION_METHOD: "Método de inibição",
-        INIBITION_TEMPERATURE: "Temperatura durante a inibição",
-        INSPECTION: "Tipo de inspeção",
-        FILTER_IMGS: "Imagens do filtro",
-        PLATE_IMGS: "Imagens das plaquetas",
-        PHMETER_IMGS: "Imagens do phmetro",
-        PIPE_CODE: "Código do desenho da tubulação",
-        OBS: "Observações"
     }
 };
 
@@ -690,10 +674,9 @@ type fieldResponse = string[][] | string[] | string;
 
 type FormFieldsKeys = keyof typeof FormFields['HEADER'];
 type ServiceFieldsKeys = keyof typeof FormFields['SERVICES'];
-type RliFieldsKeys = keyof typeof FormFields['RLI'];
 
 type ServiceFieldResponses = {
-	[key in FormFieldsKeys | ServiceFieldsKeys | RliFieldsKeys]?: fieldResponse;
+	[key in FormFieldsKeys | ServiceFieldsKeys ]?: fieldResponse;
 	
 };
 

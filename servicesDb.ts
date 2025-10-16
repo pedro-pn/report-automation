@@ -26,29 +26,15 @@ const RlqServiceDbFields: ServiceDbTypeFields = {
 const RliServiceDbFields: ServiceDbTypeFields = {
     CompareFields: [
 
-      FormFields.RLI.SERVICE,
-      FormFields.RLI.EQUIPAMENT,
-      FormFields.RLI.SYSTEM,
-      FormFields.RLI.SIZE
+      FormFields.SERVICES.RLI.SERVICE,
+      FormFields.SERVICES.RLI.ID,
+      FormFields.SERVICES.RLI.SYSTEM,
+      FormFields.SERVICES.RLI.SERVICE_STEP
     ],
     ConcatenationFields: [
-      FormFields.RLI.DEGREASING_METHOD,
-      FormFields.RLI.FLUSHING_METHOD,
-      FormFields.RLI.INIBITION_METHOD,
-      FormFields.RLI.INSPECTION,
-      FormFields.RLI.FILTER_IMGS,
-      FormFields.RLI.PLATE_IMGS,
-      FormFields.RLI.PHMETER_IMGS
-    ],
-    SubstituitionFields: [
-      FormFields.RLI.FLUSHING_TEMPERATURE,
-      FormFields.RLI.DEGREASING_TEMPERATURE,
-      FormFields.RLI.INIBITION_TEMPERATURE
-    ],
-    TotalIntervalFields: [
-      "DegreaseInterval",
-      "FlushingInterval",
-      "InibitionInterval"
+      FormFields.SERVICES.RLI.FILTER_IMGS,
+      FormFields.SERVICES.RLI.PLATE_IMGS,
+      FormFields.SERVICES.COMMON.STEPS
     ]
 }
 
