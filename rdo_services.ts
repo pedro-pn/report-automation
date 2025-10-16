@@ -433,7 +433,7 @@ function fillInibition(reportData: ReportData, item: number, serviceFieldRespons
 	reportState.setValueToBuffer(cells.END_TIME, inibitionSpecs.EndTime);
 	reportState.setValueToBuffer(cells.EQUIPAMENT, inibitionSpecs.Id);
 	reportState.setValueToBuffer(cells.PARAM_ONE, inibitionSpecs. PipeMaterial);
-	reportState.setValueToBuffer(cells.SYSTEM, systemDescription[0] + " - " + inibitionSpecs.ServiceStep + " - " + systemDescription[1]);
+	reportState.setValueToBuffer(cells.SYSTEM, systemDescription[0] + " - Step " + inibitionSpecs.ServiceStep + " - " + systemDescription[1]);
 	reportState.setValueToBuffer(cells.SERVICE, "Flushing/Inibição");
 	reportState.setValueToBuffer(cells.STATUS, inibitionSpecs.Status);
 	reportState.setValueToBuffer(cells.STEPS, inibitionSpecs.Steps.join(", "));
