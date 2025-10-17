@@ -103,11 +103,12 @@ class ReportData {
 		let reportsFolder = DriveApp.getFolderById(ReportFolderIds.REPORT_FOLDER_ID);
 		let folderName = ReportTypes[this.reportState.getReportType()];
 		try {
-			let currentReportFolder = reportsFolder.getFoldersByName(this.missionName).next();
+			var currentReportFolder = reportsFolder.getFoldersByName(this.missionName).next();
 			var recipientFolder = currentReportFolder.getFoldersByName(folderName).next();
 		}
 		catch {
-			recipientFolder = DriveApp.getFolderById(ReportFolderIds.REPORT_STANDARD_FOLDER_ID);
+			currentReportFolder = reportsFolder.createFolder(this.missionName);
+			recipientFolder = currentReportFolder.createFolder(folderName);
 		}
 		return (recipientFolder);
 	}
