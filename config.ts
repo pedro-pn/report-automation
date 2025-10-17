@@ -7,6 +7,7 @@ enum ReportTypes {
 	RCP = 3,
 	RLR = 4,
 	RLI = 5,
+    RLF = 6
 }
 
 const SpreadsheetIds = {

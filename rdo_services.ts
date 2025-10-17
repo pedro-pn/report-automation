@@ -442,16 +442,17 @@ function fillInibition(reportData: ReportData, item: number, serviceFieldRespons
   	if (reportState.getIsEdit())
     	return ;
 	checkServiceProgress(reportData, item, RliServiceDbFields, serviceFieldResponseDb)
+	if (inibitionSpecs.Status !== "Finalizado")
+		return ;
 	inibitionSpecs.Reports.forEach(reportType => {
-		if (reportType == "RLI")
-			console.log("Generates RLI");
-		else if (reportType == "RLF")
-			console.log("Generates RLF");
+		if (reportType == "RLI") {
+			makeServiceReport(reportData, ReportTypes.RLI, item);
+			reportData.updateReportNumber(ReportTypes.RLI);
+		}
+		else if (reportType == "RLF") {
+			makeServiceReport(reportData, ReportTypes.RLF, item);
+			reportData.updateReportNumber(ReportTypes.RLF);
+		}
 	});
-	// if (inibitionSpecs.Status === "Finalizado") {
-	// 	var status = makeServiceReport(reportData, reportData.getReportNumber(ReportTypes.RLI), ReportTypes.RLI, item)
-	// 	if (status)
-	// 		reportData.reportInfo.updateReportNumber(reportData.missionName, ReportTypes.RLI);
-	// }
 }
 //#endregion
