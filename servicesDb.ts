@@ -34,8 +34,10 @@ const RliServiceDbFields: ServiceDbTypeFields = {
     ConcatenationFields: [
       FormFields.SERVICES.RLI.FILTER_IMGS,
       FormFields.SERVICES.RLI.PLATE_IMGS,
-      FormFields.SERVICES.RLI.LINES,
       FormFields.SERVICES.COMMON.STEPS
+    ],
+    SubstituitionFields: [
+      FormFields.SERVICES.RLI.LINES
     ]
 }
 
