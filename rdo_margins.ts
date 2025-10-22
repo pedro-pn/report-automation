@@ -35,7 +35,7 @@ function fillNightShiftOvertimeField(reportData: ReportData): boolean {
 
 	if (overtime <= 0.5)
 			return false;
-	reportState.setValueToBuffer(ReportCells.RDO.FOOTER.NIGHT_SHIFT_OVERTIME, hoursToHourString(overtime));
+	reportState.setValueToBuffer(ReportCells.RDO.FOOTER.NIGHT_SHIFT_OVERTIME, "'" + hoursToHourString(overtime));
 	
 	return (true);
 }
@@ -62,7 +62,7 @@ function fillDayShiftOvertimeField(reportData: ReportData): boolean {
 
     if (overtime <= 0.5)
         return false;
-    reportState.setValueToBuffer(ReportCells.RDO.FOOTER.DAY_SHIFT_OVERTIME, hoursToHourString(overtime))
+    reportState.setValueToBuffer(ReportCells.RDO.FOOTER.DAY_SHIFT_OVERTIME, "'" + hoursToHourString(overtime))
     
     return (true);
 }
