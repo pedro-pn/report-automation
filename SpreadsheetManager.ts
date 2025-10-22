@@ -4,10 +4,11 @@
 class SpreadsheetManager {
     private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet | null = null;
     private firstSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
-    private secondSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
-    private thirdSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
+    private secondToLastSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
+    private appendingSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
     private blob: GoogleAppsScript.Base.Blob;
     private oldReportNum: number
+    private numberOfSheets: number
     constructor(
         private reportState: ReportState,
         private modelId?: string,
@@ -53,6 +54,7 @@ class SpreadsheetManager {
         const copiedFile = modelFile.makeCopy(name, folder);
         this.spreadsheet = SpreadsheetApp.openById(copiedFile.getId());
         this.firstSheet = this.spreadsheet.getSheets()[0];
+        this.numberOfSheets = this.spreadsheet.getNumSheets();
         return (this.spreadsheet);
     }
 
@@ -85,7 +87,7 @@ class SpreadsheetManager {
 
     getWorkingSheet(): GoogleAppsScript.Spreadsheet.Sheet {
         if (this.reportState.getIsAppending())
-            return (this.thirdSheet);
+            return (this.appendingSheet);
         return (this.firstSheet);
     }
 
@@ -174,6 +176,14 @@ class SpreadsheetManager {
         return (this.firstSheet.getRange(ReportCells.RDO.HEADER.RDO_NUMBER).getValue());
     }
 
+    updateReportItemsHeader() {
+        for (let i = 0; i < 9; i++) {
+            let itemHeader = this.appendingSheet.getRange(ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[i + 1], 1);
+            let itemNumber = i + this.getItemNumber();
+            itemHeader.setValue("Item " + itemNumber);
+        }
+    }
+
     updateReportSpreadsheetFile(oldSpreadsheetId: string, date: string): void { // generalize this function
         this.spreadsheet = this.openSpreadsheet(oldSpreadsheetId);
         if (this.spreadsheet === null)
@@ -188,21 +198,22 @@ class SpreadsheetManager {
         this.firstSheet = newFirstSheet;
         this.firstSheet.setName(ReportTypes[this.reportState.getReportType()])
         this.updateSpreadsheetName(newSpreadsheetName)
+        this.numberOfSheets = 1;
     }
 
     appendReportSpreadsheetFile(oldSpreadsheetId: string): void { // generalize this function
         this.spreadsheet = this.openSpreadsheet(oldSpreadsheetId);
         if (this.spreadsheet === null)
           throw Error("Could not open report Spreadsheet - appeding mode");
-
-        // O CÓDIGO ABAIXO TALVEZ SÓ PRECISE SER EXECUTADO APÓS O PROCESSAMENTO DOS SERVIÇOS.
         this.firstSheet = this.spreadsheet.getSheets()[0];
         this.oldReportNum = this.getOldReportNum();
         let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
-        let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
-        this.thirdSheet = newFirstSheet;
-        this.thirdSheet.setName("Verso 3")
-        this.secondSheet = this.spreadsheet.getSheets()[1];
+        let newAppendingSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
+        this.appendingSheet = newAppendingSheet;
+        this.numberOfSheets = this.spreadsheet.getNumSheets();
+        this.appendingSheet.setName("Verso " + this.numberOfSheets);
+        this.secondToLastSheet = this.spreadsheet.getSheets()[this.numberOfSheets - 2];
+        this.updateReportItemsHeader();
     }
 
     deleteOldPdf(): void {
@@ -216,7 +227,6 @@ class SpreadsheetManager {
     exportSheetToPDF(): void {
         var token = ScriptApp.getOAuthToken();
         var reportSpreadsheetId = this.getSpreadsheetId();
-        var reportSheetId = this.firstSheet.getSheetId();
         var urlRequest = getExportUrlRequest(reportSpreadsheetId);
         try {
             var response = UrlFetchApp.fetch(urlRequest, {
@@ -237,52 +247,67 @@ class SpreadsheetManager {
         this.folder.createFile(blob)
     }
 
-    spreadServices(numberOfServices: number): void {
+    spreadServices(numberOfServices: number): boolean {
         if (numberOfServices <= 6)
-            return;
-        this.secondSheet = this.firstSheet.copyTo(this.spreadsheet);
-        this.secondSheet.setName("Verso 2");
-        this.firstSheet.getRange(ReportCells.RDO.FOOTER.PAGE_NUMBER).setValue("Página 1 de 2");
-        this.secondSheet.getRange(ReportCells.RDO.FOOTER.PAGE_NUMBER).setValue("Página 2 de 2");
+            return (false);
+        this.appendingSheet = this.firstSheet.copyTo(this.spreadsheet);
+        this.appendingSheet.setName(`Verso ${this.numberOfSheets + 1}`);
+        let sheets = this.spreadsheet.getSheets();
+        for (let i = 0; i < this.numberOfSheets + 1; i++) {
+            sheets[i].getRange(sheets[i].getLastRow(), 1).setValue(`Página ${(i + 1)} de ${this.numberOfSheets + 1}`);
+        }
         let startRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[7];
         let endRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS.LAST_ROW - startRow + 1 - (7 * (9 - numberOfServices));
-        this.firstSheet.deleteRows(startRow, endRow);
+        this.getWorkingSheet().deleteRows(startRow, endRow);
         SpreadsheetApp.flush();
         startRow = ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[1];
-        this.secondSheet.deleteRows(startRow, 42);
-        this.firstSheet.deleteRows(ReportCells.RDO.FIRST_PAGE_INFO_ROWS.START_ROW, ReportCells.RDO.FIRST_PAGE_INFO_ROWS.TOTAL);
-        this.secondSheet.deleteRows(ReportCells.RDO.HEADER_ROWS.START_ROW, ReportCells.RDO.HEADER_ROWS.TOTAL);
+        this.appendingSheet.deleteRows(startRow, 42);
+        this.getWorkingSheet().deleteRows(ReportCells.RDO.FIRST_PAGE_INFO_ROWS.START_ROW, ReportCells.RDO.FIRST_PAGE_INFO_ROWS.TOTAL);
+        this.appendingSheet.deleteRows(ReportCells.RDO.HEADER_ROWS.START_ROW, ReportCells.RDO.HEADER_ROWS.TOTAL);
+        return (true);
+    }
+
+    getItemNumber(): number {
+        return (((this.numberOfSheets - 2) * 9) + 1);
+    }
+
+    appendEvenServices(numberOfServices: number): void {
+        let overTimeValues = this.secondToLastSheet.getRange(ReportCells.RDO.FOOTER.SECOND_SHEET_OVERTIME_VALUES).getValues();
+        this.appendingSheet.getRange(76 - 7 * (9 - numberOfServices), 1, 3, 16).setValues(overTimeValues);
+        if (this.spreadServices(numberOfServices) === false) {
+            this.secondToLastSheet.deleteRows(53, 3);
+            let sheets = this.spreadsheet.getSheets();
+            for (let i = 0; i < this.numberOfSheets; i++) {
+                sheets[i].getRange(sheets[i].getLastRow(), 1).setValue(`Página ${(i + 1)} de ${this.numberOfSheets}`);
+            }
+        }
+        
     }
 
     appendServices(numberOfServices: number): void {
-        let numberOfRowsToAppend = numberOfServices <= 3 ? (7 * numberOfServices) : 21;
-        let numberOfServicesToAppend = numberOfRowsToAppend / 7;
-        let rangeToCopy = this.thirdSheet.getRange(11, 1, numberOfRowsToAppend, 16);
-        rangeToCopy.copyTo(this.secondSheet.getRange("A84")); // random cell down below report
-        let rangeToMove = this.secondSheet.getRange(84, 1, numberOfRowsToAppend, 16);
-        this.secondSheet.moveRows(rangeToMove, 30);
-        for (let i = 0; i < numberOfServicesToAppend; i++) {
-            let itemHeader = this.secondSheet.getRange(ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[i + 4] - 2, 1);
-            let itemNumber = i + 10;
-            itemHeader.setValue("Item " + itemNumber);
-        }
-        if (numberOfServices <= 3) {
-            this.spreadsheet.deleteSheet(this.thirdSheet);
+        if (this.numberOfSheets % 2 === 0) {
+            this.appendEvenServices(numberOfServices);
             return ;
         }
-        for (let i = 0; i < numberOfServices - 3; i++) {
-            let itemHeader = this.thirdSheet.getRange(ReportCells.RDO.SERVICES_ROWS.FIRST_ROWS[i + 4], 1);
-            let itemNumber = i + 13;
-            itemHeader.setValue("Item " + itemNumber);
+        let numberOfRowsToAppend = numberOfServices <= 3 ? (7 * numberOfServices) : 21;
+        let numberOfServicesToAppend = numberOfRowsToAppend / 7;
+        let rangeToCopy = this.appendingSheet.getRange(11, 1, numberOfRowsToAppend, 16);
+        rangeToCopy.copyTo(this.secondToLastSheet.getRange("A84")); // random cell down below report
+        let rangeToMove = this.secondToLastSheet.getRange(84, 1, numberOfRowsToAppend, 16);
+        this.secondToLastSheet.moveRows(rangeToMove, 30);
+        rangeToMove.clear();
+        if (numberOfServices <= 3) {
+            this.spreadsheet.deleteSheet(this.appendingSheet);
+            return ;
         }
-
-        let overTimeValues = this.secondSheet.getRange(ReportCells.RDO.FOOTER.SECOND_SHEET_OVERTIME_VALUES).getValues();
-        this.thirdSheet.getRange(76 - 7 * (9 - numberOfServices), 1, 3, 16).setValues(overTimeValues);
-        this.firstSheet.getRange(this.firstSheet.getLastRow(), 1).setValue("Página 1 de 3");
-        this.secondSheet.getRange(this.secondSheet.getLastRow(), 1).setValue("Página 2 de 3");
-        this.thirdSheet.getRange(this.thirdSheet.getLastRow(), 1).setValue("Página 3 de 3");
-        this.thirdSheet.deleteRows(11, numberOfRowsToAppend);
-        this.thirdSheet.deleteRows(ReportCells.RDO.HEADER_ROWS.START_ROW, ReportCells.RDO.HEADER_ROWS.TOTAL);
-        this.secondSheet.deleteRows(53, 3);
+        let overTimeValues = this.secondToLastSheet.getRange(ReportCells.RDO.FOOTER.SECOND_SHEET_OVERTIME_VALUES).getValues();
+        this.appendingSheet.getRange(76 - 7 * (9 - numberOfServices), 1, 3, 16).setValues(overTimeValues);
+        let sheets = this.spreadsheet.getSheets();
+        for (let i = 0; i < this.numberOfSheets; i++) {
+            sheets[i].getRange(sheets[i].getLastRow(), 1).setValue(`Página ${(i + 1)} de ${this.numberOfSheets}`);
+        }
+        this.appendingSheet.deleteRows(11, numberOfRowsToAppend);
+        this.appendingSheet.deleteRows(ReportCells.RDO.HEADER_ROWS.START_ROW, ReportCells.RDO.HEADER_ROWS.TOTAL);
+        this.secondToLastSheet.deleteRows(53, 3);
     }
 }
