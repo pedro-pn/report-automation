@@ -10,7 +10,7 @@ function setDotLineBorder(reportData: ReportData, spreadsheetManager: Spreadshee
 	}
 	if (reportCells.length) {
 		console.log(reportCells)
-		spreadsheetManager.getSpreadsheet().getRangeList(reportCells).activate()
+		spreadsheetManager.getWorkingSheet().getRangeList(reportCells).activate()
 			.setBorder(null, null, true, null, null, null, '#000000', SpreadsheetApp.BorderStyle.DOTTED);
 
 	}
