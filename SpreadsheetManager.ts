@@ -296,6 +296,7 @@ class SpreadsheetManager {
         let rangeToMove = this.secondToLastSheet.getRange(84, 1, numberOfRowsToAppend, 16);
         this.secondToLastSheet.moveRows(rangeToMove, 30);
         rangeToMove.clear();
+        this.secondToLastSheet.autoResizeRows(10, this.secondToLastSheet.getLastRow())
         if (numberOfServices <= 3) {
             this.spreadsheet.deleteSheet(this.appendingSheet);
             return ;
