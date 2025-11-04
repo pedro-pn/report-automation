@@ -17,12 +17,14 @@ interface ReportInfoMission {
 	IncludeSunday: boolean;
 	ShiftTime: string;
 	WeekendShiftTime: string;
+	English: boolean;
 	RDO: number;
 	RTP: number;
 	RLQ: number;
 	RCP: number;
 	RLR: number;
-	RLI: number
+	RLI: number;
+	RLF: number
 }
 
 interface ReportInfoLeaders {
@@ -63,7 +65,7 @@ class ReportInfo {
 	}
 
 	// This function MUST be called after using reportInfo.json. 
-	updateReportInfo() {
+	updateReportInfo(): void {
 		const updatedInfoData = JSON.stringify(this.reportInfoData, null, 2);
 		this.reportInfoFile.setContent(updatedInfoData);
 	}

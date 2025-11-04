@@ -131,6 +131,35 @@ function cellStringToNumber(cellString: string): number[] {
     return ([rowNumber, columnNumber]);
 }
 
+function getFlushingType(type: string): string {
+	let reportState = ReportState.getInstance();
+	let isEnglish = reportState.getIsEnglish();
+
+	switch (type) {
+		case "Primário":
+			return (isEnglish ? "Primary" : type);
+		case "Secundário":
+			return (isEnglish ? "Secundário" : type);
+	}
+}
+
+function getServiceString(service: ServicesNames, type: string = "") {
+	let reportState = ReportState.getInstance();
+	let isEnglish = reportState.getIsEnglish();
+	switch (service) {
+		case ServicesNames.TESTE_DE_PRESSÃO:
+			return (isEnglish ? "Pressure Test" : "Teste de pressão");
+		case ServicesNames.LIMPEZA_QUÍMICA:
+			return (isEnglish ? "Chemical cleaning" : "Limpeza química");
+		case ServicesNames.FLUSHING:
+			return (isEnglish ? `${type} Flushing` : `Flushing ${type}`);
+		case ServicesNames.FILTRAGEM_ABSOLUTA:
+			return (isEnglish ? "Oil Filtration" : "Filtragem");
+		case ServicesNames.LIMPEZA_DE_RESERVATORIO:
+			return (isEnglish ? "Tank cleaning" : "Limpeza de reservatório");
+	}
+}
+
 function	mergeValuesAndFormulas(formulas: string[][], values: string[][]): string[][] {
 	let result = formulas
 	for (var i = 0; i < formulas.length; i++) {
@@ -148,9 +177,20 @@ function getServiceFieldResponse(reportData: ReportData, field: string, item: nu
 }
 
 function getStatus(status: string): string {
+	let reportState = ReportState.getInstance();
 	if (status === "Sim")
-		return ("Finalizado");
-	return ("Em andamento");
+		return (reportState.getIsEnglish() ? "Finished" : "Finalizado");
+	return (reportState.getIsEnglish() ? "In progress" : "Em andamento");
+}
+
+function setEnglishConfiguration(isEnglish: boolean): void {
+	let reportState = ReportState.getInstance();
+	reportState.setIsEnglish(isEnglish);
+	if (isEnglish === false)
+		return ;
+	ReportStatements.RDO = EnglishReportStatements.RDO;
+	SpreadsheetIds.MODEL_IDS = EnglishSpreadsheetIds;
+	Weekdays = EngWeekdays;
 }
 
 //#endregion

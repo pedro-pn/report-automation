@@ -86,6 +86,10 @@ class ReportData {
 		return (this.reportInfo.getMissionInfo(this.missionName).Proposal);
 	}
 
+	isEnglish(): boolean {
+		return (this.reportInfo.getMissionInfo(this.missionName).English);
+	}
+
 	getWeekDayNum(): number {
 		var dateStrings = this.date.split('-');
 		var dateType = new Date(Number(dateStrings[2]), Number(dateStrings[1]) - 1, Number(dateStrings[0]));

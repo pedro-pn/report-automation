@@ -9,6 +9,7 @@ class ReportState {
     private debug: boolean;
     private newServiceFlag: boolean;
     private serviceItem: number;
+    private isEnglish: boolean;
     private requestsObject: GoogleAppsScript.URL_Fetch.URLFetchRequest[];
 
     private constructor() {
@@ -22,6 +23,7 @@ class ReportState {
         this.newServiceFlag = false;
         this.serviceItem = 0;
         this.requestsObject = [];
+        this.isEnglish = false;
     }
 
     public static getInstance(): ReportState {
@@ -47,6 +49,14 @@ class ReportState {
 
     public getReportBuffer(): string[][] {
         return (this.reportBuffer)
+    }
+
+    public setIsEnglish(value: boolean): void {
+        this.isEnglish = value;
+    }
+
+    public getIsEnglish(): boolean {
+        return (this.isEnglish);
     }
 
     public setReportBuffer(value: string[][]): void {

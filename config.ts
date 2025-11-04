@@ -1,4 +1,5 @@
-const Weekdays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+let Weekdays = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+const EngWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 enum ReportTypes {
     RDO = 0,
@@ -8,6 +9,10 @@ enum ReportTypes {
 	RLR = 4,
 	RLI = 5,
     RLF = 6
+}
+
+enum ServicesNames {
+    TESTE_DE_PRESSÃO, LIMPEZA_QUÍMICA, FLUSHING, FILTRAGEM_ABSOLUTA, LIMPEZA_DE_RESERVATORIO
 }
 
 const SpreadsheetIds = {
@@ -25,6 +30,15 @@ const SpreadsheetIds = {
 /**@deprecated Specific case for 5663. Might be removed in the future */
 const SpreadsheetIds5663 = {
     [ReportTypes.RDO]: "17e0EbLOVua6fWXacg9YZb0UfNHBo8H28aQ1M63WpcuA"
+}
+
+const EnglishSpreadsheetIds = {
+    [ReportTypes.RDO]: "1hwg5WUlag2_wt-URAznDsvt0IruIGIbfWsPprm9tYcI",
+    [ReportTypes.RTP]: "1SrjPtfXh11GPkuIyAXhly6macJOiAE7ndBJ4Jh7irDc",
+    [ReportTypes.RLQ]: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU",
+    [ReportTypes.RCP]: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so",
+    [ReportTypes.RLR]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
+    [ReportTypes.RLI]: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg"
 }
 
 const ReportFolderIds = {
@@ -496,6 +510,20 @@ const ReportCells = {
                 "L52"
             ]
         },
+    }
+}
+
+const EnglishReportStatements = {
+    RDO: {
+        INICIAL_ANALYSIS: "Inicial Analysis",
+        FINAL_ANALYSIS: "Final Analysis:",
+        VOLUME: "Volume:",
+        PIPE_MATERIAL: "Pipe material:",
+        TANK_MATERIAL: "Tank material:",
+        WORK_PRESSURE: "Work pressure:",
+        TEST_PRESSURE: "Test pressure:",
+        FLUID_TYPE: "Fluid:",
+        OIL: "Oil:"
     }
 }
 

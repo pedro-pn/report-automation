@@ -69,7 +69,7 @@ function getPressureTestSpecs(reportData: ReportData, item: number): PressureTes
 		EndTime: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Service: getServiceString(ServicesNames.TESTE_DE_PRESSÃO),
 		Fluid: getServiceFieldResponse(reportData, FormFields.SERVICES.RTP.FLUID_TYPE, item) as string,
 		Obs: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.STEPS, item) as string[],
@@ -104,7 +104,7 @@ function	fillPressureTest(reportData: ReportData, item: number, serviceFieldResp
   if (reportState.getIsEdit())
     return ;
 	checkServiceProgress(reportData, item, RtpServiceDbFields, serviceFieldResponseDb)
-	if (pressureTestSpecs.Status === "Finalizado") {
+	if (pressureTestSpecs.Status === "Finalizado" || pressureTestSpecs.Status === "Finished") {
 		makeServiceReport(reportData, ReportTypes.RTP, item)
 		reportData.updateReportNumber(ReportTypes.RTP);
 	}
@@ -136,7 +136,7 @@ function getDescalingSpecs(reportData: ReportData, item: number): DescalingSpecs
 		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData,FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Service: getServiceString(ServicesNames.LIMPEZA_QUÍMICA),
 		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
    		Size: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SIZE, item) as string,
 		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
@@ -168,7 +168,7 @@ function fillDescaling(reportData: ReportData, item: number, serviceFieldRespons
   if (reportState.getIsEdit())
     return ;
 	checkServiceProgress(reportData, item, RlqServiceDbFields, serviceFieldResponseDb)
-	if (descalingSpecs.Status === "Finalizado") {
+	if (descalingSpecs.Status === "Finalizado" || descalingSpecs.Status === "Finished") {
 		makeServiceReport(reportData, ReportTypes.RLQ, item)
 		reportData.updateReportNumber(ReportTypes.RLQ);
 	}
@@ -182,7 +182,6 @@ interface FlushingSpecs {
 	EndTime: string;
 	Equipament: string;
 	System: string;
-	Type: string;
 	Service: string;
 	Obs: string;
 	Steps: string[];
@@ -206,8 +205,7 @@ function getFlushingSpecs(reportData: ReportData, item: number): FlushingSpecs {
 		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Type: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.FLUSHING_TYPE, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Service: getServiceString(ServicesNames.FLUSHING, getFlushingType(getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.FLUSHING_TYPE, item) as string)),
 		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
 		InicialPartCount: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.INICIAL_PART_COUNT, item) as string,
@@ -229,7 +227,7 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
 	fillFlushingStatements(cells, reportState)
 	reportState.setValueToBuffer(cells.START_TIME, flushingSpecs.StartTime);
 	reportState.setValueToBuffer(cells.END_TIME, flushingSpecs.EndTime);
-	reportState.setValueToBuffer(cells.SERVICE, `${flushingSpecs.Service} ${flushingSpecs.Type}`);
+	reportState.setValueToBuffer(cells.SERVICE, flushingSpecs.Service);
 	reportState.setValueToBuffer(cells.EQUIPAMENT, flushingSpecs.Equipament);
 	reportState.setValueToBuffer(cells.SYSTEM, flushingSpecs.System);
 	reportState.setValueToBuffer(cells.STATUS, flushingSpecs.Status);
@@ -243,7 +241,7 @@ function fillFlushing(reportData: ReportData, item: number, serviceFieldResponse
   	if (reportState.getIsEdit())
    		return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
-	if (flushingSpecs.Status === "Finalizado") {
+	if (flushingSpecs.Status === "Finalizado" || flushingSpecs.Status === "Finished") {
 		makeServiceReport(reportData, ReportTypes.RCP, item)
 		reportData.updateReportNumber(ReportTypes.RCP);
 	}
@@ -281,7 +279,7 @@ function getFiltrationSpecs(reportData: ReportData, item: number): FiltrationSpe
 		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Service: getServiceString(ServicesNames.FILTRAGEM_ABSOLUTA),
 		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
 		OilNorm: getServiceFieldResponse(reportData, FormFields.SERVICES.RCP.OIL_NORM, item) as string,
@@ -317,7 +315,7 @@ function fillFiltration(reportData: ReportData, item: number, serviceFieldRespon
   if (reportState.getIsEdit())
       return ;
 	checkServiceProgress(reportData, item, RcpServiceDbFields, serviceFieldResponseDb)
-	if (filtrationSpecs.Status === "Finalizado") {
+	if (filtrationSpecs.Status === "Finalizado" || filtrationSpecs.Status === "Finished") {
 		makeServiceReport(reportData, ReportTypes.RCP, item)
 		reportData.updateReportNumber(ReportTypes.RCP);
 	}
@@ -348,7 +346,7 @@ function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleanin
 		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Service: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SERVICE, item) as string,
+		Service: getServiceString(ServicesNames.LIMPEZA_DE_RESERVATORIO),
 		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
 		tankMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.RLR.TANK_MATERIAL, item) as string,
@@ -376,7 +374,7 @@ function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResp
 	if (reportState.getIsEdit())
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
-	  if (tankCleaningSpecs.Status === "Finalizado") {
+	  if (tankCleaningSpecs.Status === "Finalizado" || tankCleaningSpecs.Status === "Finished") {
 		  makeServiceReport(reportData, ReportTypes.RLR, item)
 		reportData.updateReportNumber(ReportTypes.RLR);
 	  }

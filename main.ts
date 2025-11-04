@@ -5,6 +5,7 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
 	const reportInfo = new ReportInfo();
 	const reportData =  new ReportData(formResponse, reportInfo, reportState);
 	reportDb.setEditFlag();
+	setEnglishConfiguration(reportData.isEnglish())
   	if (reportDb.checkReportStatus(reportData) === false)
     	return ;
 	const spreadsheetManager = reportData.createSpreadSheetManager(reportDb);
