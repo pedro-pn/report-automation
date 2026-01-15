@@ -86,6 +86,10 @@ class ReportData {
 		return (this.reportInfo.getMissionInfo(this.missionName).Proposal);
 	}
 
+	getLocation(): string {
+		return (this.reportInfo.getMissionInfo(this.missionName).Location);
+	}
+
 	isEnglish(): boolean {
 		return (this.reportInfo.getMissionInfo(this.missionName).English);
 	}

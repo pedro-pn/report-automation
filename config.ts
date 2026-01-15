@@ -90,6 +90,7 @@ const ReportCells = {
             NIGHT_SHIFT_EXIT_TIME: "D8",
             NIGHT_SHIFT_DINNER_TIME: "I8",
             NIGHT_SHIFT_EMPLOYEES_NUM: "N8",
+            LOCATION: "C9",
             RDO_NUMBER: "L5",
             SERVICE_NUMBER: "J5", // VERIFICAR USO
             DATE: "N5",

@@ -34,7 +34,7 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	fillReportHeader(reportData);
 	fillReportSubHeader(reportData);
 	fillReportNightShift(reportData);
-	fillReportFooter(reportData, spreadsheetManager);
+	fillReportFooter(reportData);
 	fillActivities(reportData);
 	fillServicesFields(reportData);
 	fillSignField(reportData, spreadsheetManager, ReportCells.RDO.FOOTER.SIGNATURE, 100);

@@ -137,9 +137,10 @@ function fillReportHeader(reportData: ReportData): void {
 	reportState.setValueToBuffer(ReportCells.RDO.HEADER.CNPJ, reportData.getCNPJ());
 	reportState.setValueToBuffer(ReportCells.RDO.HEADER.PROPOSAL, reportData.getProposal());
   	reportState.setValueToBuffer(ReportCells.RDO.HEADER.MISSION_NAME, reportData.missionName);
+	reportState.setValueToBuffer(ReportCells.RDO.HEADER.LOCATION, reportData.getLocation());
 }
 
-function fillReportFooter(reportData: ReportData, spreadsheetManager: SpreadsheetManager): void {
+function fillReportFooter(reportData: ReportData): void {
 	fillOvertimeField(reportData);
 	fillStandByField(reportData);
 	fillLeaderField(reportData);

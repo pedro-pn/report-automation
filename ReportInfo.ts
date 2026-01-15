@@ -10,6 +10,7 @@ interface ReportInfoMission {
 	Client: string;
 	CNPJ: string;
 	Proposal: string;
+	Location : string;
 	Leader: number;
 	ClientLeader: string;
 	ClientLeaderPosition: string;
