@@ -25,6 +25,6 @@ function deleteEmptyServiceRows(reportFirstSheet: GoogleAppsScript.Spreadsheet.S
 }
 
 function reportCellsFit(reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet): void {
-	reportFirstSheet.autoResizeRows(6, 1);
+	reportFirstSheet.autoResizeRows(5, 2);
 	reportFirstSheet.autoResizeRows(10, reportFirstSheet.getLastRow());
 }

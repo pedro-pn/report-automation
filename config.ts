@@ -97,7 +97,7 @@ const ReportCells = {
             PROPOSAL: "M5",
             LOCATION: "C6",
             ACTIVITIES: "C10",
-            MISSION_NAME: "F5"
+            MISSION_NAME: "F4"
         },
         FOOTER: {
             SIGNATURE: "B81",
