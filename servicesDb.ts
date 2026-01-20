@@ -175,14 +175,13 @@ function concatenateServiceResponses(currentServiceObject, storedService, field:
   for (let i = 0; i < field.length; i++) {
     var storedField = storedService[field[i]];
     var serviceField = currentServiceObject[field[i]]
-    if (!(serviceField && storedField))
+    if (serviceField === false && storedField === false)
       continue ;
     var concatenateService = (storedField || []).concat(serviceField || [])
     var fieldSet = new Set(concatenateService);
     var fieldArray =  Array.from(fieldSet);
     storedService[field[i]] = fieldArray
     currentServiceObject[field[i]] = fieldArray
-
   }
 }
 
