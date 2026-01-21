@@ -155,8 +155,8 @@ function getServiceString(service: ServicesNames, type: string = "") {
 			return (isEnglish ? `${type} Flushing` : `Flushing ${type}`);
 		case ServicesNames.FILTRAGEM_ABSOLUTA:
 			return (isEnglish ? "Oil Filtration" : "Filtragem");
-		case ServicesNames.LIMPEZA_DE_RESERVATORIO:
-			return (isEnglish ? "Tank cleaning" : "Limpeza de reservatório");
+		case ServicesNames.LIMPEZA_MECANICA:
+			return (isEnglish ? "Tank cleaning" : "Limpeza mecânica");
 	}
 }
 

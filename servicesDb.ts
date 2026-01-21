@@ -84,7 +84,7 @@ const RlrServiceDbFields: ServiceDbTypeFields = {
     FormFields.SERVICES.COMMON.SERVICE,
     FormFields.SERVICES.COMMON.EQUIPAMENT,
     FormFields.SERVICES.COMMON.SYSTEM,
-    FormFields.SERVICES.RLR.TANK_MATERIAL
+    FormFields.SERVICES.RLM.MATERIAL
   ],
   ConcatenationFields: [
     FormFields.SERVICES.COMMON.STEPS,

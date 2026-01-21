@@ -6,13 +6,13 @@ enum ReportTypes {
 	RTP = 1,
 	RLQ = 2,
 	RCP = 3,
-	RLR = 4,
+	RLM = 4,
 	RLI = 5,
     RLF = 6
 }
 
 enum ServicesNames {
-    TESTE_DE_PRESSÃO, LIMPEZA_QUÍMICA, FLUSHING, FILTRAGEM_ABSOLUTA, LIMPEZA_DE_RESERVATORIO
+    TESTE_DE_PRESSÃO, LIMPEZA_QUÍMICA, FLUSHING, FILTRAGEM_ABSOLUTA, LIMPEZA_MECANICA
 }
 
 const SpreadsheetIds = {
@@ -22,7 +22,7 @@ const SpreadsheetIds = {
         [ReportTypes.RTP]: "10LbzYMJzF-zMYsYk7N5zB1AgW7-9QQZ3nsZUWu-VKN4",
         [ReportTypes.RLQ]: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU",
         [ReportTypes.RCP]: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so",
-        [ReportTypes.RLR]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
+        [ReportTypes.RLM]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
         [ReportTypes.RLI]: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg"
     },
 }
@@ -37,7 +37,7 @@ const EnglishSpreadsheetIds = {
     [ReportTypes.RTP]: "1SrjPtfXh11GPkuIyAXhly6macJOiAE7ndBJ4Jh7irDc",
     [ReportTypes.RLQ]: "1QYn2H5EdIjyuMvSLLOMkkCrWItzN2fwb3KOJBqjYEyU",
     [ReportTypes.RCP]: "1QVU8O6Ucz6CruI1-U9vLG3m0OEptwtsv1v-1ZTcA3so",
-    [ReportTypes.RLR]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
+    [ReportTypes.RLM]: "1j7mazWihCwPlkVw6VxRKrrd27YKFw6iCFqo4O7pPJU0",
     [ReportTypes.RLI]: "1hB2wU91fS_JazpKpQ98i0mPfrDgOWlqJE4xR5MUoaCg"
 }
 
@@ -289,228 +289,6 @@ const ReportCells = {
             TOTAL: 2
         }
     },
-    SERVICES: {
-        COMMON: {
-            REPORT_NUM: "M5",
-            MISSION: "F5",
-            ASS: "B57",
-            DATE: "O5",
-            CLIENT: "B6",
-            EQUIPAMENT: "C8",
-            SYSTEM: "C9",
-            PROPOSAL: "L6",
-            OBS: "C5",
-            LEADER: "B60",
-            APPROVAL: "I53",
-            REAPPROVAL: "L53"
-        },
-        RTP: {
-            BODY: {
-                EQUIPAMENT: "C8",
-                SYSTEM: "C9",
-                DESCRIPTION: "C10",
-                MATERIAL: "C11",
-                FLUID: "C12",
-                PROJECT_PRESSURE: "K10",
-                TEST_PRESSURE: "O10",
-                START_TIME: "K11",
-                END_TIME: "O11",
-            },
-            MANOMETER_INFO_CELLS: {
-                0: ["C18", "F18", "J18", "L18"],
-                1: ["C19", "F19", "J19", "L19"],
-                2: ["C20", "F20", "J20", "L20"],
-                3: ["C21", "F21", "J21", "L21"]
-            },
-            MANOMETER_IMG_CELLS: [
-                "F25",
-                "I25",
-                "D25",
-                "L25",
-                "A25"
-            ],
-            SYSTEM_IMG_CELLS: [
-                "F38",
-                "I38",
-                "C38",
-                "L38"
-            ]
-        },
-        RLQ: {
-            BODY: {
-                EQUIPAMENT: "C8",
-                SYSTEM: "C9",
-                DESCRIPTION: "C10",
-                MATERIAL: "C12",
-                PIPE_DRAW: "C13",
-                BOROSCOPY_INSPECTION: "J9",
-                VISUAL_INSPECTION: "L9",
-                TEST_BODY: "N9",
-                PRESSURIZED_CLEANING: "J11",
-                IMERSION_CLEANING: "L11",
-                FILLMENT_CLEANING: "N11",
-                PULVERIZED_CLEANING: "J12"
-            },
-            STEPS:  [
-                "I18",
-                "I19",
-                "I20",
-                "I21",
-                "L18",
-                "L19",
-                "L20",
-                "L21",
-            ],
-            METHODS: [
-                "J11",
-                "L11",
-                "N11",
-                "J12"
-            ],
-            BODY_TEST: [
-                "B25",
-                "E25",
-                "I25",
-                "L25"
-            ],
-            SYSTEM_IMG: [
-                "B38",
-                "E38",
-                "H38",
-                "L38",
-                "B51",
-                "E51",
-                "H51",
-                "L51",
-            ],
-            PRODUCTS: [
-                "C18",
-                "C19",
-                "C20",
-                "C21",
-                "C22",
-                "F18",
-                "F19",
-                "F20",
-                "F21",
-                "F22",
-            ]
-        },
-        RCP: {
-            BODY: {
-                EQUIPAMENT: "C8",
-                SYSTEM: "C9",
-                DESCRIPTION: "C10",
-                OIL: "C11",
-                VOLUME: "C12",
-                "LCM 20": "J9",
-                "LCM 30": "L9",
-                "LASPAC I": "N9",
-                DURATION: "D21",
-                PRIMARY_FLUSH: "J11",
-                SECONDARY_FLUSH: "J12",
-                DEHYDRATION: "L12",
-                FILTRATION: "N11",
-                OIL_NORM: "D18",
-                INICIAL_PART_COUNT: "D19",
-                FINAL_PART_COUNT: "D20",
-                INICIAL_HUMIDITY: "M19",
-                FINAL_HUMIDITY: "M20"
-            },
-            PARTICLE_COUNT_IMGS: [
-                "F25",
-                "J25",
-                "D25",
-                "L25",
-                "A25",
-            ],
-            DEHYDRATION_IMGS: [
-                "E38",
-                "I38",
-                "A38",
-                "L38"
-            ]
-        },
-        RLR: {
-            BODY: {
-                EQUIPAMENT: "C8",
-                SYSTEM: "C9",
-                VOLUME: "C11",
-                MATERIAL: "C12",
-                BOROSCOPY: "C13",
-                VISUAL: "E13"
-            },
-            TANK_IMG: [
-                "B18",
-                "E18",
-                "I18",
-                "M18"
-            ],
-            CLEANING_STEPS: [
-                "I10",
-                "I11",
-                "I12",
-                "I13",
-                "L10",
-                "L11",
-                "L12",
-                "L13"
-            ],
-            TANK_BOROSCOPY: [
-                "B38",
-                "E38",
-                "I38",
-                "M38",
-                "B51",
-                "E51",
-                "I51",
-                "M51",
-            ]
-        },
-        RLI: {
-            BODY: {
-                EQUIPAMENT: "C8",
-                SYSTEM: "C9",
-                DESCRIPTION: "C10",
-                MATERIAL: "C11",
-                PIPE_DRAW: "C12",
-                BOROSCOPY_INPSECTION: "J9",
-                VISUAL_INSPECTION: "L9",
-                TEST_BODY: "N9",
-                PRESSURIZED_CLEANING: "J11",
-                IMERSION_CLEANING: "L11",
-                FILLMENT_CLEANING: "N11",
-                PULVERIZED_CLEANING: "J12"
-            },
-            INIBITION_STEPS: [
-                ["D18", "F18", "I18", "K18", "L18"],
-                ["D19", "F19", "I19", "K19", "L19"],
-                ["D20", "F20", "I20", "K20", "L20"]
-            ],
-            INIBITION_PLATE_IMGS: [
-                "A38",
-                "E38",
-                "I38",
-                "L38",
-                "A45",
-                "E45",
-                "I45",
-                "L45"
-            ],
-            INIBITION_FILTER_IMGS: [
-                "E25",
-                "I25",
-                "A25",
-                "L25"
-            ],
-            INIBITION_PHMETER_IMG: [
-                "E52",
-                "I52",
-                "A52",
-                "L52"
-            ]
-        },
-    }
 }
 
 const EnglishReportStatements = {
@@ -520,6 +298,7 @@ const EnglishReportStatements = {
         VOLUME: "Volume:",
         PIPE_MATERIAL: "Pipe material:",
         TANK_MATERIAL: "Tank material:",
+        MATERIAL: "Equipament material:",
         WORK_PRESSURE: "Work pressure:",
         TEST_PRESSURE: "Test pressure:",
         FLUID_TYPE: "Fluid:",
@@ -533,68 +312,11 @@ const ReportStatements = {
         FINAL_ANALYSIS: "Análise final:",
         VOLUME: "Volume:",
         PIPE_MATERIAL: "Material da tubulação:",
-        TANK_MATERIAL: "Material do tanque:",
+        MATERIAL: "Material do equipamento:",
         WORK_PRESSURE: "Pressão de trabalho:",
         TEST_PRESSURE: "Pressão de teste:",
         FLUID_TYPE: "Fluido:",
         OIL: "Óleo:"
-    },
-    RLQ: {
-        INSPECT: {
-            VISUAL: "Visual",
-            TEST_BODY: "Corpo de prova",
-            BOROSCOPY: "Vídeo boroscopia",
-        },
-        STEPS: [
-            "Montagem do Sistema",
-            "Teste de estanqueidade",
-            "Desengraxe",
-            "Fase ácida",
-            "Fase neutralizante",
-            "Fase passivante",
-            "Secagem",
-            "Desmontagem do sistema"
-        ],
-        CHEMICAL_REAGENTS: {
-            DEGREASE_ONE: "Hidróxido de sódio",
-            DEGREASE_TWO: "Metassilicato de sódio",
-            DEGREASE_THREE: "Tripolifosfato de sódio",
-            CARBONIC_ACID_PHASE: "Ácido cítrico/fosfórico",
-            STAINLESS_ACID_PHASE_ONE: "Ácido nítrico",
-            STAINLESS_ACID_PHASE_TWO: "Ácido fluorídrico",
-            NEUT_PHASE: "Carbonato de sódio",
-            PASS_PHASE: "Nitrito de sódio"
-        },
-        CLEANING_METHODS: [
-            "Circulação pressurizada",
-            "Imersão",
-            "Enchimento",
-            "Pulverização"
-        ]
-    },
-    RLR: {
-        STEPS: [
-        "Montagem de peças",
-        "Drenagem do reservatório",
-        "Secagem do reservatório",
-        "Aspiração do reservatório",
-        "Inspeção por boroscopia",
-        "Abastecimento do reservatório",
-        "Medição de gases",
-        "Ventilação"
-        ],
-        INSPECTION: {
-            BOROSCOPY: "Inspeção por boroscopia",
-            VISUAL: "Inspeção visual"
-        }
-    },
-    RLI: {
-        CLEANING_METHODS: [
-            "Circulação pressurizada",
-            "Imersão",
-            "Enchimento",
-            "Pulverização"
-        ]
     }
 }
         
@@ -673,12 +395,9 @@ const FormFields = {
 	        FINAL_HUMIDITY: "Umidade final",
             
         },
-        RLR: {
-            VOLUME: "Volume do reservatório",
-            IMAGE: "Imagens do reservatório",
-            TANK_MATERIAL: "Material do reservatório",
-            BOROSCOPY_IMG: "Imagens da boroscopia",
-            OBS: "Observações"
+        RLM: {
+            MATERIAL: "Material do equipamento",
+            IMAGE: "Imagens da limpeza"
         },
         RLI: {
             SERVICE: "Selecione o tipo de serviço que deseja adicionar informações",

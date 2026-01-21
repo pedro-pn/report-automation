@@ -21,8 +21,8 @@ function fillItem(reportData: ReportData, item: number, serviceFieldResponseDb: 
 		fillFlushing(reportData, item, serviceFieldResponseDb)
 	else if (service === "Filtragem absoluta")
 		fillFiltration(reportData, item, serviceFieldResponseDb)
-	else if (service === "Limpeza de reservatório")
-		fillTankCleaning(reportData, item, serviceFieldResponseDb)
+	else if (service === "Limpeza mecânica")
+		fillMechanicalCleaning(reportData, item, serviceFieldResponseDb)
 	else if (service === "Inibição")
 		fillInibition(reportData, item, serviceFieldResponseDb)
 	else
@@ -322,9 +322,9 @@ function fillFiltration(reportData: ReportData, item: number, serviceFieldRespon
 }
 //#endregion
 
-//#region TANK CLEANING
+//#region MECHANICAL CLEANING
 
-interface TankCleaningSpecs {
+interface MechanicalCleaningSpecs {
 	StartTime: string;
 	EndTime: string;
 	Equipament: string;
@@ -332,51 +332,52 @@ interface TankCleaningSpecs {
 	Service: string;
 	Obs: string;
 	Steps: string[];
-	tankMaterial: string;
+	Material: string;
 	Status: string;
 }
 
-function fillTankCleaningStatements(cells: ReportServiceCells, reportState: ReportState): void {
-	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.TANK_MATERIAL);
+function fillMechanicalCleaningStatements(cells: ReportServiceCells, reportState: ReportState): void {
+	reportState.setValueToBuffer(cells.PARAM_ONE_KEY, ReportStatements.RDO.MATERIAL);
 }
 
-function getTankCleaningSpecs(reportData: ReportData, item: number): TankCleaningSpecs {
+function getMechanicalCleaningSpecs(reportData: ReportData, item: number): MechanicalCleaningSpecs {
 	var descalingSpecs = {
 		StartTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.START_TIME, item) as string,
 		EndTime: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.END_TIME, item) as string,
 		Equipament: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.EQUIPAMENT, item) as string,
 		System: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.SYSTEM, item) as string,
-		Service: getServiceString(ServicesNames.LIMPEZA_DE_RESERVATORIO),
+		Service: getServiceString(ServicesNames.LIMPEZA_MECANICA),
 		Obs: getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.OBS, item) as string,
 		Steps:getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STEPS, item) as string[],
-		tankMaterial: getServiceFieldResponse(reportData, FormFields.SERVICES.RLR.TANK_MATERIAL, item) as string,
+		Material: getServiceFieldResponse(reportData, FormFields.SERVICES.RLM.MATERIAL, item) as string,
 		Status: getStatus(getServiceFieldResponse(reportData, FormFields.SERVICES.COMMON.STATUS, item) as string)
 	}
 	
 	return (descalingSpecs);
 }
 
-function fillTankCleaning(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
+function fillMechanicalCleaning(reportData: ReportData, item: number, serviceFieldResponseDb: ServiceFieldResponses): void {
 	let cells = ReportCells.RDO.SERVICES[item];
-	let tankCleaningSpecs = getTankCleaningSpecs(reportData, item);
+	let mechanicalCleaningSpecs = getMechanicalCleaningSpecs(reportData, item);
 	const reportState = ReportState.getInstance();
 
-	fillTankCleaningStatements(cells, reportState)
-	reportState.setValueToBuffer(cells.START_TIME, tankCleaningSpecs.StartTime);
-	reportState.setValueToBuffer(cells.END_TIME, tankCleaningSpecs.EndTime);
-	reportState.setValueToBuffer(cells.EQUIPAMENT, tankCleaningSpecs.Equipament);
-	reportState.setValueToBuffer(cells.SYSTEM, tankCleaningSpecs.System);
-	reportState.setValueToBuffer(cells.SERVICE, tankCleaningSpecs.Service);
-	reportState.setValueToBuffer(cells.STATUS, tankCleaningSpecs.Status);
-	reportState.setValueToBuffer(cells.STEPS, tankCleaningSpecs.Steps.join(", "));
-	reportState.setValueToBuffer(cells.OBS, tankCleaningSpecs.Obs);
+	fillMechanicalCleaningStatements(cells, reportState)
+	reportState.setValueToBuffer(cells.START_TIME, mechanicalCleaningSpecs.StartTime);
+	reportState.setValueToBuffer(cells.END_TIME, mechanicalCleaningSpecs.EndTime);
+	reportState.setValueToBuffer(cells.EQUIPAMENT, mechanicalCleaningSpecs.Equipament);
+	reportState.setValueToBuffer(cells.PARAM_ONE, mechanicalCleaningSpecs.Material);
+	reportState.setValueToBuffer(cells.SYSTEM, mechanicalCleaningSpecs.System);
+	reportState.setValueToBuffer(cells.SERVICE, mechanicalCleaningSpecs.Service);
+	reportState.setValueToBuffer(cells.STATUS, mechanicalCleaningSpecs.Status);
+	reportState.setValueToBuffer(cells.STEPS, mechanicalCleaningSpecs.Steps.join(", "));
+	reportState.setValueToBuffer(cells.OBS, mechanicalCleaningSpecs.Obs);
 
 	if (reportState.getIsEdit())
 		return ;
 	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
-	  if (tankCleaningSpecs.Status === "Finalizado" || tankCleaningSpecs.Status === "Finished") {
-		  makeServiceReport(reportData, ReportTypes.RLR, item)
-		reportData.updateReportNumber(ReportTypes.RLR);
+	  if (mechanicalCleaningSpecs.Status === "Finalizado" || mechanicalCleaningSpecs.Status === "Finished") {
+		  makeServiceReport(reportData, ReportTypes.RLM, item)
+		reportData.updateReportNumber(ReportTypes.RLM);
 	  }
 }
 //#endregion
