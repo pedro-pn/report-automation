@@ -79,7 +79,7 @@ const RcpServiceDbFields: ServiceDbTypeFields = {
     ]
 }
 
-const RlrServiceDbFields: ServiceDbTypeFields = {
+const RlmServiceDbFields: ServiceDbTypeFields = {
   CompareFields: [
     FormFields.SERVICES.COMMON.SERVICE,
     FormFields.SERVICES.COMMON.EQUIPAMENT,
@@ -88,8 +88,7 @@ const RlrServiceDbFields: ServiceDbTypeFields = {
   ],
   ConcatenationFields: [
     FormFields.SERVICES.COMMON.STEPS,
-    "Imagens do reservatório",
-    "Imagens da boroscopia"
+    FormFields.SERVICES.RLM.IMAGE
   ]
 }
 

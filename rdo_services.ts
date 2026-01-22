@@ -374,7 +374,7 @@ function fillMechanicalCleaning(reportData: ReportData, item: number, serviceFie
 
 	if (reportState.getIsEdit())
 		return ;
-	  checkServiceProgress(reportData, item, RlrServiceDbFields, serviceFieldResponseDb)
+	  checkServiceProgress(reportData, item, RlmServiceDbFields, serviceFieldResponseDb)
 	  if (mechanicalCleaningSpecs.Status === "Finalizado" || mechanicalCleaningSpecs.Status === "Finished") {
 		  makeServiceReport(reportData, ReportTypes.RLM, item)
 		reportData.updateReportNumber(ReportTypes.RLM);
