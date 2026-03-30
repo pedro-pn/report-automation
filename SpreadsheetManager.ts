@@ -4,6 +4,7 @@
 class SpreadsheetManager {
     private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet | null = null;
     private firstSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
+    private secondSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
     private secondToLastSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
     private appendingSheet: GoogleAppsScript.Spreadsheet.Sheet | null = null;
     private blob: GoogleAppsScript.Base.Blob;
@@ -54,7 +55,8 @@ class SpreadsheetManager {
         const copiedFile = modelFile.makeCopy(name, folder);
         this.spreadsheet = SpreadsheetApp.openById(copiedFile.getId());
         this.firstSheet = this.spreadsheet.getSheets()[0];
-        this.numberOfSheets = this.spreadsheet.getNumSheets();
+        this.secondSheet = this.spreadsheet.getSheets()[1];
+        this.numberOfSheets = this.spreadsheet.getNumSheets() - 1; // ignore photo record sheet
         return (this.spreadsheet);
     }
 
@@ -83,6 +85,13 @@ class SpreadsheetManager {
             throw new Error("No spreadsheet or sheet is currently open.");
         }
         return this.firstSheet;
+    }
+
+    getSecondSheet(): GoogleAppsScript.Spreadsheet.Sheet {
+        if (!this.secondSheet) {
+            throw new Error("No spreadsheet or sheet is currently open.");
+        }
+        return (this.secondSheet);
     }
 
     getWorkingSheet(): GoogleAppsScript.Spreadsheet.Sheet {
@@ -145,7 +154,7 @@ class SpreadsheetManager {
         if (!this.spreadsheet) {
             throw new Error("No spreadsheet is currently open.");
         }
-        return sourceSheet.copyTo(this.spreadsheet);
+        return (sourceSheet.copyTo(this.spreadsheet));
     }
 
     /**
@@ -189,14 +198,20 @@ class SpreadsheetManager {
         if (this.spreadsheet === null)
           throw Error("Could not open report Spreadsheet - edit mode");
         this.firstSheet = this.spreadsheet.getSheets()[0]
+        this.secondSheet = this.spreadsheet.getSheets()[1]
         this.oldReportNum = this.getOldReportNum();
         let reportNameModel =  /(\d{2}-\d{2}-\d{4}) - ([a-zA-ZçÇ]+)/;
         let newSpreadsheetName = this.spreadsheet.getName().replace(reportNameModel, `${date} - ${getWeekDay(date)}`);
-        let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
-        let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
+        let modelFirstSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
+        let modelSecondSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[1];
+        let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelFirstSheet)
+        let newSecondSheet = this.copySheetToCurrentSpreadsheet(modelSecondSheet)
         this.deleteSheet(this.firstSheet);
+        this.deleteSheet(this.secondSheet);
         this.firstSheet = newFirstSheet;
-        this.firstSheet.setName(ReportTypes[this.reportState.getReportType()])
+        this.secondSheet = newSecondSheet;
+        this.firstSheet.setName("Frente")
+        this.secondSheet.setName("Verso")
         this.updateSpreadsheetName(newSpreadsheetName)
         this.numberOfSheets = 1;
     }
@@ -210,7 +225,9 @@ class SpreadsheetManager {
         let modelSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
         let newAppendingSheet = this.copySheetToCurrentSpreadsheet(modelSheet)
         this.appendingSheet = newAppendingSheet;
-        this.numberOfSheets = this.spreadsheet.getNumSheets();
+        this.spreadsheet.setActiveSheet(this.secondSheet);
+        this.numberOfSheets = this.spreadsheet.getNumSheets() - 1;
+        this.spreadsheet.moveActiveSheet(this.numberOfSheets + 1);
         this.appendingSheet.setName("Verso " + this.numberOfSheets);
         this.secondToLastSheet = this.spreadsheet.getSheets()[this.numberOfSheets - 2];
         this.updateReportItemsHeader();
@@ -225,9 +242,10 @@ class SpreadsheetManager {
     }
 
     exportSheetToPDF(): void {
-        var token = ScriptApp.getOAuthToken();
-        var reportSpreadsheetId = this.getSpreadsheetId();
-        var urlRequest = getExportUrlRequest(reportSpreadsheetId);
+        const token = ScriptApp.getOAuthToken();
+        const reportSpreadsheetId = this.getSpreadsheetId();
+        const urlRequest = getExportUrlRequest(reportSpreadsheetId);
+        
         try {
             var response = UrlFetchApp.fetch(urlRequest, {
             headers: {
@@ -239,7 +257,7 @@ class SpreadsheetManager {
         } catch (error) {
             Logger.log('Error: ' + error.toString());
         }
-        var blob = response.getBlob().setName(`${this.spreadsheet.getName()}.pdf`);
+        const blob = response.getBlob().setName(`${this.spreadsheet.getName()}.pdf`);
         this.blob = blob;
         this.reportState.getReportBlobs().push(blob);
         if (this.reportState.getIsAppending() === true || this.reportState.getIsEdit() === true)

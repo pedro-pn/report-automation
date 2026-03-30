@@ -24,7 +24,9 @@ function deleteEmptyServiceRows(reportFirstSheet: GoogleAppsScript.Spreadsheet.S
 	reportFirstSheet.deleteRows(startRow, endRow);
 }
 
-function reportCellsFit(reportFirstSheet: GoogleAppsScript.Spreadsheet.Sheet): void {
-	reportFirstSheet.autoResizeRows(5, 2);
-	reportFirstSheet.autoResizeRows(10, reportFirstSheet.getLastRow());
+function reportCellsFit(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+	sheet.autoResizeRows(5, 2);
+	if (sheet.getName() !== "Verso")
+		sheet.autoResizeRows(10, sheet.getLastRow());
+	
 }

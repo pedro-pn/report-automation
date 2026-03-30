@@ -10,6 +10,7 @@ class ReportState {
     private newServiceFlag: boolean;
     private serviceItem: number;
     private isEnglish: boolean;
+    private hasPhotoRecord: boolean;
     private requestsObject: GoogleAppsScript.URL_Fetch.URLFetchRequest[];
 
     private constructor() {
@@ -24,6 +25,7 @@ class ReportState {
         this.serviceItem = 0;
         this.requestsObject = [];
         this.isEnglish = false;
+        this.hasPhotoRecord = false;
     }
 
     public static getInstance(): ReportState {
@@ -53,6 +55,14 @@ class ReportState {
 
     public setIsEnglish(value: boolean): void {
         this.isEnglish = value;
+    }
+
+    public setHasPhotoRecord(value: boolean): void {
+        this.hasPhotoRecord = true;
+    }
+
+    public getHasPhotoRecord(): boolean {
+        return (this.hasPhotoRecord);
     }
 
     public getIsEnglish(): boolean {

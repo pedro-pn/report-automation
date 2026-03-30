@@ -155,17 +155,38 @@ function fillActivities(reportData: ReportData): void {
 		reportState.setValueToBuffer(ReportCells.RDO.HEADER.ACTIVITIES, activities.replace(/\n{2,}/g, '\n'));
 }
 
-function fillSignField(reportData: ReportData, spreadsheetManager: SpreadsheetManager, cell: string, width: number): void {
+function fillSignField(reportData: ReportData, sheet: GoogleAppsScript.Spreadsheet.Sheet, cell: string, width: number): void {
 	let leaderAssId = reportData.getLeaderInfos().Ass
 	if (leaderAssId == "")
 		return ;
 	let imageBlob = DriveApp.getFileById(leaderAssId).getBlob();
   	let cellNum = cellStringToNumber(cell);
  
-	let image = spreadsheetManager.getWorkingSheet().insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
+	let image = sheet.insertImage(imageBlob, cellNum[1] + 1, cellNum[0] + 1);
 	let ratio = image.getHeight() / image.getWidth();
 	image.setWidth(width);
 	image.setHeight(width * ratio);
+}
+
+function fillPhotoRecord(reportData: ReportData, SpreadsheetManager: SpreadsheetManager) {
+	const photoRecords = reportData.searchFieldResponse(FormFields.HEADER.PHOTO_RECORD) as string[];
+	const reportState = ReportState.getInstance();
+
+	if (!photoRecords) {
+		SpreadsheetManager.getSecondSheet().hideSheet();
+		return ;
+	}
+	switch (photoRecords.length) {
+		case 1:
+			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_CASE_ONE, { width: 850, height: 850, offSetX: 0, offSetY: 0 });
+			break ;
+		case 2:
+			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_CASE_TWO, { width: 460, height: 460, offSetX: 0, offSetY: 0 });
+			break ;
+		default:
+			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_DEFAULT, { width: 380, height: 380, offSetX: 0, offSetY: 0 });
+	}
+	reportState.setHasPhotoRecord(true);
 }
 
 //#endregion

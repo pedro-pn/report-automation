@@ -287,7 +287,20 @@ const ReportCells = {
         HEADER_ROWS: {
             START_ROW: 7,
             TOTAL: 2
-        }
+        },
+        PHOTO_RECORDS_DEFAULT: [
+            "B8",
+            "I8",
+            "B32",
+            "I32"
+        ],
+        PHOTO_RECORDS_CASE_ONE: [
+            "A8"
+        ],
+        PHOTO_RECORDS_CASE_TWO: [
+            "A8",
+            "H37"
+        ]
     },
 }
 
@@ -338,6 +351,7 @@ const FormFields = {
         STAND_BY_TIME: "Tempo total em stand-by",
         STAND_BY_MOTIVE: "Motivo do período ocioso",
         OVERTIME_COMMENT: "Em caso de hora extra, indicar o responsável a mesma",
+        PHOTO_RECORD: "Registros fotográticos",
         ACTIVITIES: "Atividades/Observações",
         ADD_SERVICE: "Selecione o tipo de serviço que deseja adicionar informações"
     },

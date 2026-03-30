@@ -14,6 +14,8 @@ function onFormSubmit(formEvent: GoogleAppsScript.Events.FormsOnFormSubmit): voi
 	fillReport(reportData, spreadsheetManager);
 	SpreadsheetApp.flush();
 	spreadsheetManager.exportSheetToPDF();
+	if (spreadsheetManager.getSecondSheet().isSheetHidden())
+		spreadsheetManager.getSecondSheet().showSheet();
 	sendReportViaEmail(reportData, reportState);
 	reportDb.logResponse(reportData, spreadsheetManager);
   	if (reportState.getIsEdit() === false)
@@ -37,10 +39,14 @@ function  fillReport(reportData: ReportData, spreadsheetManager: SpreadsheetMana
 	fillReportFooter(reportData);
 	fillActivities(reportData);
 	fillServicesFields(reportData);
-	fillSignField(reportData, spreadsheetManager, ReportCells.RDO.FOOTER.SIGNATURE, 100);
+	fillPhotoRecord(reportData, spreadsheetManager);
+	fillSignField(reportData, spreadsheetManager.getWorkingSheet(), ReportCells.RDO.FOOTER.SIGNATURE, 100);
+	if (reportState.getHasPhotoRecord())
+		fillSignField(reportData, spreadsheetManager.getSecondSheet(), ReportCells.RDO.FOOTER.SIGNATURE, 100);
 	var reportValuesResult = mergeValuesAndFormulas(formulas, reportState.getReportBuffer());
 	reportCellsRange.setValues(reportValuesResult)
 	reportCellsFit(spreadsheetManager.getWorkingSheet())
+	reportCellsFit(spreadsheetManager.getSecondSheet())
 	deleteEmptyServiceRows(spreadsheetManager.getWorkingSheet(), reportData.numOfServices);
 	setDotLineBorder(reportData, spreadsheetManager);
 	if (reportState.getIsAppending() === false)

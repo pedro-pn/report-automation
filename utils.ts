@@ -193,6 +193,78 @@ function setEnglishConfiguration(isEnglish: boolean): void {
 	Weekdays = EngWeekdays;
 }
 
+interface ImageParams {
+	width: number,
+	height: number,
+	offSetX: number,
+	offSetY: number
+}
+
+//#region UTILS
+function setImagesToReport(sheet: GoogleAppsScript.Spreadsheet.Sheet, imgIds: string[], reportCells: string[], params: ImageParams): void {
+	let cell = 0;
+
+	if (imgIds == undefined)
+		return ;
+	for (let i = 0; i < imgIds.length && i < reportCells.length; i++) {
+		let imgBlob = getImageBlobById(imgIds[i]);
+		insertImageIntoSheet(sheet, imgBlob, reportCells[cell], params);
+		cell++;
+	}
+}
+
+function getImageBlobById(fileId: string): GoogleAppsScript.Base.Blob {
+	let file = DriveApp.getFileById(fileId);
+	let blob = file.getBlob();
+
+	return blob;
+}
+
+function insertImageIntoSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, blob: GoogleAppsScript.Base.Blob, cell: string, params: ImageParams): void {
+	try {
+		let range = sheet.getRange(cell);
+		let image = sheet.insertImage(blob, range.getColumn(), range.getRow(), params.offSetX, params.offSetY);
+
+		image.setWidth(params.width);
+		image.setHeight(params.height);
+	} catch {
+    	let range = sheet.getRange(cell);
+		let compressedImage = compressImage(blob);
+		if (compressedImage == null) {
+			Logger.log("Could not compress image (image larger than 2 mb).");
+			return ;
+		}
+		let image = sheet.insertImage(compressedImage, range.getColumn(), range.getRow());
+
+		image.setWidth(params.width);
+		image.setHeight(params.height);
+	}
+}
+
+function compressImage(imageBlob: GoogleAppsScript.Base.Blob) {
+	let url = 'https://image-compressor-1016981201840.us-central1.run.app/compress';
+	// let url = 'https://ce32-177-67-207-114.ngrok-free.app/compress';
+	let base64Image = Utilities.base64Encode(imageBlob.getBytes());
+	  let options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+    'method': 'post',
+    'contentType': 'application/x-www-form-urlencoded',
+    'payload': {
+      'inputImage': base64Image
+    }
+  };
+	
+  try {
+	  let response = UrlFetchApp.fetch(url, options);
+	  let result = JSON.parse(response.getContentText());
+		let compressedBase64Image = result.compressedImage;
+	   let compressedImageBlob = Utilities.newBlob(Utilities.base64Decode(compressedBase64Image), 'image/jpeg', 'compressedImage.jpg');
+		  return (compressedImageBlob);
+  } catch {
+	console.log("Could not compress image")
+	return (null);
+  }
+}
+
 //#endregion
 
 function showAllRespondsLink() {
