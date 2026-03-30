@@ -181,7 +181,7 @@ function fillPhotoRecord(reportData: ReportData, SpreadsheetManager: Spreadsheet
 			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_CASE_ONE, { width: 850, height: 850, offSetX: 0, offSetY: 0 });
 			break ;
 		case 2:
-			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_CASE_TWO, { width: 460, height: 460, offSetX: 0, offSetY: 0 });
+			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_CASE_TWO, { width: 450, height: 450, offSetX: 0, offSetY: 0 });
 			break ;
 		default:
 			setImagesToReport(SpreadsheetManager.getSecondSheet(), photoRecords, ReportCells.RDO.PHOTO_RECORDS_DEFAULT, { width: 380, height: 380, offSetX: 0, offSetY: 0 });
