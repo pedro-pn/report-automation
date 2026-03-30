@@ -205,12 +205,12 @@ class SpreadsheetManager {
         let modelFirstSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[0];
         let modelSecondSheet = this.openSpreadsheet(SpreadsheetIds.MODEL_IDS[this.reportState.getReportType()]).getSheets()[1];
         let newFirstSheet = this.copySheetToCurrentSpreadsheet(modelFirstSheet)
-        let newSecondSheet = this.copySheetToCurrentSpreadsheet(modelSecondSheet)
         this.deleteSheet(this.firstSheet);
+        newFirstSheet.setName("Frente")
+        let newSecondSheet = this.copySheetToCurrentSpreadsheet(modelSecondSheet)
         this.deleteSheet(this.secondSheet);
         this.firstSheet = newFirstSheet;
         this.secondSheet = newSecondSheet;
-        this.firstSheet.setName("Frente")
         this.secondSheet.setName("Verso")
         this.updateSpreadsheetName(newSpreadsheetName)
         this.numberOfSheets = 1;
