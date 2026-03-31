@@ -49,6 +49,21 @@ class ReportState {
 		return (value);
 	}
 
+    public resetReportState(): void {
+        this.reportBuffer = [];
+        this.isEdit = false;
+        this.isAppending = false;
+        this.reportBlobs = [];
+        this.reportType = ReportTypes.RDO;
+        this.reportIds = "";
+        this.debug = false;
+        this.newServiceFlag = false;
+        this.serviceItem = 0;
+        this.requestsObject = [];
+        this.isEnglish = false;
+        this.hasPhotoRecord = false;
+    }
+
     public getReportBuffer(): string[][] {
         return (this.reportBuffer)
     }

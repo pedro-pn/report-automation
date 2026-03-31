@@ -38,6 +38,7 @@ function showAllResponses() {
             };
             // Call form submission handler with the fake event
             onFormSubmit(fakeEvent);
+			ReportState.getInstance().resetReportState();
             // ReportState.reportBuffer = null;
             // ReportState.reportIds = "";
             // ReportState.isEdit = false;
